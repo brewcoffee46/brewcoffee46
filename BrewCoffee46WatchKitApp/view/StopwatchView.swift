@@ -89,7 +89,8 @@ struct StopwatchView: View {
                             withTimeInterval: countDownInit,
                             repeats: false
                         ) { _ in
-                            WKInterfaceDevice.current().play(.start)
+                            WKInterfaceDevice.current().play(.notification)
+                            WKInterfaceDevice.current().play(.notification)
                         }
                     }) {
                         Text("Start")
