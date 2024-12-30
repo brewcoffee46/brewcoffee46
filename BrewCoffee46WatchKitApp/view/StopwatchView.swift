@@ -101,7 +101,16 @@ struct StopwatchView: View {
             }
         }
         .navigationTitle("navigation title stopwatch")
-        .currentConfigSaveLoadModifier($viewModel.currentConfig, $viewModel.log)
+        .currentConfigSaveLoadModifier(
+            $viewModel.currentConfig,
+            // For now, there is no load & save function on WatchKit App, so
+            // it's OK that `lastUpdateAt` is always `.none`.
+            Binding(
+                get: { .none },
+                set: { _ in () }
+            ),
+            $viewModel.log
+        )
     }
 
     private func showDripInfo(index: Int, totalDripCount: Int) -> some View {

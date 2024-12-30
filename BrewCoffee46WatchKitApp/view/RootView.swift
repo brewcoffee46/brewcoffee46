@@ -38,7 +38,16 @@ struct RootView: View {
             )
         }
         .navigation(path: $appEnvironment.rootPath)
-        .currentConfigSaveLoadModifier($viewModel.currentConfig, $viewModel.log)
+        .currentConfigSaveLoadModifier(
+            $viewModel.currentConfig,
+            // For now, there is no load & save function on WatchKit App, so
+            // it's OK that `lastUpdateAt` is always `.none`.
+            Binding(
+                get: { .none },
+                set: { _ in () }
+            ),
+            $viewModel.log
+        )
     }
 
     private func navigationLink(

@@ -164,7 +164,11 @@ struct SaveLoadView: View {
                 .map { legacySavedConfigs = $0 }
                 .recoverWithErrorLog(&viewModel.errors)
         }
-        .currentConfigSaveLoadModifier($viewModel.currentConfig, $viewModel.errors)
+        .currentConfigSaveLoadModifier(
+            $viewModel.currentConfig,
+            $viewModel.currentConfigLastUpdatedAt,
+            $viewModel.errors
+        )
     }
 
     private var loadLegacySavedConfigs: some View {
