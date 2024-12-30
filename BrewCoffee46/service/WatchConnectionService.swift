@@ -55,7 +55,7 @@ extension Container {
     }
 }
 
-extension WatchConnectionServiceImpl: @preconcurrency WCSessionDelegate {
+extension WatchConnectionServiceImpl: WCSessionDelegate {
     func sessionDidBecomeInactive(_ session: WCSession) {
 
     }
