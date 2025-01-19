@@ -27,6 +27,7 @@ struct StopwatchView: View {
 
     @Injected(\.requestReviewService) private var requestReviewService
     @Injected(\.notificationService) private var notificationService
+    @Injected(\.dripTimingNotificationService) private var dripTimingNotificationService
     @Injected(\.getDripPhaseService) private var getDripPhaseService
 
     private let soundIdRing = SystemSoundID(1013)
@@ -167,60 +168,6 @@ struct StopwatchView: View {
         }
     }
 
-    private func addNotifications() async -> ResultNea<Void, CoffeeError> {
-        return await withTaskGroup(of: ResultNea<Void, CoffeeError>.self) { group in
-            var errors: [CoffeeError] = []
-
-            let numberOfAllDrips = viewModel.pointerInfo.dripInfo.dripTimings.count
-            for (i, info) in viewModel.pointerInfo.dripInfo.dripTimings.dropFirst().enumerated() {
-                let notifiedAt = Int(floor(info.dripAt) - StopwatchView.progressTimeInit)
-
-                group.addTask {
-                    let title =
-                        if i == 0 {
-                            String(format: NSLocalizedString("notification 2nd drip", comment: ""), numberOfAllDrips)
-                        } else if i == 1 {
-                            String(format: NSLocalizedString("notification 3rd drip", comment: ""), numberOfAllDrips)
-                        } else {
-                            String(format: NSLocalizedString("notification after 4th drip suffix", comment: ""), (i + 2), numberOfAllDrips)
-                        }
-
-                    return await notificationService.addNotificationUsingTimer(
-                        title: title,
-                        body: "🫖 \(roundCentesimal(info.waterAmount))g 💧",
-                        notifiedInSeconds: notifiedAt
-                    )
-                }
-
-                for await result in group {
-                    switch result {
-                    case .failure(let error):
-                        errors += error.toArray()
-                    case .success():
-                        ()
-                    }
-                }
-            }
-
-            switch await notificationService.addNotificationUsingTimer(
-                title: "☕️ " + NSLocalizedString("notification drip end", comment: ""),
-                body: "",
-                notifiedInSeconds: Int(ceil(viewModel.currentConfig.totalTimeSec) - StopwatchView.progressTimeInit)
-            ) {
-            case .failure(let error):
-                errors += error.toArray()
-            case .success():
-                ()
-            }
-
-            if errors.isEmpty {
-                return .success(())
-            } else {
-                return .failure(NonEmptyArray(errors.first!, Array(errors.dropFirst())))
-            }
-        }
-    }
-
     private func startTimer() {
         if self.timer == nil {
             UIApplication.shared.isIdleTimerDisabled = true
@@ -228,7 +175,11 @@ struct StopwatchView: View {
             self.startTime = Date()
 
             Task { @MainActor in
-                await addNotifications()
+                await dripTimingNotificationService.registerNotifications(
+                    dripTimings: viewModel.pointerInfo.dripInfo.dripTimings,
+                    firstDripAtSec: -StopwatchView.progressTimeInit,
+                    totalTimeSec: viewModel.currentConfig.totalTimeSec
+                )
             }
 
             self.timer =
