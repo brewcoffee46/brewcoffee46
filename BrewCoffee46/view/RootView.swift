@@ -18,12 +18,12 @@ struct RootView: View {
                     Text("navigation title stopwatch")
                 }
                 .tag(Route.stopwatch)
-            ConfigView()
+            SettingView()
                 .tabItem {
                     Image(systemName: "slider.horizontal.3")
                     Text("navigation title configuration")
                 }
-                .tag(Route.config)
+                .tag(Route.setting)
         }
     }
 }

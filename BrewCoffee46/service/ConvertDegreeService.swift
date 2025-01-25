@@ -7,6 +7,7 @@ protocol ConvertDegreeService {
     func fromProgressTime(
         _ config: Config,
         _ pointerInfo: PointerInfo,
+        _ dripInfo: DripInfo,
         _ progressTime: Double
     ) -> Double
 
@@ -14,6 +15,7 @@ protocol ConvertDegreeService {
     func toProgressTime(
         _ config: Config,
         _ pointerInfo: PointerInfo,
+        _ dripInfo: DripInfo,
         _ degree: Double
     ) -> Double
 }
@@ -22,6 +24,7 @@ final class ConvertDegreeServiceImpl: ConvertDegreeService, Sendable {
     func fromProgressTime(
         _ config: Config,
         _ pointerInfo: PointerInfo,
+        _ dripInfo: DripInfo,
         _ progressTime: Double
     ) -> Double {
         if progressTime < 0 {
@@ -32,16 +35,16 @@ final class ConvertDegreeServiceImpl: ConvertDegreeService, Sendable {
             // In this case, at 1st shot.
             return progressTime / config.steamingTimeSec * pointerInfo.pointerDegrees[1]
         } else {
-            if config.firstWaterPercent < 1 && progressTime <= pointerInfo.dripInfo.dripTimings[2].dripAt {
+            if config.firstWaterPercent < 1 && progressTime <= dripInfo.dripTimings[2].dripAt {
                 // At 2nd shot where there are 2 shots on first 40% drip.
                 return (progressTime - config.steamingTimeSec)
                     * (pointerInfo.pointerDegrees[2] - pointerInfo.pointerDegrees[1])
-                    / (pointerInfo.dripInfo.dripTimings[2].dripAt - config.steamingTimeSec) + pointerInfo.pointerDegrees[1]
+                    / (dripInfo.dripTimings[2].dripAt - config.steamingTimeSec) + pointerInfo.pointerDegrees[1]
             } else if config.firstWaterPercent < 1 {
                 // After 2nd shot where there are 2 shots on first 40% drip.
                 return
-                    ((progressTime - pointerInfo.dripInfo.dripTimings[2].dripAt)
-                    / (config.totalTimeSec - pointerInfo.dripInfo.dripTimings[2].dripAt))
+                    ((progressTime - dripInfo.dripTimings[2].dripAt)
+                    / (config.totalTimeSec - dripInfo.dripTimings[2].dripAt))
                     * (360.0 - pointerInfo.pointerDegrees[2]) + pointerInfo.pointerDegrees[2]
             } else {
                 // After 2nd shot where there are 1 shot on first 40% drip.
@@ -57,6 +60,7 @@ final class ConvertDegreeServiceImpl: ConvertDegreeService, Sendable {
     func toProgressTime(
         _ config: Config,
         _ pointerInfo: PointerInfo,
+        _ dripInfo: DripInfo,
         _ degree: Double
     ) -> Double {
         if degree > 360 {
@@ -67,17 +71,17 @@ final class ConvertDegreeServiceImpl: ConvertDegreeService, Sendable {
         } else {
             if config.firstWaterPercent < 1 && degree <= fortyPercentDegree {
                 // At 2nd shot where there are 2 shots on first 40% drip.
-                return (pointerInfo.dripInfo.dripTimings[2].dripAt - config.steamingTimeSec)
+                return (dripInfo.dripTimings[2].dripAt - config.steamingTimeSec)
                     * (degree - pointerInfo.pointerDegrees[1]) / (fortyPercentDegree - pointerInfo.pointerDegrees[1])
                     + config.steamingTimeSec
             } else if config.firstWaterPercent < 1 {
                 // After 2nd shot where there are 2 shots on first 40% drip.
-                return (config.totalTimeSec - pointerInfo.dripInfo.dripTimings[2].dripAt) * (degree - fortyPercentDegree)
-                    / (360 - pointerInfo.pointerDegrees[2]) + pointerInfo.dripInfo.dripTimings[2].dripAt
+                return (config.totalTimeSec - dripInfo.dripTimings[2].dripAt) * (degree - fortyPercentDegree)
+                    / (360 - pointerInfo.pointerDegrees[2]) + dripInfo.dripTimings[2].dripAt
             } else {
                 // After 2nd shot where there are 2 shots on first 40% drip.
-                return (config.totalTimeSec - pointerInfo.dripInfo.dripTimings[1].dripAt) * (degree - fortyPercentDegree)
-                    / (360 - pointerInfo.pointerDegrees[1]) + pointerInfo.dripInfo.dripTimings[1].dripAt
+                return (config.totalTimeSec - dripInfo.dripTimings[1].dripAt) * (degree - fortyPercentDegree)
+                    / (360 - pointerInfo.pointerDegrees[1]) + dripInfo.dripTimings[1].dripAt
             }
         }
     }

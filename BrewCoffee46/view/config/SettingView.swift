@@ -4,33 +4,26 @@ import SwiftUI
 import SwiftUITooltip
 
 @MainActor
-struct ConfigView: View {
+struct SettingView: View {
     @EnvironmentObject var appEnvironment: AppEnvironment
     @EnvironmentObject var viewModel: CurrentConfigViewModel
 
-    @Injected(\.saveLoadConfigService) private var saveLoadConfigService
+    @Injected(\.dateService) private var dateService
+    @Injected(\.rawSettingConvertService) private var rawSettingConvertService
     @Injected(\.watchConnectionService) private var watchConnectionService
     @Injected(\.configurationLinkService) private var configurationLinkService
 
     @Environment(\.scenePhase) private var scenePhase
 
-    @State var showTips: Bool = false
-    @State var calculateCoffeeBeansWeightFromWater: Bool = false {
-        didSet {
-            temporaryWaterAmount = viewModel.currentConfig.totalWaterAmount()
-        }
-    }
-    @State var temporaryWaterAmount: Double = Config.initCoffeeBeansWeight * Config.initWaterToCoffeeBeansWeightRatio {
-        didSet {
-            viewModel.currentConfig.coffeeBeansWeight = roundCentesimal(temporaryWaterAmount / viewModel.currentConfig.waterToCoffeeBeansWeightRatio)
-        }
-    }
-    @State var didSuccessSendingConfig: Bool? = .none
+    @State private var rawSetting: RawSetting = RawSetting.defaultValue()
+
+    @State private var showTips: Bool = false
+    @State private var didSuccessSendingConfig: Bool? = .none
 
     // This will be calculated initially using the current configuration so it's not necessary ` ConfigurationLinkServiceImpl.universalLinksBaseURL`
     // but if the type of `universalLinksConfigUrl` would be `URL?` it's not convenience so
     // for now we assign `ConfigurationLinkServiceImpl.universalLinksBaseURL`.
-    @State var universalLinksConfigUrl: URL = ConfigurationLinkServiceImpl.universalLinksBaseURL
+    @State private var universalLinksConfigUrl: URL = ConfigurationLinkServiceImpl.universalLinksBaseURL
 
     private let digit = 1
     private let timerStep: Double = 1.0
@@ -120,19 +113,14 @@ struct ConfigView: View {
             Section(header: Text("config weight settings")) {
                 TipsView(
                     showTips,
-                    content: Picker("", selection: $calculateCoffeeBeansWeightFromWater) {
+                    content: Picker("", selection: $rawSetting.calculateCoffeeBeansWeightFromWater) {
                         Text("config calculate water from coffee beans").tag(false)
                         Text("config calculate coffee beans from water").tag(true)
                     }
-                    .pickerStyle(.segmented)
-                    .onChange(of: calculateCoffeeBeansWeightFromWater) { _, newValue in
-                        if newValue {
-                            temporaryWaterAmount = viewModel.currentConfig.totalWaterAmount()
-                        }
-                    },
+                    .pickerStyle(.segmented),
                     tips: Text("config calculate coffee beans from water tips")
                 )
-                if calculateCoffeeBeansWeightFromWater {
+                if rawSetting.calculateCoffeeBeansWeightFromWater {
                     waterAmountSettingView
                 } else {
                     coffeeBeansWeightSettingView
@@ -142,7 +130,7 @@ struct ConfigView: View {
                         showTips,
                         content: HStack {
                             Text("config water ratio")
-                            Text("\(String(format: "%.1f%", viewModel.currentConfig.waterToCoffeeBeansWeightRatio))")
+                            Text("\(String(format: "%.1f%", rawSetting.waterToCoffeeBeansWeightRatio))")
 
                         },
                         tips: Text("config water ratio tips")
@@ -153,11 +141,8 @@ struct ConfigView: View {
                         sliderStep: 1,
                         buttonStep: 0.1,
                         isDisable: appEnvironment.isTimerStarted,
-                        target: $viewModel.currentConfig.waterToCoffeeBeansWeightRatio
+                        target: $rawSetting.waterToCoffeeBeansWeightRatio
                     )
-                    .onChange(of: viewModel.currentConfig.waterToCoffeeBeansWeightRatio) {
-                        temporaryWaterAmount = viewModel.currentConfig.totalWaterAmount()
-                    }
                 }
             }
 
@@ -167,7 +152,7 @@ struct ConfigView: View {
                         showTips,
                         content: HStack {
                             Text("config 1st water percent")
-                            Text("\(String(format: "%.0f%", viewModel.currentConfig.firstWaterPercent * 100))%")
+                            Text("\(String(format: "%.0f%", rawSetting.firstWaterPercent * 100))%")
 
                         },
                         tips: Text("config 1st water percent tips")
@@ -178,7 +163,7 @@ struct ConfigView: View {
                         sliderStep: 0.05,
                         buttonStep: 0.01,
                         isDisable: appEnvironment.isTimerStarted,
-                        target: $viewModel.currentConfig.firstWaterPercent
+                        target: $rawSetting.firstWaterPercent
                     )
                 }
 
@@ -193,7 +178,7 @@ struct ConfigView: View {
                         minimum: 1,
                         step: 1.0,
                         isDisable: appEnvironment.isTimerStarted.getOnlyBinding,
-                        target: $viewModel.currentConfig.partitionsCountOf6
+                        target: $rawSetting.partitionsCountOf6
                     )
                 }
             }
@@ -205,7 +190,7 @@ struct ConfigView: View {
                         content: HStack {
                             Text("config total time")
                             Text(
-                                "\(String(format: "%.0f", viewModel.currentConfig.totalTimeSec))\(NSLocalizedString("config sec unit", comment: ""))")
+                                "\(String(format: "%.0f", rawSetting.totalTimeSec))\(NSLocalizedString("config sec unit", comment: ""))")
                             Spacer()
                         },
                         tips: Text("config total time tips")
@@ -214,18 +199,18 @@ struct ConfigView: View {
                         maximum: 300.0,
                         // If `totalTime` would be going down less than `steamingTime` + its step,
                         // then `SliderView` will crash so this `steamingTime + timerStep` is needed to avoid crash.
-                        minimum: viewModel.currentConfig.steamingTimeSec + timerStep,
+                        minimum: rawSetting.steamingTimeSec + timerStep,
                         sliderStep: timerStep,
                         buttonStep: timerStep,
                         isDisable: appEnvironment.isTimerStarted,
-                        target: $viewModel.currentConfig.totalTimeSec
+                        target: $rawSetting.totalTimeSec
                     )
                 }
 
                 VStack {
                     HStack {
                         Text("config steaming time")
-                        Text("\(String(format: "%.0f", viewModel.currentConfig.steamingTimeSec))\(NSLocalizedString("config sec unit", comment: ""))")
+                        Text("\(String(format: "%.0f", rawSetting.steamingTimeSec))\(NSLocalizedString("config sec unit", comment: ""))")
                         Spacer()
                     }
                     ButtonSliderButtonView(
@@ -233,13 +218,13 @@ struct ConfigView: View {
                         // If the maximum is `viewModel.totalTime - timerStep` then
                         // `totalTime`'s slider range could be 300~300 and it will crash
                         // so that's the why `timerStep` double subtractions are required.
-                        maximum: viewModel.currentConfig.totalTimeSec - timerStep - timerStep > 1 + timerStep
-                            ? viewModel.currentConfig.totalTimeSec - timerStep - timerStep : 1 + timerStep,
+                        maximum: rawSetting.totalTimeSec - timerStep - timerStep > 1 + timerStep
+                            ? rawSetting.totalTimeSec - timerStep - timerStep : 1 + timerStep,
                         minimum: 1,
                         sliderStep: timerStep,
                         buttonStep: timerStep,
                         isDisable: appEnvironment.isTimerStarted,
-                        target: $viewModel.currentConfig.steamingTimeSec
+                        target: $rawSetting.steamingTimeSec
                     )
                 }
             }
@@ -266,6 +251,26 @@ struct ConfigView: View {
                 }
             }
         }
+        .onChange(of: viewModel.currentConfig, initial: true) { _, newValue in
+            rawSetting = rawSettingConvertService.fromConfig(
+                newValue, calculateCoffeeBeansWeightFromWater: rawSetting.calculateCoffeeBeansWeightFromWater)
+        }
+        .onChange(of: rawSetting) { _, newValue in
+            rawSettingConvertService.toConfig(newValue, viewModel.currentConfig).map { config in
+                viewModel.currentConfig = config
+                viewModel.currentConfigLastUpdatedAt = dateService.nowEpochTimeMillis()
+
+                // We have to feedback beans weight from water amount or its inverse.
+                // Due to this feedback, this `onChange` will be called at most twice unfortunately
+                // but for now we don't know the better way.
+                if rawSetting.calculateCoffeeBeansWeightFromWater {
+                    rawSetting.coffeeBeansWeight = config.coffeeBeansWeight
+                } else {
+                    rawSetting.waterAmount = config.totalWaterAmount()
+                }
+            }
+            .recoverWithErrorLog(&viewModel.errors)
+        }
         .navigationTitle("navigation title configuration")
         .navigation(path: $appEnvironment.configPath)
         .currentConfigSaveLoadModifier(
@@ -280,33 +285,20 @@ struct ConfigView: View {
             Spacer()
             Group {
                 Text("config coffee beans weight")
-                    .font(
-                        !calculateCoffeeBeansWeightFromWater ? Font.headline.weight(.bold) : Font.headline.weight(.regular)
-                    )
-                Text("\(String(format: "%.1f", viewModel.currentConfig.coffeeBeansWeight))\(weightUnit)")
-                    .onChange(of: temporaryWaterAmount) { _, newValue in
-                        viewModel.currentConfig.coffeeBeansWeight = roundCentesimal(newValue / viewModel.currentConfig.waterToCoffeeBeansWeightRatio)
-                    }
+                Text("\(String(format: "%.1f", rawSetting.coffeeBeansWeight))\(weightUnit)")
             }
             .font(
-                !calculateCoffeeBeansWeightFromWater ? Font.headline.weight(.bold) : Font.headline.weight(.regular)
+                !rawSetting.calculateCoffeeBeansWeightFromWater ? Font.headline.weight(.bold) : Font.headline.weight(.regular)
             )
             Spacer()
             Spacer()
             Spacer()
             Group {
                 Text("config water amount")
-                Text("\(String(format: "%.1f", temporaryWaterAmount))\(weightUnit)")
-                    .onChange(of: viewModel.currentConfig.coffeeBeansWeight, initial: true) { _, newValue in
-                        // When `calculateCoffeeBeansWeightFromWater = true` then `temporaryWaterAmount` has more priority than the coffee beans weight so
-                        // we stop calculation of `temporaryWaterAmount` from the coffee beans weight.
-                        if !calculateCoffeeBeansWeightFromWater {
-                            temporaryWaterAmount = viewModel.currentConfig.totalWaterAmount()
-                        }
-                    }
+                Text("\(String(format: "%.1f", rawSetting.waterAmount))\(weightUnit)")
             }
             .font(
-                calculateCoffeeBeansWeightFromWater ? Font.headline.weight(.bold) : Font.headline.weight(.regular)
+                rawSetting.calculateCoffeeBeansWeightFromWater ? Font.headline.weight(.bold) : Font.headline.weight(.regular)
             )
             Spacer()
         }
@@ -318,7 +310,7 @@ struct ConfigView: View {
             NumberPickerView(
                 digit: digit,
                 max: coffeeBeansWeightMax,
-                target: $viewModel.currentConfig.coffeeBeansWeight,
+                target: $rawSetting.coffeeBeansWeight,
                 isDisable: $appEnvironment.isTimerStarted
             )
         }
@@ -329,22 +321,22 @@ struct ConfigView: View {
             coffeeBeansAndWaterWeightView
             NumberPickerView(
                 digit: digit,
-                max: coffeeBeansWeightMax * viewModel.currentConfig.waterToCoffeeBeansWeightRatio,
-                target: $temporaryWaterAmount,
+                max: coffeeBeansWeightMax * rawSetting.waterToCoffeeBeansWeightRatio,
+                target: $rawSetting.waterAmount,
                 isDisable: $appEnvironment.isTimerStarted
             )
         }
     }
 }
 
-extension ConfigView {
+extension SettingView {
     static let temporaryCurrentConfigKey = "temporaryCurrentConfig"
 }
 
 #if DEBUG
-    struct ConfigView_Previews: PreviewProvider {
+    struct SettingView_Previews: PreviewProvider {
         static var previews: some View {
-            ConfigView()
+            SettingView()
                 .environment(\.locale, .init(identifier: "ja"))
                 .environmentObject(CurrentConfigViewModel.init())
                 .environmentObject(AppEnvironment.init())

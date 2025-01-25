@@ -18,6 +18,8 @@ struct StopwatchView: View {
         }
     }
 
+    @State private var pointerInfo: PointerInfo = PointerInfo.defaultValue()
+
     private static let progressTimeInit: Double = -3
 
     @State private var progressTime: Double = progressTimeInit
@@ -44,6 +46,7 @@ struct StopwatchView: View {
                     ZStack(alignment: .center) {
                         ClockView(
                             progressTime: $progressTime,
+                            pointerInfo: pointerInfo,
                             steamingTime: viewModel.currentConfig.steamingTimeSec,
                             totalTime: viewModel.currentConfig.totalTimeSec
                         )
@@ -68,6 +71,7 @@ struct StopwatchView: View {
                         ZStack(alignment: .center) {
                             ClockView(
                                 progressTime: $progressTime,
+                                pointerInfo: pointerInfo,
                                 steamingTime: viewModel.currentConfig.steamingTimeSec,
                                 totalTime: viewModel.currentConfig.totalTimeSec
                             )
@@ -88,6 +92,9 @@ struct StopwatchView: View {
             if phase == .active {
                 restoreTimer()
             }
+        }
+        .onChange(of: viewModel.dripInfo, initial: true) { _, newValue in
+            pointerInfo = PointerInfo(newValue)
         }
     }
 
@@ -176,7 +183,7 @@ struct StopwatchView: View {
 
             Task { @MainActor in
                 await dripTimingNotificationService.registerNotifications(
-                    dripTimings: viewModel.pointerInfo.dripInfo.dripTimings,
+                    dripTimings: viewModel.dripInfo.dripTimings,
                     firstDripAtSec: -StopwatchView.progressTimeInit,
                     totalTimeSec: viewModel.currentConfig.totalTimeSec
                 )
@@ -240,7 +247,7 @@ struct StopwatchView: View {
 
     private func ringSound() {
         let nth = getDripPhaseService.get(
-            dripInfo: viewModel.pointerInfo.dripInfo,
+            dripInfo: viewModel.dripInfo,
             progressTime: progressTime
         ).toInt()
 

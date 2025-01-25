@@ -6,8 +6,8 @@ struct NavigationModifier: ViewModifier {
     @ViewBuilder
     fileprivate func coordinator(_ route: Route) -> some View {
         switch route {
-        case .config:
-            ConfigView()
+        case .setting:
+            SettingView()
         case .stopwatch:
             StopwatchView()
         case .jsonImportExport:

@@ -1,6 +1,6 @@
 enum Route: Sendable {
     case stopwatch
-    case config
+    case setting
     case saveLoad
     case universalLinksImport
     case jsonImportExport
