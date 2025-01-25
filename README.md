@@ -9,7 +9,7 @@ This is a coffee brewing utility for iOS & watchOS.
 
 iPhone          |  Apple Watch
 :--------------:|:-------------------------:
-![](https://github.com/y-yu/coffeebrew46/assets/612043/07d1504c-f2c1-4827-94ae-36030ae9ad12)  |  ![](https://github.com/user-attachments/assets/5957b83a-14f0-4390-b643-0ff4a9db54b5)
+![](https://brewcoffee46.github.io/img/ios.jpg)  |  ![](https://brewcoffee46.github.io/img/watchos.jpg)
 
 ## Demo (YouTube)
 
