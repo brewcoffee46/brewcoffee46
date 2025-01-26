@@ -13,15 +13,18 @@ struct ClockView: View {
 
     private let density: Int = 40
     private let markInterval: Int = 10
+
     @Binding var progressTime: Double
+    private let pointerInfo: PointerInfo
 
     @State var endDegree: Double
 
     var steamingTime: Double
     var totalTime: Double
 
-    init(progressTime: Binding<Double>, steamingTime: Double, totalTime: Double) {
+    init(progressTime: Binding<Double>, pointerInfo: PointerInfo, steamingTime: Double, totalTime: Double) {
         self._progressTime = progressTime
+        self.pointerInfo = pointerInfo
         self.endDegree = (ceil(progressTime.wrappedValue) - progressTime.wrappedValue) * 365
         self.steamingTime = steamingTime
         self.totalTime = totalTime
@@ -55,14 +58,14 @@ struct ClockView: View {
             ZStack {
                 GeometryReader { (geometry: GeometryProxy) in
                     ForEach(
-                        Array(zip(viewModel.pointerInfo.pointerDegrees, viewModel.pointerInfo.dripInfo.dripTimings).enumerated()),
+                        Array(zip(pointerInfo.pointerDegrees, viewModel.dripInfo.dripTimings).enumerated()),
                         id: \.0
                     ) { i, item in
                         let (degree, dripTiming) = item
                         let isCurrentPhaseAfterOrEqualIndex =
                             getDripPhaseService
                             .get(
-                                dripInfo: viewModel.pointerInfo.dripInfo,
+                                dripInfo: viewModel.dripInfo,
                                 progressTime: progressTime
                             )
                             .toInt() >= i
@@ -86,7 +89,8 @@ struct ClockView: View {
                         } else {
                             endDegree = convertDegreeService.fromProgressTime(
                                 viewModel.currentConfig,
-                                viewModel.pointerInfo,
+                                pointerInfo,
+                                viewModel.dripInfo,
                                 newValue
                             )
                         }
@@ -99,9 +103,9 @@ struct ClockView: View {
     // Print oblique squares as divisions of a scale.
     private func tick(tick: Int) -> some View {
         let angle: Double = Double(tick) / Double(self.density * 4) * 360
-        let degree = convertDegreeService.fromProgressTime(viewModel.currentConfig, viewModel.pointerInfo, progressTime)
+        let degree = convertDegreeService.fromProgressTime(viewModel.currentConfig, pointerInfo, viewModel.dripInfo, progressTime)
         let isMark: Bool = tick % markInterval == 0
-        let caption = convertDegreeService.toProgressTime(viewModel.currentConfig, viewModel.pointerInfo, angle)
+        let caption = convertDegreeService.toProgressTime(viewModel.currentConfig, pointerInfo, viewModel.dripInfo, angle)
 
         return VStack {
             Text(isMark ? String(format: "%.0f", round(caption)) : " ")
@@ -134,6 +138,7 @@ struct ClockView: View {
 
             return ClockView(
                 progressTime: $progressTime,
+                pointerInfo: PointerInfo.defaultValue(),
                 steamingTime: 50,
                 totalTime: 180
             )

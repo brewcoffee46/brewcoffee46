@@ -44,7 +44,7 @@ public struct Config: Equatable {
         firstWaterPercent: Double,
         totalTimeSec: Double,
         steamingTimeSec: Double,
-        note: String,
+        note: String?,
         beforeChecklist: [String],
         editedAtMilliSec: UInt64?,
         version: Int = Config.currentVersion
@@ -55,7 +55,7 @@ public struct Config: Equatable {
         self.firstWaterPercent = firstWaterPercent
         self.totalTimeSec = totalTimeSec
         self.steamingTimeSec = steamingTimeSec
-        self.note = .some(note)
+        self.note = note
         self.beforeChecklist = beforeChecklist
         self.editedAtMilliSec = editedAtMilliSec
         self.version = version

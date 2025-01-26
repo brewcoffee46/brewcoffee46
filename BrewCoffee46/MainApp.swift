@@ -20,8 +20,8 @@ struct MainApp: App {
             .onOpenURL { url in
                 configurationLinkService.get(url: url).forEach { configClaims in
                     appEnvironment.importedConfigClaims = configClaims
-                    appEnvironment.selectedTab = .config
-                    appEnvironment.configPath = [.config, .universalLinksImport]
+                    appEnvironment.selectedTab = .setting
+                    appEnvironment.configPath = [.setting, .universalLinksImport]
                 }
             }
         }

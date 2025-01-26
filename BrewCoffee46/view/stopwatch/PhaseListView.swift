@@ -84,13 +84,13 @@ struct PhaseListView: View {
         .onChange(of: viewModel.currentConfig, initial: true) {
             updatePhaseList()
             currentDripPhase = getDripPhaseService.get(
-                dripInfo: viewModel.pointerInfo.dripInfo,
+                dripInfo: viewModel.dripInfo,
                 progressTime: progressTime
             )
         }
         .onChange(of: progressTime) {
             currentDripPhase = getDripPhaseService.get(
-                dripInfo: viewModel.pointerInfo.dripInfo,
+                dripInfo: viewModel.dripInfo,
                 progressTime: progressTime
             )
         }
@@ -117,7 +117,7 @@ struct PhaseListView: View {
 
     private func updatePhaseList() {
         var newPhaseList: [Phase] = []
-        for (i, info) in viewModel.pointerInfo.dripInfo.dripTimings.enumerated() {
+        for (i, info) in viewModel.dripInfo.dripTimings.enumerated() {
             newPhaseList.append(
                 Phase(
                     index: i,
@@ -152,7 +152,7 @@ struct PhaseListView: View {
 
     private func timingView(phase: Phase) -> AnyView {
         let dripPhase = getDripPhaseService.get(
-            dripInfo: viewModel.pointerInfo.dripInfo,
+            dripInfo: viewModel.dripInfo,
             progressTime: progressTime
         )
 
