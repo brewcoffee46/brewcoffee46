@@ -5,7 +5,7 @@ import Factory
 protocol RawSettingConvertService: Sendable {
     func toConfig(_ rawSetting: RawSetting, _ currentConfig: Config) -> ResultNea<Config, CoffeeError>
 
-    func fromConfig(_ config: Config, calculateCoffeeBeansWeightFromWater: Bool) -> RawSetting
+    func fromConfig(_ config: Config, _ previousRawSetting: RawSetting) -> RawSetting
 }
 
 final class RawSettingConvertServiceImpl: RawSettingConvertService {
@@ -35,10 +35,17 @@ final class RawSettingConvertServiceImpl: RawSettingConvertService {
         return validateInputService.validate(config: config).map { () in config }
     }
 
-    func fromConfig(_ config: Config, calculateCoffeeBeansWeightFromWater: Bool) -> RawSetting {
+    func fromConfig(_ config: Config, _ previousRawSetting: RawSetting) -> RawSetting {
+        let waterAmount =
+            if previousRawSetting.calculateCoffeeBeansWeightFromWater {
+                previousRawSetting.waterAmount
+            } else {
+                config.totalWaterAmount()
+            }
+
         return RawSetting(
-            calculateCoffeeBeansWeightFromWater: calculateCoffeeBeansWeightFromWater,
-            waterAmount: config.totalWaterAmount(),
+            calculateCoffeeBeansWeightFromWater: previousRawSetting.calculateCoffeeBeansWeightFromWater,
+            waterAmount: waterAmount,
             waterToCoffeeBeansWeightRatio: config.waterToCoffeeBeansWeightRatio,
             firstWaterPercent: config.firstWaterPercent,
             partitionsCountOf6: config.partitionsCountOf6,
