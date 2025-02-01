@@ -252,8 +252,7 @@ struct SettingView: View {
             }
         }
         .onChange(of: viewModel.currentConfig, initial: true) { _, newValue in
-            rawSetting = rawSettingConvertService.fromConfig(
-                newValue, calculateCoffeeBeansWeightFromWater: rawSetting.calculateCoffeeBeansWeightFromWater)
+            rawSetting = rawSettingConvertService.fromConfig(newValue, rawSetting)
         }
         .onChange(of: rawSetting) { _, newValue in
             rawSettingConvertService.toConfig(newValue, viewModel.currentConfig).map { config in

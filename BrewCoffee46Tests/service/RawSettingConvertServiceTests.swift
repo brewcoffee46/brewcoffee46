@@ -86,14 +86,48 @@ final class RawSettingConvertServiceTests: XCTestCase {
     }
 
     func testConvertToAndConvertFrom() {
+        let rawSetting = RawSetting(
+            calculateCoffeeBeansWeightFromWater: false,
+            waterAmount: dummyValue,
+            waterToCoffeeBeansWeightRatio: 0.5,
+            firstWaterPercent: 210.0,
+            partitionsCountOf6: 40.0,
+            totalTimeSec: 210.0,
+            steamingTimeSec: 40.0,
+            coffeeBeansWeight: 11.8
+        )
+
         let sut = RawSettingConvertServiceImpl()
 
-        let actual1 = sut.fromConfig(initConfig, calculateCoffeeBeansWeightFromWater: true)
+        let actual1 = sut.fromConfig(initConfig, rawSetting)
         let actual2 = sut.toConfig(actual1, initConfig)
 
         XCTAssertTrue(actual2.isSuccess())
         actual2.forEach { actualConfig in
             XCTAssertEqual(initConfig, actualConfig)
+        }
+    }
+
+    func testWaterAmountOfConfigEqaulsToRawSettingWhenCalculateCoffeeBeansWeightFromWaterIsTrue() {
+        let rawSetting = RawSetting(
+            calculateCoffeeBeansWeightFromWater: true,
+            waterAmount: 400.2,
+            waterToCoffeeBeansWeightRatio: 14.6,
+            firstWaterPercent: 210.0,
+            partitionsCountOf6: 40.0,
+            totalTimeSec: 210.0,
+            steamingTimeSec: 40.0,
+            coffeeBeansWeight: 27.4
+        )
+
+        let sut = RawSettingConvertServiceImpl()
+
+        let actual1 = sut.toConfig(rawSetting, initConfig)
+        XCTAssertTrue(actual1.isSuccess())
+
+        actual1.forEach { config in
+            let actual2 = sut.fromConfig(config, rawSetting)
+            XCTAssertEqual(actual2.waterAmount, rawSetting.waterAmount)
         }
     }
 }
