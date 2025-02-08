@@ -113,7 +113,7 @@ jobs:
           ./.github/workflows/convert.sh BrewCoffee46.app/BrewCoffee46.debug.dylib brewCoffee46.lcov
 
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
