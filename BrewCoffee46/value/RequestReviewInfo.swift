@@ -11,10 +11,6 @@ struct RequestReviewItem: Equatable {
     }
 }
 
-func == (lhs: RequestReviewItem, rhs: RequestReviewItem) -> Bool {
-    lhs.appVersion == rhs.appVersion && lhs.requestedDate == rhs.requestedDate
-}
-
 extension RequestReviewItem: Decodable {
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -50,19 +46,6 @@ extension RequestReviewInfo: Encodable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(requestHistory, forKey: .requestHistory)
-    }
-}
-
-func == (lhs: RequestReviewInfo, rhs: RequestReviewInfo) -> Bool {
-    if lhs.requestHistory.count == rhs.requestHistory.count {
-        for (index, item) in lhs.requestHistory.enumerated() {
-            if item != rhs.requestHistory[index] {
-                return false
-            }
-        }
-        return true
-    } else {
-        return false
     }
 }
 

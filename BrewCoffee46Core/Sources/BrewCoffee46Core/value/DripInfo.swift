@@ -8,10 +8,6 @@ public struct DripTiming: Equatable, Sendable {
     }
 }
 
-public func == (lhs: DripTiming, rhs: DripTiming) -> Bool {
-    return lhs.waterAmount == rhs.waterAmount && lhs.dripAt == rhs.dripAt
-}
-
 public struct DripInfo: Equatable {
     public let dripTimings: [DripTiming]
     public let waterAmount: WaterAmount
@@ -22,10 +18,6 @@ public struct DripInfo: Equatable {
         self.waterAmount = waterAmount
         self.totalTimeSec = totalTimeSec
     }
-}
-
-public func == (lhs: DripInfo, rhs: DripInfo) -> Bool {
-    return lhs.dripTimings == rhs.dripTimings && lhs.waterAmount == rhs.waterAmount && lhs.totalTimeSec == rhs.totalTimeSec
 }
 
 extension DripInfo {

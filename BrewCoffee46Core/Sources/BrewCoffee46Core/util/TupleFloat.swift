@@ -3,7 +3,7 @@ import Foundation
 /// # Floating number representation using tuple
 ///
 /// `decimal` is always positive value.
-public struct TupleFloat {
+public struct TupleFloat: Equatable {
     public var integer: Int
     public var decimal: Int
     public let digit: Int
@@ -34,11 +34,5 @@ extension TupleFloat {
         let base = pow(10.0, Double(digit))
 
         return if integer < 0 { Double(integer) - (Double(decimal) / base) } else { Double(integer) + (Double(decimal) / base) }
-    }
-}
-
-extension TupleFloat: Equatable {
-    static public func == (lhs: TupleFloat, rhs: TupleFloat) -> Bool {
-        return lhs.integer == rhs.integer && lhs.decimal == rhs.decimal && lhs.digit == rhs.digit
     }
 }
