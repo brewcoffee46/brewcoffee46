@@ -1,2 +1,6 @@
 ignore:
   - BrewCoffee46WatchKitApp/
+
+comment:
+  behavior: new
+  require_changes: false 
