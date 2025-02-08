@@ -159,13 +159,6 @@ extension Config: Encodable {
     }
 }
 
-public func == (lhs: Config, rhs: Config) -> Bool {
-    lhs.coffeeBeansWeight == rhs.coffeeBeansWeight && lhs.firstWaterPercent == rhs.firstWaterPercent
-        && lhs.partitionsCountOf6 == rhs.partitionsCountOf6 && lhs.steamingTimeSec == rhs.steamingTimeSec && lhs.totalTimeSec == rhs.totalTimeSec
-        && lhs.waterToCoffeeBeansWeightRatio == rhs.waterToCoffeeBeansWeightRatio && lhs.note == rhs.note
-        && lhs.beforeChecklist == rhs.beforeChecklist && lhs.editedAtMilliSec == rhs.editedAtMilliSec && lhs.version == rhs.version
-}
-
 extension Config: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(coffeeBeansWeight)

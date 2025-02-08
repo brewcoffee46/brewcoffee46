@@ -14,10 +14,6 @@ struct NotificationAuthorization: Equatable {
     }
 }
 
-func == (lhs: NotificationAuthorization, rhs: NotificationAuthorization) -> Bool {
-    lhs.appVersion == rhs.appVersion && lhs.requestedDate == rhs.requestedDate && lhs.isAuthorized == rhs.isAuthorized
-}
-
 extension NotificationAuthorization: Decodable {
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
