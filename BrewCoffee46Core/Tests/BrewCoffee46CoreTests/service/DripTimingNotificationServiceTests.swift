@@ -1,9 +1,8 @@
-import BrewCoffee46Core
 import BrewCoffee46TestsShared
 import Factory
 import XCTest
 
-@testable import BrewCoffee46
+@testable import BrewCoffee46Core
 
 struct AddNotificationUsingTimerArgument {
     let title: String
@@ -55,7 +54,7 @@ final class DripTimingNotificationServiceTests: XCTestCase {
     }
 
     func testArgumentsNotifiedAtOfAddNotificationUsingTimer() async {
-        var expectedNotifiedInSeconds: [Int] = dripTimings.dropFirst().map({ dt in
+        var expectedNotifiedInSeconds: [Int] = dripTimings.map({ dt in
             Int(floor(dt.dripAt) + firstDripAtSec)
         })
         expectedNotifiedInSeconds.append(Int(ceil(totalTimeSec) + firstDripAtSec))

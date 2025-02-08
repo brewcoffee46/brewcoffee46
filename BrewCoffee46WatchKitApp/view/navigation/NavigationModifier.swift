@@ -12,6 +12,8 @@ struct NavigationModifier: ViewModifier {
             ConfigView()
         case .stopwatch:
             StopwatchView()
+        case .info:
+            InfoView()
         }
     }
 
