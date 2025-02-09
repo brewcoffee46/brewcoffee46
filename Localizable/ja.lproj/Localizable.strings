@@ -107,6 +107,7 @@
 
 "oss license title information" = "OSSライセンス情報";
 
+"notification 1st drip" = "1投目 / %d投";
 "notification 2nd drip" = "2投目 / %d投";
 "notification 3rd drip" = "3投目 / %d投";
 "notification after 4th drip suffix" = "%d投目 / %d投";

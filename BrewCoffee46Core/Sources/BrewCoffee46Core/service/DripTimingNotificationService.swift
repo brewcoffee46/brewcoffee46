@@ -1,20 +1,21 @@
-import BrewCoffee46Core
 import Factory
 import Foundation
 
 /// # Notify drip notifications to user.
-protocol DripTimingNotificationService: Sendable {
+public protocol DripTimingNotificationService: Sendable {
     func registerNotifications(
         dripTimings: [DripTiming],
         firstDripAtSec: Double,
         totalTimeSec: Double
     ) async -> ResultNea<Void, CoffeeError>
+
+    func removePendingAll() -> Void
 }
 
-final class DripTimingNotificationServiceImpl: DripTimingNotificationService {
+public final class DripTimingNotificationServiceImpl: DripTimingNotificationService {
     private let notificationService = Container.shared.notificationService()
 
-    func registerNotifications(
+    public func registerNotifications(
         dripTimings: [DripTiming],
         firstDripAtSec: Double,
         totalTimeSec: Double
@@ -23,17 +24,19 @@ final class DripTimingNotificationServiceImpl: DripTimingNotificationService {
             var errors: [CoffeeError] = []
 
             let numberOfAllDrips = dripTimings.count
-            for (i, info) in dripTimings.dropFirst().enumerated() {
+            for (i, info) in dripTimings.enumerated() {
                 let notifiedAt = Int(floor(info.dripAt) + firstDripAtSec)
 
                 group.addTask {
                     let title =
                         if i == 0 {
-                            String(format: NSLocalizedString("notification 2nd drip", comment: ""), numberOfAllDrips)
+                            String(format: NSLocalizedString("notification 1st drip", comment: ""), numberOfAllDrips)
                         } else if i == 1 {
+                            String(format: NSLocalizedString("notification 2nd drip", comment: ""), numberOfAllDrips)
+                        } else if i == 2 {
                             String(format: NSLocalizedString("notification 3rd drip", comment: ""), numberOfAllDrips)
                         } else {
-                            String(format: NSLocalizedString("notification after 4th drip suffix", comment: ""), (i + 2), numberOfAllDrips)
+                            String(format: NSLocalizedString("notification after 4th drip suffix", comment: ""), (i + 1), numberOfAllDrips)
                         }
 
                     return await self.notificationService.addNotificationUsingTimer(
@@ -71,10 +74,14 @@ final class DripTimingNotificationServiceImpl: DripTimingNotificationService {
             }
         }
     }
+
+    public func removePendingAll() -> Void {
+        notificationService.removePendingAll()
+    }
 }
 
 extension Container {
-    var dripTimingNotificationService: Factory<DripTimingNotificationService> {
+    public var dripTimingNotificationService: Factory<DripTimingNotificationService> {
         Factory(self) { DripTimingNotificationServiceImpl() }
     }
 }

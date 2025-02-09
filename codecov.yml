@@ -4,3 +4,6 @@ ignore:
 comment:
   behavior: new
   require_changes: false 
+
+codecov:
+  require_ci_to_pass: false

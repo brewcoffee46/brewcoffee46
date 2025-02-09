@@ -108,6 +108,7 @@
 
 "oss license title information" = "OSS License Information";
 
+"notification 1st drip" = "1st of %d Drip Now";
 "notification 2nd drip" = "2nd of %d Drip Now";
 "notification 3rd drip" = "3rd of %d Drip Now";
 "notification after 4th drip suffix" = "%dth of %d Drip Now";

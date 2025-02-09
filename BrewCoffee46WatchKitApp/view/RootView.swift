@@ -36,6 +36,13 @@ struct RootView: View {
                 imageColor: .green,
                 navigationTitle: "navigation title configuration"
             )
+
+            navigationLink(
+                route: .info,
+                imageName: "info.circle",
+                imageColor: .gray,
+                navigationTitle: "navigation title information"
+            )
         }
         .navigation(path: $appEnvironment.rootPath)
         .currentConfigSaveLoadModifier(

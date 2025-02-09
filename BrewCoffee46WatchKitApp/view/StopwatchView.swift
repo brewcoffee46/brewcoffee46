@@ -10,6 +10,7 @@ struct StopwatchView: View {
 
     @Injected(\.dateService) private var dateService
     @Injected(\.getDripPhaseService) private var getDripPhaseService
+    @Injected(\.dripTimingNotificationService) private var dripTimingNotificationService
 
     @State var startAt: Date? = .none
 
@@ -64,6 +65,8 @@ struct StopwatchView: View {
                         }
                         Spacer()
                         Button(action: {
+                            dripTimingNotificationService.removePendingAll()
+
                             WKInterfaceDevice.current().play(.success)
                             self.startAt = .none
                         }) {
@@ -85,12 +88,12 @@ struct StopwatchView: View {
                         WKInterfaceDevice.current().play(.success)
                         self.startAt = dateService.now()
 
-                        Timer.scheduledTimer(
-                            withTimeInterval: countDownInit,
-                            repeats: false
-                        ) { _ in
-                            WKInterfaceDevice.current().play(.notification)
-                            WKInterfaceDevice.current().play(.notification)
+                        Task { @MainActor in
+                            await dripTimingNotificationService.registerNotifications(
+                                dripTimings: viewModel.dripInfo.dripTimings,
+                                firstDripAtSec: countDownInit,
+                                totalTimeSec: viewModel.currentConfig.totalTimeSec
+                            )
                         }
                     }) {
                         Text("Start")

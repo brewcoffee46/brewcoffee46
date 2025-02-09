@@ -28,7 +28,6 @@ struct StopwatchView: View {
     @State private var isStop︎AlertPresented: Bool = false
 
     @Injected(\.requestReviewService) private var requestReviewService
-    @Injected(\.notificationService) private var notificationService
     @Injected(\.dripTimingNotificationService) private var dripTimingNotificationService
     @Injected(\.getDripPhaseService) private var getDripPhaseService
 
@@ -223,6 +222,8 @@ struct StopwatchView: View {
 
     private func stopTimer() {
         if let t = self.timer {
+            dripTimingNotificationService.removePendingAll()
+
             t.cancel()
             self.appEnvironment.isTimerStarted = false
             UIApplication.shared.isIdleTimerDisabled = false
@@ -230,7 +231,6 @@ struct StopwatchView: View {
             self.timer = .none
             self.startTime = .none
             hasRingingIndex = 0
-            notificationService.removePendingAll()
         }
     }
 

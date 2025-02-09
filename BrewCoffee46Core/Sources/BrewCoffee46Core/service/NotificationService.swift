@@ -1,9 +1,8 @@
-import BrewCoffee46Core
 import Factory
 @preconcurrency import UserNotifications
 
 /// # Local notifications manager
-protocol NotificationService: Sendable {
+public protocol NotificationService: Sendable {
     /// # Request notification to the user if the request has not been requested yet
     /// - Returns:
     ///     - `success(true)` means that the request was accepted
@@ -22,8 +21,8 @@ protocol NotificationService: Sendable {
     func removePendingAll() -> Void
 }
 
-final class NotificationServiceImpl: NotificationService {
-    func request() async -> ResultNea<Bool, CoffeeError> {
+public final class NotificationServiceImpl: NotificationService {
+    public func request() async -> ResultNea<Bool, CoffeeError> {
         do {
             return .success(try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]))
         } catch {
@@ -31,7 +30,7 @@ final class NotificationServiceImpl: NotificationService {
         }
     }
 
-    func addNotificationUsingTimer(title: String, body: String, notifiedInSeconds: Int) async
+    public func addNotificationUsingTimer(title: String, body: String, notifiedInSeconds: Int) async
         -> ResultNea<Void, CoffeeError>
     {
         let result = await request()
@@ -54,7 +53,7 @@ final class NotificationServiceImpl: NotificationService {
         }
     }
 
-    func removePendingAll() -> Void {
+    public func removePendingAll() -> Void {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     }
 }
@@ -64,7 +63,7 @@ extension NotificationServiceImpl {
 }
 
 extension Container {
-    var notificationService: Factory<NotificationService> {
+    public var notificationService: Factory<NotificationService> {
         Factory(self) { NotificationServiceImpl() }
     }
 }
