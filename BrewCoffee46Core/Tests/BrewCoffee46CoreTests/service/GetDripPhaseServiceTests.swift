@@ -2,7 +2,7 @@ import XCTest
 
 @testable import BrewCoffee46Core
 
-class GetDripPhaseServiceTests: XCTestCase {
+final class GetDripPhaseServiceTests: XCTestCase {
     let sut = GetDripPhaseServiceImpl()
 
     func test_return_beforeDrip_if_the_progress_time_less_than_0() throws {

@@ -12,9 +12,15 @@ struct StopwatchView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.requestReview) private var requestReview
 
-    @State private var startTime: Date? {
+    @State private var startAt: Date? {
         didSet {
-            saveStartTime()
+            if let time = startAt {
+                saveLoadTimerStartAtService
+                    .saveStartAt(time)
+                    .recoverWithErrorLog(&viewModel.errors)
+            } else {
+                saveLoadTimerStartAtService.deleteStartAt()
+            }
         }
     }
 
@@ -30,6 +36,7 @@ struct StopwatchView: View {
     @Injected(\.requestReviewService) private var requestReviewService
     @Injected(\.dripTimingNotificationService) private var dripTimingNotificationService
     @Injected(\.getDripPhaseService) private var getDripPhaseService
+    @Injected(\.saveLoadTimerStartAtService) private var saveLoadTimerStartAtService
 
     private let soundIdRing = SystemSoundID(1013)
 
@@ -89,7 +96,12 @@ struct StopwatchView: View {
         .navigation(path: $appEnvironment.stopwatchPath)
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
-                restoreTimer()
+                saveLoadTimerStartAtService.loadStartAt().forEach { (startAtOpt: Date?) in
+                    if let time = startAtOpt {
+                        startAt = time
+                        startTimer()
+                    }
+                }
             }
         }
         .onChange(of: viewModel.dripInfo, initial: true) { _, newValue in
@@ -178,7 +190,7 @@ struct StopwatchView: View {
         if self.timer == nil {
             UIApplication.shared.isIdleTimerDisabled = true
             self.appEnvironment.isTimerStarted = true
-            self.startTime = Date()
+            self.startAt = Date()
 
             Task { @MainActor in
                 await dripTimingNotificationService.registerNotifications(
@@ -195,10 +207,10 @@ struct StopwatchView: View {
                 .sink { _ in
                     let now = Date()
 
-                    if let time = self.startTime, progressTime < 0 {
+                    if let time = self.startAt, progressTime < 0 {
                         progressTime = now.timeIntervalSince(time) + StopwatchView.progressTimeInit
                     } else {
-                        if let time = startTime {
+                        if let time = startAt {
                             progressTime = now.timeIntervalSince(time) + StopwatchView.progressTimeInit
                             ringSound()
 
@@ -212,14 +224,6 @@ struct StopwatchView: View {
         }
     }
 
-    private func saveStartTime() {
-        if let time = startTime {
-            UserDefaults.standard.set(time, forKey: "startTime")
-        } else {
-            UserDefaults.standard.removeObject(forKey: "startTime")
-        }
-    }
-
     private func stopTimer() {
         if let t = self.timer {
             dripTimingNotificationService.removePendingAll()
@@ -229,20 +233,9 @@ struct StopwatchView: View {
             UIApplication.shared.isIdleTimerDisabled = false
             progressTime = StopwatchView.progressTimeInit
             self.timer = .none
-            self.startTime = .none
+            self.startAt = .none
             hasRingingIndex = 0
         }
-    }
-
-    private func restoreTimer() {
-        if let time = fetchStartTime() {
-            startTime = time
-            startTimer()
-        }
-    }
-
-    private func fetchStartTime() -> Date? {
-        UserDefaults.standard.object(forKey: "startTime") as? Date
     }
 
     private func ringSound() {

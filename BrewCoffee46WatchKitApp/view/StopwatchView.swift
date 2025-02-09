@@ -7,10 +7,12 @@ import SwiftUI
 struct StopwatchView: View {
     @EnvironmentObject var appEnvironment: WatchKitAppEnvironment
     @EnvironmentObject var viewModel: CurrentConfigViewModel
+    @Environment(\.scenePhase) private var scenePhase
 
     @Injected(\.dateService) private var dateService
     @Injected(\.getDripPhaseService) private var getDripPhaseService
     @Injected(\.dripTimingNotificationService) private var dripTimingNotificationService
+    @Injected(\.saveLoadTimerStartAtService) private var saveLoadTimerStartAtService
 
     @State var startAt: Date? = .none
 
@@ -69,6 +71,7 @@ struct StopwatchView: View {
 
                             WKInterfaceDevice.current().play(.success)
                             self.startAt = .none
+                            saveLoadTimerStartAtService.deleteStartAt()
                         }) {
                             Text("Stop")
                         }
@@ -86,8 +89,12 @@ struct StopwatchView: View {
                     Spacer()
                     Button(action: {
                         WKInterfaceDevice.current().play(.success)
-                        self.startAt = dateService.now()
+                        let now = dateService.now()
+                        self.startAt = .some(now)
 
+                        saveLoadTimerStartAtService
+                            .saveStartAt(now)
+                            .recoverWithErrorLog(&viewModel.log)
                         Task { @MainActor in
                             await dripTimingNotificationService.registerNotifications(
                                 dripTimings: viewModel.dripInfo.dripTimings,
@@ -104,6 +111,17 @@ struct StopwatchView: View {
             }
         }
         .navigationTitle("navigation title stopwatch")
+        // I don't know the reason to set `initial: true` but if not set then
+        // `saveLoadTimerStartAtService` will not be called.
+        .onChange(of: scenePhase, initial: true) { _, phase in
+            if phase == .active {
+                saveLoadTimerStartAtService.loadStartAt().forEach { (startAtOpt: Date?) in
+                    if let time = startAtOpt {
+                        startAt = time
+                    }
+                }
+            }
+        }
         .currentConfigSaveLoadModifier(
             $viewModel.currentConfig,
             // For now, there is no load & save function on WatchKit App, so
