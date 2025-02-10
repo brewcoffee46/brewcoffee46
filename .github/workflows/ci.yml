@@ -5,6 +5,15 @@ on:
     branches:
       - main
 jobs:
+  codecov-yaml-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check codecov.yml
+        run: curl -v -X POST --fail-with-body --data-binary @codecov.yml https://codecov.io/validate
+
   format-check:
     runs-on: macos-15
     strategy:
