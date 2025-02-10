@@ -121,3 +121,5 @@
 "watch kit app drip end" = "End of Dripping";
 
 "watch kit app current setting" = "Current configuration";
+
+"watch kit app info log header" = "Log";
