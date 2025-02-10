@@ -95,12 +95,22 @@ struct StopwatchView: View {
                         saveLoadTimerStartAtService
                             .saveStartAt(now)
                             .recoverWithErrorLog(&viewModel.log)
+
+                        Timer.scheduledTimer(
+                            withTimeInterval: countDownInit,
+                            repeats: false
+                        ) { _ in
+                            WKInterfaceDevice.current().play(.notification)
+                            WKInterfaceDevice.current().play(.notification)
+                        }
+
                         Task { @MainActor in
-                            await dripTimingNotificationService.registerNotifications(
+                            let result = await dripTimingNotificationService.registerNotifications(
                                 dripTimings: viewModel.dripInfo.dripTimings,
                                 firstDripAtSec: countDownInit,
                                 totalTimeSec: viewModel.currentConfig.totalTimeSec
                             )
+                            result.recoverWithErrorLog(&viewModel.log)
                         }
                     }) {
                         Text("Start")

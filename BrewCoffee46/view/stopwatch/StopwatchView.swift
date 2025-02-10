@@ -193,11 +193,12 @@ struct StopwatchView: View {
             self.startAt = Date()
 
             Task { @MainActor in
-                await dripTimingNotificationService.registerNotifications(
+                let result = await dripTimingNotificationService.registerNotifications(
                     dripTimings: viewModel.dripInfo.dripTimings,
                     firstDripAtSec: -StopwatchView.progressTimeInit,
                     totalTimeSec: viewModel.currentConfig.totalTimeSec
                 )
+                result.recoverWithErrorLog(&viewModel.errors)
             }
 
             self.timer =
