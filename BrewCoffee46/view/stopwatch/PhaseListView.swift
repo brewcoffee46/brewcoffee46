@@ -167,6 +167,7 @@ struct PhaseListView: View {
             ),
             onGoing: AnyView(
                 Image(systemName: "drop.fill")
+                    .symbolEffect(.pulse, value: floor(progressTime / 4.0))
                     .scaledToFit()
                     .frame(width: 24, height: 24)
                     .foregroundColor(.blue)
