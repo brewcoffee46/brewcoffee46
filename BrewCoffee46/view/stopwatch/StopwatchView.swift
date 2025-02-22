@@ -81,7 +81,7 @@ struct StopwatchView: View {
                                 steamingTime: viewModel.currentConfig.steamingTimeSec,
                                 totalTime: viewModel.currentConfig.totalTimeSec
                             )
-                            .frame(height: geometry.size.width * 0.95)
+                            .frame(height: geometry.size.width * 0.9)
                             stopWatchCountShow
                         }
                     }
