@@ -27,7 +27,7 @@ struct SettingView: View {
 
     private let digit = 1
     private let timerStep: Double = 1.0
-    private let coffeeBeansWeightMax = 50.0
+    private let coffeeBeansWeightMax = 125.0
     private let coffeeBeansWeightMin = 1.0
 
     var body: some View {
