@@ -184,6 +184,7 @@ struct StopwatchView: View {
                 .foregroundColor(.red)
             }
         }
+        .sensoryFeedback(.impact, trigger: self.appEnvironment.isTimerStarted)
     }
 
     private func startTimer() {
