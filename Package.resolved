@@ -1,5 +1,5 @@
 {
-  "originHash" : "20da8bca1611e1ab8eb72cd8611079040f4c913a8c3df27229a770ba07baed90",
+  "originHash" : "f41f11386204814f062bdc0640eb0edc6c531ad4fc3628d1d6d35092d75acd8c",
   "pins" : [
     {
       "identity" : "aexml",
@@ -105,8 +105,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-format.git",
       "state" : {
-        "revision" : "65f9da9aad84adb7e2028eb32ca95164aa590e3b",
-        "version" : "600.0.0"
+        "revision" : "ffbb3225ffda37b62c7283c70e87e8bc7e8e202a",
+        "version" : "601.0.0"
       }
     },
     {
@@ -141,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax.git",
       "state" : {
-        "revision" : "0687f71944021d616d34d922343dcef086855920",
-        "version" : "600.0.1"
+        "revision" : "1103c45ece4f7fe160b8f75b4ea1ee2e5fac1841",
+        "version" : "601.0.0"
       }
     },
     {
