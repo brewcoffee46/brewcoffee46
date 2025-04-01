@@ -1,5 +1,5 @@
 {
-  "originHash" : "20da8bca1611e1ab8eb72cd8611079040f4c913a8c3df27229a770ba07baed90",
+  "originHash" : "0f4b0bdde68c02016e179fcd9b04b0c484f3d6f8a26a42c695e12046a7408181",
   "pins" : [
     {
       "identity" : "aexml",
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mono0926/LicensePlist.git",
       "state" : {
-        "revision" : "92fba80590ce7cc69672a6d5f635bf11f49ab4a1",
-        "version" : "3.26.0"
+        "revision" : "ab1692c16f4ce50fc134a8f51179f3310d41c5ef",
+        "version" : "3.27.1"
       }
     },
     {
