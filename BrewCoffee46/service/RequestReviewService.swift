@@ -91,7 +91,7 @@ extension RequestReviewServiceImpl {
 
     static internal let requestReviewGuardKey: String = "requestReviewGuard"
 
-    static internal let reviewRequestInterval: Double = Double(100 * 24 * 60 * 60)  // 100 days
+    static internal let reviewRequestInterval: Double = Double(30 * 24 * 60 * 60)  // 30 days
 
     static internal let minimumTryCount: Int = 3
 }
