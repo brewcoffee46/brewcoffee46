@@ -12,11 +12,15 @@ final class RequestReviewServiceImpl: RequestReviewService {
     private let dateService = Container.shared.dateService()
 
     func check() -> ResultNea<Bool, CoffeeError> {
-        beforeCheck().flatMap { result in
-            if result {
-                requestReview()
-            } else {
-                .success(false)
+        if RequestReviewServiceImpl.isTestFlight {
+            .success(false)
+        } else {
+            beforeCheck().flatMap { result in
+                if result {
+                    requestReview()
+                } else {
+                    .success(false)
+                }
             }
         }
     }
@@ -91,9 +95,11 @@ extension RequestReviewServiceImpl {
 
     static internal let requestReviewGuardKey: String = "requestReviewGuard"
 
-    static internal let reviewRequestInterval: Double = Double(30 * 24 * 60 * 60)  // 30 days
+    static internal let reviewRequestInterval: Double = Double(50 * 24 * 60 * 60)  // 50 days
 
     static internal let minimumTryCount: Int = 3
+
+    private static let isTestFlight = Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
 }
 
 extension Container {
