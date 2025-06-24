@@ -19,6 +19,7 @@ struct SettingView: View {
 
     @State private var showTips: Bool = false
     @State private var didSuccessSendingConfig: Bool? = .none
+    @State private var showTipsWhenSendingConfigFailure: Bool = false
 
     // This will be calculated initially using the current configuration so it's not necessary ` ConfigurationLinkServiceImpl.universalLinksBaseURL`
     // but if the type of `universalLinksConfigUrl` would be `URL?` it's not convenience so
@@ -68,6 +69,8 @@ struct SettingView: View {
                 Section(header: Text("config watchos app setting")) {
                     Button(action: {
                         didSuccessSendingConfig = .none
+                        showTipsWhenSendingConfigFailure = false
+
                         switch viewModel.currentConfig.toJSON(isPrettyPrint: false) {
                         case .success(let json):
                             Task {
@@ -78,6 +81,7 @@ struct SettingView: View {
                                 case .failure(let error):
                                     viewModel.errors = error.getAllErrorMessage()
                                     didSuccessSendingConfig = false
+                                    showTipsWhenSendingConfigFailure = true
                                 }
                             }
                         case .failure(let error):
@@ -107,6 +111,14 @@ struct SettingView: View {
                         }
                     }
                     .buttonStyle(BorderlessButtonStyle())
+
+                    if showTipsWhenSendingConfigFailure {
+                        HStack(alignment: .center) {
+                            Image(systemName: "lightbulb.max")
+                            Text("config watchos sending failure tips")
+                                .font(Font.footnote.weight(.light))
+                        }
+                    }
                 }
             }
 
