@@ -33,7 +33,7 @@
 "config watchos app setting" = "watchOS App setting";
 "config send current setting to watchos app" = "Send current setting to watchOS App";
 "config watch session is not activated" = "watchOS session cannot be reachable!";
-
+"config watchos sending failure tips" = "Tips: retry after WatchOS App launched";
 
 "config weight settings" = "Amount settings";
 "config calculate coffee beans from water" = "water→coffee beans";
