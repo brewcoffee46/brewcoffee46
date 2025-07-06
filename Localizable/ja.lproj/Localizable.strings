@@ -123,3 +123,14 @@
 "watch kit app current setting" = "現在の設定";
 
 "watch kit app info log header" = "ログ";
+
+"tips first configuration" = "最初の設定";
+"tips first configuration detail" = "まずは最初の設定をしましょう。“Configuration”をタップして設定に移動します。";
+"tips tips" = "Tips";
+"tips tips detail" = "ONにすると各設定の意味が表示されます。下にスクロールして抽出量を設定しましょう。";
+"tips weight" = "コーヒー抽出量";
+"tips weight detail" = "コーヒー豆の量かお湯の量でコーヒーの抽出量を調整します。";
+"tips other setting" = "他の設定";
+"tips other setting detail" = "他の設定はデフォルトでもOKです。下のタブから“Stopwatch”をタップして抽出を開始しましょう！";
+"tips stopwatch start" = "抽出開始";
+"tips stopwatch start detail" = "“Start”をタップし指定された量とタイミングでお湯を注ぎます。";

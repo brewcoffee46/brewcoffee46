@@ -1,10 +1,16 @@
 import SwiftUI
 
 struct InfoView: View {
+    #if DEBUG
+        private let debug: String = " (Debug)"
+    #else
+        private let debug: String = ""
+    #endif
+
     var body: some View {
         Form {
             Section(header: Text("info version")) {
-                Text((Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String)!)
+                Text("\((Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String)!)\(debug)")
             }
 
             Section(header: Text("info license header")) {
@@ -30,9 +36,9 @@ struct InfoView: View {
                         .textSelection(.enabled)
                 }
                 HStack {
-                    Text("Twitter:")
+                    Text("X:")
                     Link(
-                        destination: URL(string: "https://twitter.com/_yyu_")!,
+                        destination: URL(string: "https://x.com/_yyu_")!,
                         label: { Text(verbatim: "@_yyu_") }
                     )
                 }

@@ -123,3 +123,14 @@
 "watch kit app current setting" = "Current configuration";
 
 "watch kit app info log header" = "Log";
+
+"tips first configuration" = "First configuration";
+"tips first configuration detail" = "Let's make your first configuration! Tap “Configuration” button.";
+"tips tips" = "Tips";
+"tips tips detail" = "You can see the meanings of configurations.";
+"tips weight" = "Weight";
+"tips weight detail" = "Decide the coffee beans / boiled water weight.";
+"tips other setting" = "Other settings";
+"tips other setting detail" = "You can skip other settings for now. Tap “Stopwatch” button on bottom tab & let's start brewing!";
+"tips stopwatch start" = "Start brewing";
+"tips stopwatch start detail" = "Pour boiled water specified amount & timing after you tap “Start” button!";

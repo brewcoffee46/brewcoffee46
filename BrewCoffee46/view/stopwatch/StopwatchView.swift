@@ -4,6 +4,7 @@ import Combine
 import Factory
 import StoreKit
 import SwiftUI
+import TipKit
 
 @MainActor
 struct StopwatchView: View {
@@ -141,6 +142,7 @@ struct StopwatchView: View {
 
         return VStack {
             if self.timer == nil {
+                TipView(StopwatchTip(), arrowEdge: .bottom)
                 Button(action: { startTimer() }) {
                     Text("Start")
                         .font(.system(size: 20))
