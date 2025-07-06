@@ -1,4 +1,5 @@
 import SwiftUI
+import TipKit
 
 struct RootView: View {
     @EnvironmentObject var appEnvironment: AppEnvironment
@@ -24,6 +25,14 @@ struct RootView: View {
                     Text("navigation title configuration")
                 }
                 .tag(Route.setting)
+        }
+        .background(alignment: .bottomTrailing) {
+            HStack(spacing: 0) {
+                Color
+                    .clear
+                    .popoverTip(RootTip(), arrowEdge: .leading)
+            }
+            .frame(height: 60)
         }
     }
 }

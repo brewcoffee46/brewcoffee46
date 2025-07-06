@@ -2,6 +2,7 @@ import BrewCoffee46Core
 import Factory
 import SwiftUI
 import SwiftUITooltip
+import TipKit
 
 @MainActor
 struct SettingView: View {
@@ -34,6 +35,7 @@ struct SettingView: View {
     var body: some View {
         Form {
             Toggle("config show tips", isOn: $showTips)
+            TipView(TipsTip(), arrowEdge: .top)
 
             Section(header: Text("config save load setting")) {
                 TipsView(
@@ -132,12 +134,16 @@ struct SettingView: View {
                     .pickerStyle(.segmented),
                     tips: Text("config calculate coffee beans from water tips")
                 )
-                if rawSetting.calculateCoffeeBeansWeightFromWater {
-                    waterAmountSettingView
-                } else {
-                    coffeeBeansWeightSettingView
+                Group {
+                    if rawSetting.calculateCoffeeBeansWeightFromWater {
+                        waterAmountSettingView
+                    } else {
+                        coffeeBeansWeightSettingView
+                    }
                 }
+                TipView(WeightTip(), arrowEdge: .top)
                 VStack {
+                    TipView(OtherTip(), arrowEdge: .bottom)
                     TipsView(
                         showTips,
                         content: HStack {

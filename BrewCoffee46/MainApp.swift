@@ -1,6 +1,7 @@
 import BrewCoffee46Core
 import Factory
 import SwiftUI
+import TipKit
 
 @main
 struct MainApp: App {
@@ -24,6 +25,23 @@ struct MainApp: App {
                     appEnvironment.configPath = [.setting, .universalLinksImport]
                 }
             }
+        }
+    }
+
+    init() {
+        do {
+            #if DEBUG
+                try Tips.resetDatastore()
+                print("Tips.resetDatastore success!")
+            #endif
+
+            try Tips.configure([
+                .displayFrequency(.immediate),
+                .datastoreLocation(.applicationDefault),
+            ])
+        } catch {
+            let errorString = "Error initializing TipKit: \(error.localizedDescription)"
+            viewModel.errors = errorString
         }
     }
 }
