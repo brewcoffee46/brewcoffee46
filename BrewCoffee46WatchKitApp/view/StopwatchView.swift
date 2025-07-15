@@ -8,6 +8,7 @@ struct StopwatchView: View {
     @EnvironmentObject var appEnvironment: WatchKitAppEnvironment
     @EnvironmentObject var viewModel: CurrentConfigViewModel
     @Environment(\.scenePhase) private var scenePhase
+    @StateObject var extendedRuntimeSession = ExtendedRuntimeSession()
 
     @Injected(\.dateService) private var dateService
     @Injected(\.getDripPhaseService) private var getDripPhaseService
@@ -72,6 +73,8 @@ struct StopwatchView: View {
                             WKInterfaceDevice.current().play(.success)
                             self.startAt = .none
                             saveLoadTimerStartAtService.deleteStartAt()
+
+                            extendedRuntimeSession.endSession()
                         }) {
                             Text("Stop")
                         }
@@ -88,6 +91,7 @@ struct StopwatchView: View {
                     )
                     Spacer()
                     Button(action: {
+                        extendedRuntimeSession.startSession()
                         WKInterfaceDevice.current().play(.success)
                         let now = dateService.now()
                         self.startAt = .some(now)
