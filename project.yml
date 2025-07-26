@@ -31,8 +31,8 @@ settings:
     ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
     DEAD_CODE_STRIPPING: YES
     ENABLE_USER_SCRIPT_SANDBOXING: NO
-    MARKETING_VERSION: 2.11.1
-    CURRENT_PROJECT_VERSION: 2.11.1
+    MARKETING_VERSION: 2.11.2
+    CURRENT_PROJECT_VERSION: 2.11.2
     SWIFT_VERSION: '6.1.2'
     MTL_FAST_MATH: 'YES'
     SWIFT_STRICT_CONCURRENCY: 'complete'
@@ -105,11 +105,11 @@ targets:
     postBuildScripts:
       - script: |
           if [ "${CI}" == "true" ]; then
-            cp "${PROJECT_DIR}/config/GoogleService-Info-CI.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+            cp "${PROJECT_DIR}/${PRODUCT_NAME}/config/GoogleService-Info-CI.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
           elif [ "${CONFIGURATION}" == "Release" ]; then
-            cp "${PROJECT_DIR}/config/GoogleService-Info-Release.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+            cp "${PROJECT_DIR}/${PRODUCT_NAME}/config/GoogleService-Info-Release.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
           else
-            cp "${PROJECT_DIR}/config/GoogleService-Info-Debug.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+            cp "${PROJECT_DIR}/${PRODUCT_NAME}/config/GoogleService-Info-Debug.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
           fi
         name: Generate GoogleService-Info.plist
         outputFiles:
@@ -182,16 +182,18 @@ targets:
         product: BrewCoffee46Core
       - package: Factory
       - package: Firebase
+        product: FirebaseAnalytics
+      - package: Firebase
         product: FirebaseCrashlytics
     type: application
     postBuildScripts:
       - script: |
           if [ "${CI}" == "true" ]; then
-            cp "${PROJECT_DIR}/config/GoogleService-Info-CI.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+            cp "${PROJECT_DIR}/${PRODUCT_NAME}/config/GoogleService-Info-CI.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
           elif [ "${CONFIGURATION}" == "Release" ]; then
-            cp "${PROJECT_DIR}/config/GoogleService-Info-Release.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+            cp "${PROJECT_DIR}/${PRODUCT_NAME}/config/GoogleService-Info-Release.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
           else
-            cp "${PROJECT_DIR}/config/GoogleService-Info-Debug.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+            cp "${PROJECT_DIR}/${PRODUCT_NAME}/config/GoogleService-Info-Debug.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
           fi
         name: Generate GoogleService-Info.plist
         outputFiles:
@@ -214,6 +216,9 @@ schemes:
         brewcoffee46: all
     run:
       config: Debug
+      commandLineArguments:
+        '-FIRAnalyticsDebugEnabled': true
+        '-FIRDebugEnabled': true
     test:
       config: Debug
       gatherCoverageData: true
@@ -236,6 +241,9 @@ schemes:
         brewcoffee46WatchKitApp: all
     run:
       config: Debug
+      commandLineArguments:
+        '-FIRAnalyticsDebugEnabled': true
+        '-FIRDebugEnabled': true
     profile:
       config: Release
     analyze:

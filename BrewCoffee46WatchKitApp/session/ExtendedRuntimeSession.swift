@@ -2,16 +2,21 @@ import Foundation
 import WatchKit
 
 final class ExtendedRuntimeSession: NSObject, ObservableObject {
-    private var session: WKExtendedRuntimeSession!
+    private var session: WKExtendedRuntimeSession?
 
     func startSession() {
         session = WKExtendedRuntimeSession()
-        session.delegate = self
-        session.start()
+        session!.delegate = self
+        session!.start()
     }
 
     func endSession() {
-        session.invalidate()
+        switch session {
+        case .none:
+            return
+        case .some(let s):
+            s.invalidate()
+        }
     }
 }
 
