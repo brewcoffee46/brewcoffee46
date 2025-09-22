@@ -96,6 +96,7 @@
 "config universal links import is done" = "Import is Done!";
 "config universal links import move to save & load" = "Move to Save & Load";
 "config universal links import save button" = "Import";
+"config universal links imported url" = "Loaded URL";
 
 "info version" = "Build version";
 "info license header" = "License";
@@ -134,3 +135,9 @@
 "tips other setting detail" = "You can skip other settings for now. Tap “Stopwatch” button on bottom tab & let's start brewing!";
 "tips stopwatch start" = "Start brewing";
 "tips stopwatch start detail" = "Pour boiled water specified amount & timing after you tap “Start” button!";
+"tips universal links issue" = "Configuration sharing";
+"tips universal links issue detail" = "you can share your configuration with [URL](https://brewcoffee46.github.io/app/v1.html?config=eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJpYXQiOjE3NTg1MjQ3MjQuNzExNTk3LCJpc3MiOiJCcmV3Q29mZmVlNDYiLCJ2ZXJzaW9uIjoxLCJjb25maWciOnsidG90YWxUaW1lU2VjIjoyMTAsImNvZmZlZUJlYW5zV2VpZ2h0IjoxNiwiZmlyc3RXYXRlclBlcmNlbnQiOjAuNSwibm90ZSI6IuOCqOODs-OCuOODi-OCouODm-ODg-ODiOOCs-ODvOODkuODvCIsInBhcnRpdGlvbnNDb3VudE9mNiI6MywiYmVmb3JlQ2hlY2tsaXN0IjpbIuOBiua5r-OCkuayuOOBi-OBmSIsIuODleOCo-ODq-OCv-ODvOOCkuODieODquODg-ODkeODvOOBq-OCu-ODg-ODiCIsIuODleOCo-ODq-OCv-ODvOOCkuODquODs-OCuSIsIuOCs-ODvOODkuODvOeyieOCkuOCu-ODg-ODiCIsIuOCueOCseODvOODq-OCkuODquOCu-ODg-ODiCJdLCJlZGl0ZWRBdE1pbGxpU2VjIjoxNzU4NTI0NjY2ODc4LCJ2ZXJzaW9uIjoxLCJzdGVhbWluZ1RpbWVTZWMiOjQ1LCJ3YXRlclRvQ29mZmVlQmVhbnNXZWlnaHRSYXRpbyI6MTZ9fQ).";
+"tips universal links config save" = "Save setting";
+"tips universal links config save detail" = "Let's save the setting!";
+"tips config note edit" = "Edit config's note";
+"tips config note edit detail" = "You can edit notes or memos of this setting.";

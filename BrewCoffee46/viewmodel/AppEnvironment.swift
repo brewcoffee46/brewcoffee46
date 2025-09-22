@@ -10,7 +10,7 @@ final class AppEnvironment: ObservableObject {
     @Published var configPath: [Route] = []
     @Published var beforeChecklistPath: [Route] = []
 
-    @Published var importedConfigClaims: ConfigClaims? = .none
+    @Published var importedConfigClaimsWithURL: ConfigClaimsWithURL? = .none
 
     var minWidth: Double
 

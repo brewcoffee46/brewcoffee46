@@ -1,4 +1,5 @@
 import SwiftUI
+import TipKit
 
 public struct ShowConfigView: View {
     @Binding public var config: Config
@@ -10,6 +11,9 @@ public struct ShowConfigView: View {
     }
 
     public var body: some View {
+        if !isLock {
+            TipView(NoteTip(), arrowEdge: .bottom)
+        }
         LazyVGrid(
             columns: Array(
                 repeating: .init(.flexible(), spacing: 0),
