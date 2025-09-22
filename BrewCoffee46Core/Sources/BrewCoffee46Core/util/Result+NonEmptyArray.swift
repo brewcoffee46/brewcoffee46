@@ -68,7 +68,7 @@ extension Result {
     }
 
     public func getOrElse(elseValue: Success) -> Success {
-        if case let .success(success) = self {
+        if case .success(let success) = self {
             success
         } else {
             elseValue
