@@ -1,6 +1,7 @@
 import BrewCoffee46Core
 import Factory
 import SwiftUI
+import TipKit
 
 struct UniversalLinksImportView: View {
     @EnvironmentObject var appEnvironment: AppEnvironment
@@ -14,21 +15,25 @@ struct UniversalLinksImportView: View {
 
     var body: some View {
         Form {
-            if var importedConfig = appEnvironment.importedConfigClaims?.config {
+            if let importedConfigClaimsWithURL = appEnvironment.importedConfigClaimsWithURL {
+                var config = importedConfigClaimsWithURL.configClaims.config
+                let url = importedConfigClaimsWithURL.url
+
                 Section(header: Text("config universal links import imported config")) {
                     ShowConfigView(
                         config: Binding(
-                            get: { importedConfig },
-                            set: { config in importedConfig = config }
+                            get: { config },
+                            set: { c in config = c }
                         ),
                         isLock: false.getOnlyBinding
                     )
 
                     HStack {
                         Spacer()
+                        TipView(UniversalLinksSaveTip(), arrowEdge: .trailing)
                         Button(action: {
                             saveLoadConfigService
-                                .saveConfig(config: importedConfig)
+                                .saveConfig(config: config)
                                 .map { x in
                                     hasDoneImport = true
                                     return x
@@ -49,9 +54,16 @@ struct UniversalLinksImportView: View {
                     }
                 }
 
+                Section(header: Text("config universal links imported url")) {
+                    Text(url.absoluteString)
+                        .textSelection(.enabled)
+                        .font(.system(size: 10))
+                        .frame(maxHeight: 60)
+                }
+
                 Toggle("config universal links import is JSON show", isOn: $isShowJson)
                     .onChange(of: isShowJson) {
-                        exportJSON(importedConfig)
+                        exportJSON(config)
                     }
 
                 if isShowJson {
@@ -85,7 +97,7 @@ struct UniversalLinksImportView: View {
         .sheet(isPresented: $hasDoneImport) {
             Button(action: {
                 hasDoneImport = false
-                appEnvironment.importedConfigClaims = .none
+                appEnvironment.importedConfigClaimsWithURL = .none
                 appEnvironment.configPath = [.saveLoad]
             }) {
                 VStack {
@@ -127,8 +139,13 @@ struct UniversalLinksImportView: View {
                 .environmentObject(
                     { () in
                         let env = AppEnvironment.init()
-                        env.importedConfigClaims = ConfigClaims(iss: "dummy", iat: Date.now, version: 1, config: Config.defaultValue())
-
+                        env.importedConfigClaimsWithURL = ConfigClaimsWithURL(
+                            url: URL(
+                                string:
+                                    "https://brewcoffee46.github.io/app/v1.html?config=eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJpYXQiOjE3NTg1MjQ3MjQuNzExNTk3LCJpc3MiOiJCcmV3Q29mZmVlNDYiLCJ2ZXJzaW9uIjoxLCJjb25maWciOnsidG90YWxUaW1lU2VjIjoyMTAsImNvZmZlZUJlYW5zV2VpZ2h0IjoxNiwiZmlyc3RXYXRlclBlcmNlbnQiOjAuNSwibm90ZSI6IuOCqOODs-OCuOODi-OCouODm-ODg-ODiOOCs-ODvOODkuODvCIsInBhcnRpdGlvbnNDb3VudE9mNiI6MywiYmVmb3JlQ2hlY2tsaXN0IjpbIuOBiua5r-OCkuayuOOBi-OBmSIsIuODleOCo-ODq-OCv-ODvOOCkuODieODquODg-ODkeODvOOBq-OCu-ODg-ODiCIsIuODleOCo-ODq-OCv-ODvOOCkuODquODs-OCuSIsIuOCs-ODvOODkuODvOeyieOCkuOCu-ODg-ODiCIsIuOCueOCseODvOODq-OCkuODquOCu-ODg-ODiCJdLCJlZGl0ZWRBdE1pbGxpU2VjIjoxNzU4NTI0NjY2ODc4LCJ2ZXJzaW9uIjoxLCJzdGVhbWluZ1RpbWVTZWMiOjQ1LCJ3YXRlclRvQ29mZmVlQmVhbnNXZWlnaHRSYXRpbyI6MTZ9fQ"
+                            )!,
+                            configClaims: ConfigClaims(iss: "dummy", iat: Date.now, version: 1, config: Config.defaultValue())
+                        )
                         return env
                     }()
                 )

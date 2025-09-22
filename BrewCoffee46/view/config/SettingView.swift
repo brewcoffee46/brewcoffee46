@@ -65,6 +65,7 @@ struct SettingView: View {
                         .map { universalLinksConfigUrl = $0 }
                         .recoverWithErrorLog(&viewModel.errors)
                 }
+                TipView(UniversalLinksIssueTip(), arrowEdge: .top)
             }
 
             if watchConnectionService.isPaired() {

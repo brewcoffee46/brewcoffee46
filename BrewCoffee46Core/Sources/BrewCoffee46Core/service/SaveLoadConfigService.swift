@@ -33,7 +33,20 @@ public final class SaveLoadConfigServiceImpl: SaveLoadConfigService {
     }
 
     public func loadAll() -> ResultNea<[Config]?, CoffeeError> {
-        return userDefaultsService.getDecodable(forKey: userDefaultsKey(SaveLoadConfigServiceImpl.configsKey))
+        return
+            userDefaultsService
+            .getDecodable(forKey: userDefaultsKey(SaveLoadConfigServiceImpl.configsKey))
+            .map { (configsOpt: [Config]?) in
+                if var configs = configsOpt {
+                    // Order by desc.
+                    configs.sort {
+                        ($0.editedAtMilliSec ?? 0) > ($1.editedAtMilliSec ?? 0)
+                    }
+                    return configs
+                } else {
+                    return .none
+                }
+            }
     }
 
     public func saveConfig(config: Config) -> ResultNea<Void, CoffeeError> {

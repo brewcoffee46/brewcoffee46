@@ -8,3 +8,8 @@ struct ConfigClaims: Claims, Equatable {
     let version: Int
     let config: Config
 }
+
+struct ConfigClaimsWithURL: Equatable {
+    let url: URL
+    let configClaims: ConfigClaims
+}
