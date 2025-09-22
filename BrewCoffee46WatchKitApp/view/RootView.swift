@@ -22,6 +22,7 @@ struct RootView: View {
                 Text("\(String(format: "%.1f", viewModel.currentConfig.coffeeBeansWeight))\(weightUnit)")
                     .font(.system(size: 19))
             }
+            .disabled(appEnvironment.isTimerStarted)
 
             navigationLink(
                 route: .stopwatch,

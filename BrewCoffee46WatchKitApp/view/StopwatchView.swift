@@ -68,6 +68,8 @@ struct StopwatchView: View {
                         }
                         Spacer()
                         Button(action: {
+                            appEnvironment.isTimerStarted = false
+
                             dripTimingNotificationService.removePendingAll()
 
                             WKInterfaceDevice.current().play(.success)
@@ -91,6 +93,8 @@ struct StopwatchView: View {
                     )
                     Spacer()
                     Button(action: {
+                        appEnvironment.isTimerStarted = true
+
                         extendedRuntimeSession.startSession()
                         WKInterfaceDevice.current().play(.success)
                         let now = dateService.now()
