@@ -10,6 +10,8 @@ struct NavigationModifier: ViewModifier {
             RootView()
         case .config:
             ConfigView()
+        case .selectConfig:
+            SelectConfigView()
         case .stopwatch:
             StopwatchView()
         case .info:

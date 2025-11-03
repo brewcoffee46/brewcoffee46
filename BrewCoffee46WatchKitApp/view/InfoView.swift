@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct InfoView: View {
-    @EnvironmentObject var viewModel: CurrentConfigViewModel
+    @EnvironmentObject var viewModel: ConfigViewModel
 
     var body: some View {
         Form {

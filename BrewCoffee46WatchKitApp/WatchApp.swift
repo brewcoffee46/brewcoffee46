@@ -7,7 +7,7 @@ struct WatchApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
-                .environmentObject(CurrentConfigViewModel())
+                .environmentObject(ConfigViewModel())
                 .environmentObject(WatchKitAppEnvironment())
         }
     }

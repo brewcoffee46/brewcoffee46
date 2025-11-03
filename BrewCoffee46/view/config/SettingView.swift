@@ -13,6 +13,7 @@ struct SettingView: View {
     @Injected(\.rawSettingConvertService) private var rawSettingConvertService
     @Injected(\.watchConnectionService) private var watchConnectionService
     @Injected(\.configurationLinkService) private var configurationLinkService
+    @Injected(\.saveLoadConfigService) private var saveLoadConfigService
 
     @Environment(\.scenePhase) private var scenePhase
 
@@ -74,18 +75,22 @@ struct SettingView: View {
                         didSuccessSendingConfig = .none
                         showTipsWhenSendingConfigFailure = false
 
-                        switch viewModel.currentConfig.toJSON(isPrettyPrint: false) {
-                        case .success(let json):
-                            Task {
-                                let result = await watchConnectionService.sendConfigAsJson(json)
-                                switch result {
-                                case .success():
-                                    didSuccessSendingConfig = true
-                                case .failure(let error):
-                                    viewModel.errors = error.getAllErrorMessage()
-                                    didSuccessSendingConfig = false
-                                    showTipsWhenSendingConfigFailure = true
+                        switch saveLoadConfigService.loadAll() {
+                        case .success(let configsOpt):
+                            if let configs = configsOpt {
+                                Task {
+                                    let result = await watchConnectionService.sendConfigsAsJson(configs)
+                                    switch result {
+                                    case .success():
+                                        didSuccessSendingConfig = true
+                                    case .failure(let error):
+                                        viewModel.errors = error.getAllErrorMessage()
+                                        didSuccessSendingConfig = false
+                                        showTipsWhenSendingConfigFailure = true
+                                    }
                                 }
+                            } else {
+                                print("none configs")
                             }
                         case .failure(let error):
                             didSuccessSendingConfig = false

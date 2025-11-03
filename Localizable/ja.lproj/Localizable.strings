@@ -31,7 +31,7 @@
 "config show current note tips" = "現在の設定";
 
 "config watchos app setting" = "watchOSアプリ設定";
-"config send current setting to watchos app" = "現在の設定をwatchOSアプリへ送信";
+"config send current setting to watchos app" = "保存された設定をwatchOSアプリへ送信";
 "config watch session is not activated" = "現在watchOSにデータを送信できません";
 "config watchos sending failure tips" = "ヒント: watchOS側のアプリを起動して再試行";
 
@@ -122,6 +122,7 @@
 "watch kit app drip end" = "抽出終了";
 
 "watch kit app current setting" = "現在の設定";
+"watch kit app select config" = "設定を選択";
 
 "watch kit app info log header" = "ログ";
 
