@@ -3,18 +3,21 @@ import SwiftUI
 
 struct ConfigView: View {
     @EnvironmentObject var appEnvironment: WatchKitAppEnvironment
-    @EnvironmentObject var viewModel: CurrentConfigViewModel
+    @EnvironmentObject var viewModel: ConfigViewModel
     @State private var alwaysLocked: Bool = true
 
     var body: some View {
-        ScrollView {
-            ShowConfigView(
-                config: $viewModel.currentConfig,
-                // In WatchKitApp, editing configuration is always disabled so `isLock` is always `true`.
-                isLock: $alwaysLocked
-            )
+        List {
+            Section(header: Text("config save load current config")) {
+                ScrollView {
+                    ShowConfigView(
+                        config: $viewModel.currentConfig,
+                        // In WatchKitApp, editing configuration is always disabled so `isLock` is always `true`.
+                        isLock: $alwaysLocked
+                    )
+                }
+            }
         }
-        .navigationTitle("config save load current config")
     }
 }
 
@@ -22,7 +25,7 @@ struct ConfigView: View {
     struct ConfigView_Perviews: PreviewProvider {
         static var previews: some View {
             ConfigView()
-                .environmentObject(CurrentConfigViewModel())
+                .environmentObject(ConfigViewModel())
         }
     }
 #endif

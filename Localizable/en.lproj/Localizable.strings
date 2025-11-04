@@ -31,7 +31,7 @@
 "config show current note tips" = "Current configuration";
 
 "config watchos app setting" = "watchOS App setting";
-"config send current setting to watchos app" = "Send current setting to watchOS App";
+"config send current setting to watchos app" = "Send saved setting to watchOS App";
 "config watch session is not activated" = "watchOS session cannot be reachable!";
 "config watchos sending failure tips" = "Tips: retry after WatchOS App launched";
 
@@ -122,6 +122,7 @@
 "watch kit app drip end" = "End of Dripping";
 
 "watch kit app current setting" = "Current configuration";
+"watch kit app select config" = "Select configuration";
 
 "watch kit app info log header" = "Log";
 

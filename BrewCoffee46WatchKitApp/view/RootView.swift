@@ -1,22 +1,33 @@
 import BrewCoffee46Core
+import Factory
 import SwiftUI
 
 struct RootView: View {
     @EnvironmentObject var appEnvironment: WatchKitAppEnvironment
-    @EnvironmentObject var viewModel: CurrentConfigViewModel
+    @EnvironmentObject var viewModel: ConfigViewModel
+
+    @Injected(\.saveLoadConfigService) private var saveLoadConfigService
 
     var body: some View {
         List {
-            if let note = viewModel.currentConfig.note, note != "" {
+            NavigationLink(value: Route.selectConfig) {
                 VStack(alignment: .leading) {
                     HStack {
                         Text("watch kit app current setting")
                             .font(.system(size: 10))
                     }
                     Spacer()
-                    Text(note)
+                    HStack(alignment: .bottom) {
+                        Text(viewModel.currentConfig.note ??? NSLocalizedString("config note empty string", comment: ""))
+                        Spacer()
+                        Image(systemName: "ellipsis.circle.fill")
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                            .foregroundColor(.gray)
+                    }
                 }
             }
+            .disabled(appEnvironment.isTimerStarted)
 
             Stepper(value: $viewModel.currentConfig.coffeeBeansWeight, step: 0.1) {
                 Text("\(String(format: "%.1f", viewModel.currentConfig.coffeeBeansWeight))\(weightUnit)")
@@ -44,6 +55,15 @@ struct RootView: View {
                 imageColor: .gray,
                 navigationTitle: "navigation title information"
             )
+        }
+        .onAppear {
+            if viewModel.allConfigs.isEmpty {
+                saveLoadConfigService.loadAll().map {
+                    if let allConfigs = $0 {
+                        viewModel.allConfigs = allConfigs
+                    }
+                }.forEachError { viewModel.log = $0.getAllErrorMessage() }
+            }
         }
         .navigation(path: $appEnvironment.rootPath)
         .currentConfigSaveLoadModifier(
@@ -92,7 +112,7 @@ struct RootView: View {
         static var previews: some View {
             RootView()
                 .environmentObject(WatchKitAppEnvironment())
-                .environmentObject(CurrentConfigViewModel())
+                .environmentObject(ConfigViewModel())
         }
     }
 #endif

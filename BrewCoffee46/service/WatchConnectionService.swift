@@ -7,7 +7,7 @@ protocol WatchConnectionService: Sendable {
 
     func isReachable() -> Bool
 
-    func sendConfigAsJson(_ configJson: String) async -> ResultNea<Void, CoffeeError>
+    func sendConfigsAsJson(_ configs: [Config]) async -> ResultNea<Void, CoffeeError>
 }
 
 final class WatchConnectionServiceImpl: NSObject, WatchConnectionService {
@@ -28,22 +28,29 @@ final class WatchConnectionServiceImpl: NSObject, WatchConnectionService {
         session.isReachable
     }
 
-    func sendConfigAsJson(_ configJson: String) async -> ResultNea<Void, CoffeeError> {
+    private let encoder = JSONEncoder()
+
+    func sendConfigsAsJson(_ configs: [Config]) async -> ResultNea<Void, CoffeeError> {
         await withCheckedContinuation { continuation in
             if session.activationState != .activated {
                 continuation.resume(returning: .failure(NonEmptyArray(CoffeeError.watchSessionIsNotActivated)))
                 return
             }
 
-            session.sendMessage(
-                ["config": configJson],
-                replyHandler: { data in
-                    continuation.resume(returning: .success(()))
-                },
-                errorHandler: { error in
-                    continuation.resume(returning: .failure(NonEmptyArray(.sendMessageToWatchOSFailure(error))))
-                }
-            )
+            do {
+                let configsJson = try String(data: encoder.encode(configs), encoding: .utf8)!
+                session.sendMessage(
+                    [watchKitAppConfigsKey: configsJson],
+                    replyHandler: { data in
+                        continuation.resume(returning: .success(()))
+                    },
+                    errorHandler: { error in
+                        continuation.resume(returning: .failure(NonEmptyArray(.sendMessageToWatchOSFailure(error))))
+                    }
+                )
+            } catch {
+                continuation.resume(returning: .failure(NonEmptyArray(CoffeeError.jsonError(error))))
+            }
         }
     }
 }
@@ -67,5 +74,4 @@ extension WatchConnectionServiceImpl: WCSessionDelegate {
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
 
     }
-
 }

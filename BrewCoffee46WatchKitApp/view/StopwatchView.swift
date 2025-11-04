@@ -6,7 +6,7 @@ import SwiftUI
 @MainActor
 struct StopwatchView: View {
     @EnvironmentObject var appEnvironment: WatchKitAppEnvironment
-    @EnvironmentObject var viewModel: CurrentConfigViewModel
+    @EnvironmentObject var viewModel: ConfigViewModel
     @Environment(\.scenePhase) private var scenePhase
     @StateObject var extendedRuntimeSession = ExtendedRuntimeSession()
 

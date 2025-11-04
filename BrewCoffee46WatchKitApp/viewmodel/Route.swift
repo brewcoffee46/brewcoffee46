@@ -3,4 +3,5 @@ enum Route {
     case config
     case stopwatch
     case info
+    case selectConfig
 }
