@@ -16,6 +16,7 @@ struct StopwatchView: View {
     @Injected(\.saveLoadTimerStartAtService) private var saveLoadTimerStartAtService
 
     @State var startAt: Date? = .none
+    @State var isStop︎AlertPresented: Bool = false
 
     private let countDownInit: Double = 3.0
 
@@ -68,18 +69,15 @@ struct StopwatchView: View {
                         }
                         Spacer()
                         Button(action: {
-                            appEnvironment.isTimerStarted = false
-
-                            dripTimingNotificationService.removePendingAll()
-
-                            WKInterfaceDevice.current().play(.success)
-                            self.startAt = .none
-                            saveLoadTimerStartAtService.deleteStartAt()
-
-                            extendedRuntimeSession.endSession()
+                            if progressTime < viewModel.currentConfig.totalTimeSec {
+                                isStop︎AlertPresented.toggle()
+                            } else {
+                                stopTimer()
+                            }
                         }) {
                             Text("Stop")
                         }
+                        .stopWatchStopAlertModifier($isStop︎AlertPresented, stopTimer)
                         .frame(maxHeight: 20)
                         .foregroundColor(.red)
                     }
@@ -216,5 +214,17 @@ struct StopwatchView: View {
                 set: { _ in () }
             )
         )
+    }
+
+    private func stopTimer() {
+        appEnvironment.isTimerStarted = false
+
+        dripTimingNotificationService.removePendingAll()
+
+        WKInterfaceDevice.current().play(.success)
+        self.startAt = .none
+        saveLoadTimerStartAtService.deleteStartAt()
+
+        extendedRuntimeSession.endSession()
     }
 }

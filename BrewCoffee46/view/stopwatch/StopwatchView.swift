@@ -158,32 +158,18 @@ struct StopwatchView: View {
                         }
                 }
                 .foregroundColor(.green)
-            } else if progressTime <= viewModel.currentConfig.totalTimeSec {
-                Button(action: { isStop︎AlertPresented.toggle() }) {
-                    stopButtonText
-                }
-                .foregroundColor(.red)
-                .alert("stop alert title", isPresented: $isStop︎AlertPresented) {
-                    Button(role: .cancel, action: { isStop︎AlertPresented.toggle() }) {
-                        Text("stop alert cancel")
-                    }
-                    Button(
-                        role: .destructive,
-                        action: {
-                            isStop︎AlertPresented.toggle()
-                            stopTimer()
-                        }
-                    ) {
-                        Text("stop alert stop")
-                    }
-                } message: {
-                    Text("stop alert message")
-                }
             } else {
-                Button(action: { stopTimer() }) {
+                Button(action: {
+                    if progressTime < viewModel.currentConfig.totalTimeSec {
+                        isStop︎AlertPresented.toggle()
+                    } else {
+                        stopTimer()
+                    }
+                }) {
                     stopButtonText
                 }
                 .foregroundColor(.red)
+                .stopWatchStopAlertModifier($isStop︎AlertPresented, stopTimer)
             }
         }
         .sensoryFeedback(.impact, trigger: self.appEnvironment.isTimerStarted)
