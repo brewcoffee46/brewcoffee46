@@ -23,8 +23,6 @@ public func |+| <A, B, E: Error>(
 // It is required to use `NonEmptyArray` for `Failure` type parameter of `Result`
 extension NonEmptyArray: Error where A: Error {}
 
-extension ResultNea: Sendable where Success: Sendable, Failure: Sendable {}
-
 extension ResultNea {
     public func forEach(_ f: (Success) -> Void) -> Void {
         switch self {

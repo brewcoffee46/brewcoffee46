@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         os: [ 'macos-26' ]
-        xcode-version: [ '26.1' ]
+        xcode-version: [ '26.2' ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -48,15 +48,10 @@ jobs:
   build-and-test:
     strategy:
       matrix:
-        os: [ 'macos-15', 'macos-26' ]
-        xcode-version: [ '16.4', '26.1' ]
-        ios-version: [ '18.5' ]
-        ios-device-name: [ 'iPhone 16' ]
-        exclude:
-          - os: 'macos-15'
-            xcode-version: '26.1'
-          - os: 'macos-26'
-            xcode-version: '16.4'
+        os: [ 'macos-26' ]
+        xcode-version: [ '26.1' ]
+        ios-version: [ '26.1' ]
+        ios-device-name: [ 'iPhone 17' ]
     runs-on: ${{ matrix.os }}
     env:
       LICENSE_PLIST_GITHUB_TOKEN: ${{ secrets.LICENSE_PLIST_GITHUB_TOKEN }}
