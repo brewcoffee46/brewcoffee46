@@ -30,7 +30,7 @@ struct RootView: View {
             .disabled(appEnvironment.isTimerStarted)
 
             Stepper(value: $viewModel.currentConfig.coffeeBeansWeight, step: 0.1) {
-                Text("\(String(format: "%.1f", viewModel.currentConfig.coffeeBeansWeight))\(weightUnit)")
+                Text("\(viewModel.currentConfig.coffeeBeansWeight, specifier: "%.1f")\(weightUnit)")
                     .font(.system(size: 19))
             }
             .disabled(appEnvironment.isTimerStarted)

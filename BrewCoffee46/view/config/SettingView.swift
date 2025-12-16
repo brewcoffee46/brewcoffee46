@@ -154,7 +154,7 @@ struct SettingView: View {
                         showTips,
                         content: HStack {
                             Text("config water ratio")
-                            Text("\(String(format: "%.1f%", rawSetting.waterToCoffeeBeansWeightRatio))")
+                            Text("\(rawSetting.waterToCoffeeBeansWeightRatio, specifier: "%.1f%")")
 
                         },
                         tips: Text("config water ratio tips")
@@ -176,7 +176,7 @@ struct SettingView: View {
                         showTips,
                         content: HStack {
                             Text("config 1st water percent")
-                            Text("\(String(format: "%.0f%", rawSetting.firstWaterPercent * 100))%")
+                            Text("\(rawSetting.firstWaterPercent * 100, specifier: "%.0f%")%")
 
                         },
                         tips: Text("config 1st water percent tips")
@@ -214,7 +214,7 @@ struct SettingView: View {
                         content: HStack {
                             Text("config total time")
                             Text(
-                                "\(String(format: "%.0f", rawSetting.totalTimeSec))\(NSLocalizedString("config sec unit", comment: ""))")
+                                "\(rawSetting.totalTimeSec, specifier: "%.0f")\(NSLocalizedString("config sec unit", comment: ""))")
                             Spacer()
                         },
                         tips: Text("config total time tips")
@@ -234,7 +234,7 @@ struct SettingView: View {
                 VStack {
                     HStack {
                         Text("config steaming time")
-                        Text("\(String(format: "%.0f", rawSetting.steamingTimeSec))\(NSLocalizedString("config sec unit", comment: ""))")
+                        Text("\(rawSetting.steamingTimeSec, specifier: "%.0f")\(NSLocalizedString("config sec unit", comment: ""))")
                         Spacer()
                     }
                     ButtonSliderButtonView(
@@ -308,7 +308,7 @@ struct SettingView: View {
             Spacer()
             Group {
                 Text("config coffee beans weight")
-                Text("\(String(format: "%.1f", rawSetting.coffeeBeansWeight))\(weightUnit)")
+                Text("\(rawSetting.coffeeBeansWeight, specifier: "%.1f")\(weightUnit)")
             }
             .font(
                 !rawSetting.calculateCoffeeBeansWeightFromWater ? Font.headline.weight(.bold) : Font.headline.weight(.regular)
@@ -318,7 +318,7 @@ struct SettingView: View {
             Spacer()
             Group {
                 Text("config water amount")
-                Text("\(String(format: "%.1f", rawSetting.waterAmount))\(weightUnit)")
+                Text("\(rawSetting.waterAmount, specifier: "%.1f")\(weightUnit)")
             }
             .font(
                 rawSetting.calculateCoffeeBeansWeightFromWater ? Font.headline.weight(.bold) : Font.headline.weight(.regular)
