@@ -164,7 +164,7 @@ struct StopwatchView: View {
             }
             Spacer()
             Text(
-                "\(String(format: "%.1f", roundCentesimal(viewModel.dripInfo.dripTimings[index].waterAmount)))\(weightUnit)"
+                "\(roundCentesimal(viewModel.dripInfo.dripTimings[index].waterAmount), specifier: "%.1f")\(weightUnit)"
             )
         }
     }
