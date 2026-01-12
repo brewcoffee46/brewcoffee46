@@ -1,6 +1,9 @@
 import TipKit
 
 struct UniversalLinksIssueTip: Tip {
+    var image: Image? {
+        Image(systemName: "sharedwithyou.circle")
+    }
     var title: Text {
         Text("tips universal links issue")
     }

@@ -14,6 +14,8 @@ public struct Config: Equatable {
 
     public var steamingTimeSec: Double
 
+    public var mills: [Mill]
+
     public var note: String?
 
     public var beforeChecklist: [String]
@@ -22,7 +24,7 @@ public struct Config: Equatable {
     public var editedAtMilliSec: UInt64?
 
     // If the JSON compatibility of `Config` falls then `version` will increment.
-    public var version: Int
+    public let version: Int
 
     enum CodingKeys: String, CodingKey {
         case coffeeBeansWeight
@@ -32,6 +34,7 @@ public struct Config: Equatable {
         case totalTimeSec
         case steamingTimeSec
         case version
+        case mills
         case note
         case beforeChecklist
         case editedAtMilliSec
@@ -47,6 +50,7 @@ public struct Config: Equatable {
         note: String?,
         beforeChecklist: [String],
         editedAtMilliSec: UInt64?,
+        mills: [Mill] = [],
         version: Int = Config.currentVersion
     ) {
         self.coffeeBeansWeight = coffeeBeansWeight
@@ -55,6 +59,7 @@ public struct Config: Equatable {
         self.firstWaterPercent = firstWaterPercent
         self.totalTimeSec = totalTimeSec
         self.steamingTimeSec = steamingTimeSec
+        self.mills = mills
         self.note = note
         self.beforeChecklist = beforeChecklist
         self.editedAtMilliSec = editedAtMilliSec
@@ -135,6 +140,7 @@ extension Config: Decodable {
         firstWaterPercent = try values.decode(Double.self, forKey: .firstWaterPercent)
         totalTimeSec = try Double(values.decode(Int.self, forKey: .totalTimeSec))
         steamingTimeSec = try Double(values.decode(Int.self, forKey: .steamingTimeSec))
+        mills = try values.decodeIfPresent([Mill].self, forKey: .mills) ?? []
         note = try values.decodeIfPresent(String.self, forKey: .note)
         let rawBeforeChecklist = try values.decodeIfPresent([String].self, forKey: .beforeChecklist) ?? Config.initBeforeCheckList
         beforeChecklist = Array(rawBeforeChecklist.prefix(Config.maxCheckListSize))
@@ -152,6 +158,7 @@ extension Config: Encodable {
         try container.encode(firstWaterPercent, forKey: .firstWaterPercent)
         try container.encode(totalTimeSec, forKey: .totalTimeSec)
         try container.encode(steamingTimeSec, forKey: .steamingTimeSec)
+        try container.encode(mills, forKey: .mills)
         try container.encodeIfPresent(note, forKey: .note)
         try container.encode(beforeChecklist, forKey: .beforeChecklist)
         try container.encodeIfPresent(editedAtMilliSec, forKey: .editedAtMilliSec)

@@ -58,13 +58,20 @@
 "config steaming time" = "Steaming(1st -> 2nd drip) time";
 "config steaming time short" = "Steaming time";
 
+"config mill settings" = "Mill settings";
+"config mill empty" = "No mill settings";
+"config mill name default" = "Mill name";
+"config mill value default" = "Setting value";
+"config mill setting edit" = "Edit";
+"config mill settings sheet title" = "Mill settings";
+
 "config save load setting" = "Save & Load configuration";
 "config save load current config" = "Current configuration";
 "config saved data" = "Save data";
 "config empty" = "No data";
 "config note placeholder" = "Something to characterize configuration";
 "config note empty string" = "No note";
-"config save button" = "Save as new";
+"config save button" = "Save current setting as new";
 "config current config have already been saved" = "The current configuration has already been saved.";
 "config load setting alert title" = "Notice";
 "config load setting alert message" = "After loading setting (%@ - %@), the current configuration will be overwritten. Do you sure to load this setting?";
@@ -142,3 +149,9 @@
 "tips universal links config save detail" = "Let's save the setting!";
 "tips config note edit" = "Edit config's note";
 "tips config note edit detail" = "You can edit notes or memos of this setting.";
+"tips mill" = "Write your mill setting!";
+"tips mill detail" = "Push “Edit” button to save your mill setting!";
+"tips mill edit" = "Let's add your mill settings!";
+"tips mill edit detail" = "Push ”Edit” button & ⊕ button to create a new mill setting.";
+"tips mill item" = "Mill name & its setting";
+"tips mill item detail" = "Enter your mill name & its setting.";

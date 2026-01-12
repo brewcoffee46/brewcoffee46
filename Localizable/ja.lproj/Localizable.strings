@@ -58,13 +58,20 @@
 "config steaming time" = "蒸らし（1〜2投目までの）時間";
 "config steaming time short" = "蒸らし時間";
 
+"config mill settings" = "ミル設定";
+"config mill setting empty" = "ミル設定なし";
+"config mill name default" = "ミル名";
+"config mill value default" = "設定値";
+"config mill setting edit" = "編集";
+"config mill settings sheet title" = "Mill setting";
+
 "config save load setting" = "設定の保存と読み込み";
 "config save load current config" = "現在の設定";
 "config saved data" = "保存ずみ設定";
 "config empty" = "データなし";
 "config note placeholder" = "特徴メモ";
 "config note empty string" = "メモなし";
-"config save button" = "新規保存";
+"config save button" = "現在の設定を保存";
 "config current config have already been saved" = "現在の設定はすでに保存されています。";
 "config load setting alert title" = "確認";
 "config load setting alert message" = "設定（%@ - %@）を読み込むと現在の設定は上書きされます。読み込みますか？";
@@ -142,3 +149,9 @@
 "tips universal links config save detail" = "設定を保存しましょう。";
 "tips config note edit" = "メモの設定";
 "tips config note edit detail" = "設定に関するメモを編集できます。";
+"tips mill" = "ミル設定の追加と編集";
+"tips mill detail" = "「編集」を押してミルの設定を作成しましょう。";
+"tips mill edit" = "ミル設定を追加";
+"tips mill edit detail" = "「編集」ボタンと⊕ボタンで最初のミル設定を追加しましょう。";
+"tips mill item" = "ミル名と設定";
+"tips mill item detail" = "ミル名と設定内容を編集できます。";
