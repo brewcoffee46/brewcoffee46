@@ -13,6 +13,7 @@ struct RawSetting: Equatable {
     var totalTimeSec: Double
     var steamingTimeSec: Double
     var coffeeBeansWeight: Double
+    var mills: [RawMill]
 
     init(
         calculateCoffeeBeansWeightFromWater: Bool = false,
@@ -22,7 +23,8 @@ struct RawSetting: Equatable {
         partitionsCountOf6: Double,
         totalTimeSec: Double,
         steamingTimeSec: Double,
-        coffeeBeansWeight: Double
+        coffeeBeansWeight: Double,
+        mills: [RawMill]
     ) {
         self.calculateCoffeeBeansWeightFromWater = calculateCoffeeBeansWeightFromWater
         self.waterAmount = waterAmount
@@ -32,6 +34,7 @@ struct RawSetting: Equatable {
         self.totalTimeSec = totalTimeSec
         self.steamingTimeSec = steamingTimeSec
         self.coffeeBeansWeight = coffeeBeansWeight
+        self.mills = mills
     }
 }
 
@@ -46,7 +49,10 @@ extension RawSetting {
             partitionsCountOf6: defaultConfig.partitionsCountOf6,
             totalTimeSec: defaultConfig.totalTimeSec,
             steamingTimeSec: defaultConfig.steamingTimeSec,
-            coffeeBeansWeight: defaultConfig.coffeeBeansWeight
+            coffeeBeansWeight: defaultConfig.coffeeBeansWeight,
+            mills: defaultConfig.mills.map { mill in
+                RawMill(name: mill.name, value: mill.value)
+            }
         )
     }
 }

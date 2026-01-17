@@ -28,6 +28,8 @@ struct SettingView: View {
     // for now we assign `ConfigurationLinkServiceImpl.universalLinksBaseURL`.
     @State private var universalLinksConfigUrl: URL = ConfigurationLinkServiceImpl.universalLinksBaseURL
 
+    @State private var showMillEditSheet: Bool = false
+
     private let digit = 1
     private let timerStep: Double = 1.0
     private let coffeeBeansWeightMax = 125.0
@@ -250,6 +252,31 @@ struct SettingView: View {
                         isDisable: appEnvironment.isTimerStarted,
                         target: $rawSetting.steamingTimeSec
                     )
+                }
+            }
+
+            Section(
+                header: HStack {
+                    Text("config mill settings")
+                    Spacer()
+                    Button(action: {
+                        showMillEditSheet.toggle()
+                    }) {
+                        Text("config mill setting edit")
+                    }
+                    .buttonStyle(.bordered)
+                    .disabled(appEnvironment.isTimerStarted)
+                }
+            ) {
+                TipView(MillTip(), arrowEdge: .none)
+                VStack {
+                    MillListView(items: $viewModel.currentConfig.mills)
+                        .sheet(isPresented: $showMillEditSheet) {
+                            MillSettingView(
+                                mills: $rawSetting.mills,
+                                showMillEditSheet: $showMillEditSheet
+                            )
+                        }
                 }
             }
 

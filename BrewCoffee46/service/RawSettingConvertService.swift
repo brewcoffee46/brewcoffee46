@@ -29,7 +29,10 @@ final class RawSettingConvertServiceImpl: RawSettingConvertService {
             steamingTimeSec: rawSetting.steamingTimeSec,
             note: currentConfig.note,
             beforeChecklist: currentConfig.beforeChecklist,
-            editedAtMilliSec: dateService.nowEpochTimeMillis()
+            editedAtMilliSec: dateService.nowEpochTimeMillis(),
+            mills: rawSetting.mills.map { mill in
+                Mill(name: mill.name, value: mill.value)
+            }
         )
 
         return validateInputService.validate(config: config).map { () in config }
@@ -51,7 +54,10 @@ final class RawSettingConvertServiceImpl: RawSettingConvertService {
             partitionsCountOf6: config.partitionsCountOf6,
             totalTimeSec: config.totalTimeSec,
             steamingTimeSec: config.steamingTimeSec,
-            coffeeBeansWeight: config.coffeeBeansWeight
+            coffeeBeansWeight: config.coffeeBeansWeight,
+            mills: config.mills.map { mill in
+                RawMill(name: mill.name, value: mill.value)
+            }
         )
     }
 }

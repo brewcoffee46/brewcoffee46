@@ -19,6 +19,9 @@ final class MockValidateInputService: ValidateInputService {
 
 final class RawSettingConvertServiceTests: XCTestCase {
     let dummyValue = 99999.9
+    let ms = [
+        RawMill(name: "Comandante C60", value: "4.5")
+    ]
     let initConfig = Config(
         coffeeBeansWeight: 11.8,
         partitionsCountOf6: 4.0,
@@ -28,7 +31,10 @@ final class RawSettingConvertServiceTests: XCTestCase {
         steamingTimeSec: 40.0,
         note: .none,
         beforeChecklist: [],
-        editedAtMilliSec: BrewCoffee46TestsShared.epochTimeMillis
+        editedAtMilliSec: BrewCoffee46TestsShared.epochTimeMillis,
+        mills: [
+            Mill(name: "Comandante C60", value: "4.5")
+        ]
     )
 
     override class func setUp() {
@@ -52,7 +58,8 @@ final class RawSettingConvertServiceTests: XCTestCase {
             partitionsCountOf6: 40.0,
             totalTimeSec: 210.0,
             steamingTimeSec: 40.0,
-            coffeeBeansWeight: 11.8
+            coffeeBeansWeight: 11.8,
+            mills: ms
         )
         let sut = RawSettingConvertServiceImpl()
 
@@ -73,7 +80,8 @@ final class RawSettingConvertServiceTests: XCTestCase {
             partitionsCountOf6: 40.0,
             totalTimeSec: 210.0,
             steamingTimeSec: 40.0,
-            coffeeBeansWeight: dummyValue
+            coffeeBeansWeight: dummyValue,
+            mills: ms
         )
         let sut = RawSettingConvertServiceImpl()
 
@@ -94,7 +102,8 @@ final class RawSettingConvertServiceTests: XCTestCase {
             partitionsCountOf6: 40.0,
             totalTimeSec: 210.0,
             steamingTimeSec: 40.0,
-            coffeeBeansWeight: 11.8
+            coffeeBeansWeight: 11.8,
+            mills: ms
         )
 
         let sut = RawSettingConvertServiceImpl()
@@ -117,7 +126,8 @@ final class RawSettingConvertServiceTests: XCTestCase {
             partitionsCountOf6: 40.0,
             totalTimeSec: 210.0,
             steamingTimeSec: 40.0,
-            coffeeBeansWeight: 27.4
+            coffeeBeansWeight: 27.4,
+            mills: ms
         )
 
         let sut = RawSettingConvertServiceImpl()

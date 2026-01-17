@@ -15,7 +15,7 @@ extension ButtonType {
         case .minus(_):
             return "minus.circle.fill"
         case .plus(_):
-            return "plus.circle"
+            return "plus.circle.fill"
         }
     }
 
@@ -24,7 +24,7 @@ extension ButtonType {
         case .minus(_):
             return (.white, .red)
         case .plus(_):
-            return (.accentColor, .accentColor)
+            return (.white, .accentColor)
         }
     }
 }
@@ -99,38 +99,38 @@ struct ButtonView: View {
         @State static var target: Double = 10.0
 
         static var previews: some View {
-            Form {
-                HStack {
-                    ButtonView(
-                        buttonType: .minus(1),
-                        step: 0.1,
-                        isDisabled: true,
-                        target: $target
-                    )
-                    Divider()
-                    ButtonView(
-                        buttonType: .plus(100),
-                        step: 0.1,
-                        isDisabled: true,
-                        target: $target
-                    )
-                }
-                HStack {
-                    ButtonView(
-                        buttonType: .minus(10),
-                        step: 0.1,
-                        isDisabled: false,
-                        target: $target
-                    )
-                    Divider()
-                    ButtonView(
-                        buttonType: .plus(100),
-                        step: 0.1,
-                        isDisabled: false,
-                        target: $target
-                    )
-                }
+            HStack {
+                ButtonView(
+                    buttonType: .minus(1),
+                    step: 0.1,
+                    isDisabled: true,
+                    target: $target
+                )
+                Divider()
+                ButtonView(
+                    buttonType: .plus(100),
+                    step: 0.1,
+                    isDisabled: true,
+                    target: $target
+                )
             }
+            .previewDisplayName("disable = true")
+            HStack {
+                ButtonView(
+                    buttonType: .minus(10),
+                    step: 0.1,
+                    isDisabled: false,
+                    target: $target
+                )
+                Divider()
+                ButtonView(
+                    buttonType: .plus(100),
+                    step: 0.1,
+                    isDisabled: false,
+                    target: $target
+                )
+            }
+            .previewDisplayName("disable = false")
         }
     }
 #endif
