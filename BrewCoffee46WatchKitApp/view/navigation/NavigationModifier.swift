@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct NavigationModifier: ViewModifier {
+    @EnvironmentObject var viewModel: ConfigViewModel
+
     @Binding var path: [Route]
 
     @ViewBuilder
@@ -26,6 +28,19 @@ struct NavigationModifier: ViewModifier {
                     coordinator(route)
                 }
         }
+        // In WatchKit App, `RootView` sometimes won't appear when back from background,
+        // and directly `StopWatchView` will be shown so if we would use `currentConfigSaveLoadModifier`
+        // on `RootView` then the current configuration won't load and use the default configuration.
+        .currentConfigSaveLoadModifier(
+            $viewModel.currentConfig,
+            // For now, there is no load & save function on WatchKit App, so
+            // it's OK that `lastUpdateAt` is always `.none`.
+            Binding(
+                get: { .none },
+                set: { _ in () }
+            ),
+            $viewModel.log
+        )
     }
 }
 
