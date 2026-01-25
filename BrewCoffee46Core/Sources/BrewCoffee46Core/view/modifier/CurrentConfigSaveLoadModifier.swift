@@ -32,6 +32,9 @@ public struct CurrentConfigSaveLoadModifier: ViewModifier {
                         ()
                     }
                 case .active:
+                    // In ConfigViewModel(watchOS App) / CurrentConfigViewModel(iOS App), their `init()` load
+                    // the previous current configuration so in strictly speaking it's maybe not necessary to load
+                    // current config at this case.
                     saveLoadConfigService
                         .loadCurrentConfig()
                         .map { $0.map { currentConfig = $0 } }

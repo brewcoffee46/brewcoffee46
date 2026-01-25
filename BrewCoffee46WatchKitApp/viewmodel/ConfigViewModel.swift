@@ -41,6 +41,11 @@ final class ConfigViewModel: NSObject, ObservableObject {
         super.init()
         self.session.delegate = self
         self.session.activate()
+
+        saveLoadConfigService
+            .loadCurrentConfig()
+            .map { $0.map { currentConfig = $0 } }
+            .recoverWithErrorLog(&log)
     }
 }
 
