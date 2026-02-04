@@ -7,29 +7,6 @@ import XCTest
 
 struct DummyError: Error {}
 
-final class MockUserDefaultsService: UserDefaultsService, @unchecked Sendable {
-    var inputValues: [UInt64] = []
-    var dummyResult: ResultNea<Any?, CoffeeError>
-
-    init(_ dummyResult: ResultNea<Any?, CoffeeError>) {
-        self.dummyResult = dummyResult
-    }
-
-    func setEncodable<A: Encodable>(_ value: A, forKey defaultName: String) -> ResultNea<Void, CoffeeError> {
-        inputValues.append(value as! UInt64)
-        return .success(())
-    }
-
-    func getDecodable<A: Decodable>(forKey: String) -> ResultNea<A?, CoffeeError> {
-        return dummyResult.map({ a in a as? A })
-    }
-
-    func delete(forKey: String) {
-        return ()
-    }
-
-}
-
 final class SaveLoadTimerStartAtServiceTests: XCTestCase {
     let successResult: ResultNea<Any?, CoffeeError> = .success(.some(epochTimeMillis))
     let now = epochTimeMillis.toDate()
@@ -40,7 +17,7 @@ final class SaveLoadTimerStartAtServiceTests: XCTestCase {
     }
 
     func testSaveStartAtSuccessfully() {
-        let mockUserDefaultsService = MockUserDefaultsService(successResult)
+        let mockUserDefaultsService = MockUserDefaultsService<UInt64>(successResult)
         Container.shared.userDefaultsService.register {
             mockUserDefaultsService
         }
@@ -52,7 +29,7 @@ final class SaveLoadTimerStartAtServiceTests: XCTestCase {
     }
 
     func testLoadStartAtSuccessfully() {
-        let mockUserDefaultsService = MockUserDefaultsService(successResult)
+        let mockUserDefaultsService = MockUserDefaultsService<UInt64>(successResult)
         Container.shared.userDefaultsService.register {
             mockUserDefaultsService
         }
@@ -63,7 +40,7 @@ final class SaveLoadTimerStartAtServiceTests: XCTestCase {
     }
 
     func testLoadStartAtReturnNoneIfUserDefaultServiceReturnNone() {
-        let mockUserDefaultsService = MockUserDefaultsService(.success(.none))
+        let mockUserDefaultsService = MockUserDefaultsService<UInt64>(.success(.none))
         Container.shared.userDefaultsService.register {
             mockUserDefaultsService
         }
@@ -75,7 +52,7 @@ final class SaveLoadTimerStartAtServiceTests: XCTestCase {
 
     func testLoadStartAtReturnErrorIfUserDefaultServiceReturnUnexpectedTypeValue() {
         let failure: ResultNea<Date?, CoffeeError> = .failure(NonEmptyArray(CoffeeError.jsonError(DummyError())))
-        let mockUserDefaultsService = MockUserDefaultsService(failure.map({ a in a as Any }))
+        let mockUserDefaultsService = MockUserDefaultsService<UInt64>(failure.map({ a in a as Any }))
         Container.shared.userDefaultsService.register {
             mockUserDefaultsService
         }
