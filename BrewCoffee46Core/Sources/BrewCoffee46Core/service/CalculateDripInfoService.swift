@@ -6,18 +6,18 @@ import Factory
 /// the boiled water amount for each step must be calculated only the coffee beans weight.
 /// This interface is a representation of the calculation of water amount & drip timing.
 public protocol CalculateDripInfoService: Sendable {
-    func calculate(_ config: Config) -> DripInfo
+    func calculate(_ appConfig: AppConfig) -> DripInfo
 }
 
 // Implementation
 public final class CalculateDripInfoServiceImpl: CalculateDripInfoService {
     private let calculateWaterAmountService = Container.shared.calculateWaterAmountService()
 
-    public func calculate(_ config: Config) -> DripInfo {
-        let waterAmount = calculateWaterAmountService.calculate(config)
+    public func calculate(_ appConfig: AppConfig) -> DripInfo {
+        let waterAmount = calculateWaterAmountService.calculate(appConfig)
         let timeSecPerDripExceptFirst: Double =
-            (config.totalTimeSec - config.steamingTimeSec)
-            / Double((waterAmount.sixtyPercent.toArray().count + (config.firstWaterPercent < 1 ? 1 : 0)))
+            (appConfig.coffeeConfig.totalTimeSec - appConfig.coffeeConfig.steamingTimeSec)
+            / Double((waterAmount.sixtyPercent.toArray().count + (appConfig.coffeeConfig.firstWaterPercent < 1 ? 1 : 0)))
 
         var dripTimings: [DripTiming] = []
         var accValue = 0.0
@@ -30,10 +30,10 @@ public final class CalculateDripInfoServiceImpl: CalculateDripInfoService {
                 )
             )
             accValue += element
-            accDripAt += index == 0 ? config.steamingTimeSec : timeSecPerDripExceptFirst
+            accDripAt += index == 0 ? appConfig.coffeeConfig.steamingTimeSec : timeSecPerDripExceptFirst
         }
 
-        return DripInfo(dripTimings: dripTimings, waterAmount: waterAmount, totalTimeSec: config.totalTimeSec)
+        return DripInfo(dripTimings: dripTimings, waterAmount: waterAmount, totalTimeSec: appConfig.coffeeConfig.totalTimeSec)
     }
 }
 

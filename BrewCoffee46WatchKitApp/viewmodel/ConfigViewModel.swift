@@ -8,14 +8,14 @@ final class ConfigViewModel: NSObject, ObservableObject {
     @Injected(\.calculateDripInfoService) private var calculateDripInfoService: CalculateDripInfoService
     @Injected(\.saveLoadConfigService) private var saveLoadConfigService: SaveLoadConfigService
 
-    @Published var currentConfig: Config = Config.defaultValue() {
+    @Published var currentConfig: AppConfig = AppConfig.defaultValue() {
         didSet {
             if currentConfig != oldValue {
-                switch validateInputService.validate(config: currentConfig) {
+                switch validateInputService.validate(currentConfig) {
                 case .success():
                     self.dripInfo = calculateDripInfoService.calculate(currentConfig)
                     saveLoadConfigService
-                        .saveCurrentConfig(config: currentConfig)
+                        .saveCurrentConfig(currentConfig)
                         .recoverWithErrorLog(&log)
                 case .failure(let errors):
                     log = errors.getAllErrorMessage()
@@ -24,7 +24,7 @@ final class ConfigViewModel: NSObject, ObservableObject {
             }
         }
     }
-    @Published var allConfigs: [Config] = [] {
+    @Published var allConfigs: [CoffeeConfig] = [] {
         didSet {
             saveLoadConfigService
                 .saveAll(configs: allConfigs)
@@ -71,12 +71,12 @@ extension ConfigViewModel: WCSessionDelegate {
     }
 }
 
-private func fromJSON(_ json: String) -> ResultNea<[Config], CoffeeError> {
+private func fromJSON(_ json: String) -> ResultNea<[CoffeeConfig], CoffeeError> {
     let decoder = JSONDecoder()
     let jsonData = json.data(using: .utf8)!
     do {
-        let configs = try decoder.decode([Config].self, from: jsonData)
-        if configs.contains(where: { $0.version != Config.currentVersion }) {
+        let configs = try decoder.decode([CoffeeConfig].self, from: jsonData)
+        if configs.contains(where: { $0.version != CoffeeConfig.currentVersion }) {
             return Result.failure(NonEmptyArray(CoffeeError.loadedConfigIsNotCompatible))
         } else {
             return Result.success(configs)

@@ -3,7 +3,7 @@ import SwiftUI
 
 /// When leave/back app, load/save the current configuration.
 public struct CurrentConfigSaveLoadModifier: ViewModifier {
-    @Binding var currentConfig: Config
+    @Binding var currentConfig: AppConfig
     @Binding var lastUpdatedAt: UInt64?
     @Binding var errors: String
 
@@ -17,14 +17,14 @@ public struct CurrentConfigSaveLoadModifier: ViewModifier {
                 case .background:
                     let currentConfig = setConfigLastUpdateAt()
                     saveLoadConfigService
-                        .saveCurrentConfig(config: currentConfig)
+                        .saveCurrentConfig(currentConfig)
                         .recoverWithErrorLog(&errors)
                 case .inactive:
                     switch oldValue {
                     case .active:
                         let currentConfig = setConfigLastUpdateAt()
                         saveLoadConfigService
-                            .saveCurrentConfig(config: currentConfig)
+                            .saveCurrentConfig(currentConfig)
                             .recoverWithErrorLog(&errors)
                     case .background:
                         ()
@@ -46,10 +46,10 @@ public struct CurrentConfigSaveLoadModifier: ViewModifier {
             }
     }
 
-    private func setConfigLastUpdateAt() -> Config {
+    private func setConfigLastUpdateAt() -> AppConfig {
         var currentConfig = self.currentConfig
         if let lastUpdateAt = lastUpdatedAt {
-            currentConfig.editedAtMilliSec = lastUpdateAt
+            currentConfig.coffeeConfig.editedAtMilliSec = lastUpdateAt
         }
 
         return currentConfig
@@ -58,7 +58,7 @@ public struct CurrentConfigSaveLoadModifier: ViewModifier {
 
 extension View {
     public func currentConfigSaveLoadModifier(
-        _ config: Binding<Config>,
+        _ config: Binding<AppConfig>,
         _ lastUpdatedAt: Binding<UInt64?>,
         _ errors: Binding<String>
     ) -> some View {

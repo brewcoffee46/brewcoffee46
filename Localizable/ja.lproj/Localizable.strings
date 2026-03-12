@@ -71,6 +71,7 @@
 "config empty" = "データなし";
 "config note placeholder" = "特徴メモ";
 "config note empty string" = "メモなし";
+"config note cannot edit" = "現在は編集できません";
 "config save button" = "現在の設定を保存";
 "config current config have already been saved" = "現在の設定はすでに保存されています。";
 "config load setting alert title" = "確認";

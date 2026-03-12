@@ -3,6 +3,8 @@ import Factory
 import SwiftUI
 
 /// # Input raw configuration data from `SettingView`.
+/// SwiftUI view (for example `Slider`) requires `Binding<Double>` rather than `Binding<Int>`
+/// so `RawSetting` has some members whose type is `Double`.
 struct RawSetting: Equatable {
     var calculateCoffeeBeansWeightFromWater: Bool
     var waterAmount: Double
@@ -40,17 +42,17 @@ struct RawSetting: Equatable {
 
 extension RawSetting {
     static func defaultValue() -> RawSetting {
-        let defaultConfig = BrewCoffee46Core.Config.defaultValue()
+        let defaultAppConfig = AppConfig.defaultValue()
 
         return RawSetting(
-            waterAmount: defaultConfig.totalWaterAmount(),
-            waterToCoffeeBeansWeightRatio: defaultConfig.waterToCoffeeBeansWeightRatio,
-            firstWaterPercent: defaultConfig.firstWaterPercent,
-            partitionsCountOf6: defaultConfig.partitionsCountOf6,
-            totalTimeSec: defaultConfig.totalTimeSec,
-            steamingTimeSec: defaultConfig.steamingTimeSec,
-            coffeeBeansWeight: defaultConfig.coffeeBeansWeight,
-            mills: defaultConfig.mills.map { mill in
+            waterAmount: defaultAppConfig.totalWaterAmountG(),
+            waterToCoffeeBeansWeightRatio: defaultAppConfig.coffeeConfig.waterToCoffeeBeansWeightRatio,
+            firstWaterPercent: defaultAppConfig.coffeeConfig.firstWaterPercent,
+            partitionsCountOf6: Double(defaultAppConfig.coffeeConfig.partitionsCountOf6),
+            totalTimeSec: defaultAppConfig.coffeeConfig.totalTimeSec,
+            steamingTimeSec: defaultAppConfig.coffeeConfig.steamingTimeSec,
+            coffeeBeansWeight: defaultAppConfig.globalConfig.coffeeBeansWeightG,
+            mills: defaultAppConfig.coffeeConfig.mills.map { mill in
                 RawMill(name: mill.name, value: mill.value)
             }
         )

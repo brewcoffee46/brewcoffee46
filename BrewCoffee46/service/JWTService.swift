@@ -6,7 +6,7 @@ import SwiftJWT
 protocol JWTService: Sendable {
     func verify(jwt: String) -> ResultNea<ConfigClaims, CoffeeError>
 
-    func sign(config: Config) -> ResultNea<String, CoffeeError>
+    func sign(config: CoffeeConfig) -> ResultNea<String, CoffeeError>
 }
 
 final class JWTServiceImpl: JWTService {
@@ -21,7 +21,7 @@ final class JWTServiceImpl: JWTService {
         }
     }
 
-    func sign(config: Config) -> ResultNea<String, CoffeeError> {
+    func sign(config: CoffeeConfig) -> ResultNea<String, CoffeeError> {
         var jwt = JWT(
             claims: ConfigClaims(
                 iss: "BrewCoffee46",

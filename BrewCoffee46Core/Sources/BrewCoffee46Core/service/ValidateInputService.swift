@@ -2,19 +2,15 @@ import Factory
 
 /// # Validation for the config.
 public protocol ValidateInputService: Sendable {
-    func validate(
-        config: Config
-    ) -> ResultNea<Void, CoffeeError>
+    func validate(_ appConfig: AppConfig) -> ResultNea<Void, CoffeeError>
 }
 
 public final class ValidateInputServiceImpl: ValidateInputService {
-    public func validate(
-        config: Config
-    ) -> ResultNea<Void, CoffeeError> {
+    public func validate(_ appConfig: AppConfig) -> ResultNea<Void, CoffeeError> {
         let validatedTuple =
-            validateCoffeeBeansWeight(config.coffeeBeansWeight) |+| validationNumberOf6(Int(config.partitionsCountOf6))
-            |+| validationTotalTime(steamingTime: config.steamingTimeSec, totalTime: config.totalTimeSec)
-            |+| validationFirstWaterPercent(config.firstWaterPercent)
+            validateCoffeeBeansWeight(appConfig.globalConfig.coffeeBeansWeightG) |+| validationNumberOf6(appConfig.coffeeConfig.partitionsCountOf6)
+            |+| validationTotalTime(steamingTime: appConfig.coffeeConfig.steamingTimeSec, totalTime: appConfig.coffeeConfig.totalTimeSec)
+            |+| validationFirstWaterPercent(appConfig.coffeeConfig.firstWaterPercent)
 
         return validatedTuple.map { _ in
             ()

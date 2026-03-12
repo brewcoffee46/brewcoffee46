@@ -54,8 +54,8 @@ struct StopwatchView: View {
                         ClockView(
                             progressTime: $progressTime,
                             pointerInfo: pointerInfo,
-                            steamingTime: viewModel.currentConfig.steamingTimeSec,
-                            totalTime: viewModel.currentConfig.totalTimeSec
+                            steamingTime: viewModel.currentConfig.coffeeConfig.steamingTimeSec,
+                            totalTime: viewModel.currentConfig.coffeeConfig.totalTimeSec
                         )
                         .frame(height: geometry.size.width * 0.95)
                         stopWatchCountShow
@@ -79,8 +79,8 @@ struct StopwatchView: View {
                             ClockView(
                                 progressTime: $progressTime,
                                 pointerInfo: pointerInfo,
-                                steamingTime: viewModel.currentConfig.steamingTimeSec,
-                                totalTime: viewModel.currentConfig.totalTimeSec
+                                steamingTime: viewModel.currentConfig.coffeeConfig.steamingTimeSec,
+                                totalTime: viewModel.currentConfig.coffeeConfig.totalTimeSec
                             )
                             .frame(height: geometry.size.width * 0.9)
                             stopWatchCountShow
@@ -124,10 +124,10 @@ struct StopwatchView: View {
                 .font(Font(UIFont.monospacedSystemFont(ofSize: 38, weight: .light)))
                 .fixedSize()
                 .foregroundColor(
-                    progressTime < viewModel.currentConfig.totalTimeSec ? .primary : .red
+                    progressTime < viewModel.currentConfig.coffeeConfig.totalTimeSec ? .primary : .red
                 )
             }
-            Text(String(format: "/ %3.0f sec", viewModel.currentConfig.totalTimeSec))
+            Text(String(format: "/ %3.0f sec", viewModel.currentConfig.coffeeConfig.totalTimeSec))
                 .font(Font(UIFont.monospacedSystemFont(ofSize: 16, weight: .light)))
                 .frame(alignment: .bottom)
         }
@@ -160,7 +160,7 @@ struct StopwatchView: View {
                 .foregroundColor(.green)
             } else {
                 Button(action: {
-                    if progressTime < viewModel.currentConfig.totalTimeSec {
+                    if progressTime < viewModel.currentConfig.coffeeConfig.totalTimeSec {
                         isStop︎AlertPresented.toggle()
                     } else {
                         stopTimer()
@@ -185,7 +185,7 @@ struct StopwatchView: View {
                 let result = await dripTimingNotificationService.registerNotifications(
                     dripTimings: viewModel.dripInfo.dripTimings,
                     firstDripAtSec: -StopwatchView.progressTimeInit,
-                    totalTimeSec: viewModel.currentConfig.totalTimeSec
+                    totalTimeSec: viewModel.currentConfig.coffeeConfig.totalTimeSec
                 )
                 result.recoverWithErrorLog(&viewModel.errors)
             }
@@ -205,7 +205,7 @@ struct StopwatchView: View {
                             ringSound()
 
                             // For the battery life stop `isIdleTimerDisable` after 10 seconds from `totalTimeSec`.
-                            if progressTime > (viewModel.currentConfig.totalTimeSec + 10.0) && UIApplication.shared.isIdleTimerDisabled {
+                            if progressTime > (viewModel.currentConfig.coffeeConfig.totalTimeSec + 10.0) && UIApplication.shared.isIdleTimerDisabled {
                                 UIApplication.shared.isIdleTimerDisabled = false
                             }
                         }
@@ -234,7 +234,7 @@ struct StopwatchView: View {
             progressTime: progressTime
         ).toInt()
 
-        if nth > hasRingingIndex && progressTime <= viewModel.currentConfig.totalTimeSec {
+        if nth > hasRingingIndex && progressTime <= viewModel.currentConfig.coffeeConfig.totalTimeSec {
             AudioServicesPlaySystemSound(soundIdRing)
             hasRingingIndex = nth
         }

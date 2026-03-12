@@ -23,7 +23,7 @@ public let dripInfoFirstIs100Percent = DripInfo(
         DripTiming(waterAmount: 450.0, dripAt: 155.0),
     ],
     waterAmount: waterAmountFirstIs100Percent,
-    totalTimeSec: Config.defaultValue().totalTimeSec
+    totalTimeSec: CoffeeConfig.defaultValue().totalTimeSec
 )
 
 @MainActor
@@ -39,5 +39,5 @@ public let dripInfoFirstIs100PercentSixtyIs1 = DripInfo(
         DripTiming(waterAmount: 450.0, dripAt: 45.0),
     ],
     waterAmount: waterAmountFirstIs100PercentSixtyIs1,
-    totalTimeSec: Config.defaultValue().totalTimeSec
+    totalTimeSec: CoffeeConfig.defaultValue().totalTimeSec
 )

@@ -2,13 +2,18 @@ import SwiftUI
 import TipKit
 
 public struct ShowConfigView: View {
-    @Binding public var config: Config
+    @Binding public var appConfig: AppConfig
     @Binding public var isLock: Bool
 
-    public init(config: Binding<Config>, isLock: Binding<Bool>) {
-        _config = config
+    public init(
+        _ appConfig: Binding<AppConfig>,
+        _ isLock: Binding<Bool>
+    ) {
+        _appConfig = appConfig
         _isLock = isLock
     }
+
+    @State private var notePlaceholder = NSLocalizedString("config note empty string", comment: "")
 
     public var body: some View {
         if !isLock {
@@ -25,17 +30,27 @@ public struct ShowConfigView: View {
                     }
                 }
                 Group {
-                    if isLock {
-                        Text(config.note ?? NSLocalizedString("config note empty string", comment: ""))
-                    } else {
+                    VStack {
                         TextField(
-                            "config note placeholder",
-                            text: $config.note ?? NSLocalizedString("config note empty string", comment: "")
+                            notePlaceholder,
+                            text: $appConfig.coffeeConfig.note,
+                            onEditingChanged: { (hasChanged) in
+                                if hasChanged && appConfig.coffeeConfig.note.isEmpty {
+                                    notePlaceholder = ""
+                                } else if !hasChanged && appConfig.coffeeConfig.note.isEmpty {
+                                    notePlaceholder = NSLocalizedString("config note empty string", comment: "")
+                                }
+                            }
                         )
                         .multilineTextAlignment(.trailing)
                         .background()
-                        // It's not necessary?
                         .disabled(isLock)
+                        if isLock {
+                            HStack {
+                                Spacer()
+                                InfoTextView("config note cannot edit")
+                            }
+                        }
                     }
                 }
                 .gridColumnAlignment(.trailing)
@@ -44,28 +59,28 @@ public struct ShowConfigView: View {
 
             GridRow {
                 Text("config coffee beans weight")
-                Text("\(config.coffeeBeansWeight, specifier: "%.1f")\(weightUnit)")
+                Text("\(appConfig.globalConfig.coffeeBeansWeightG, specifier: "%.1f")\(weightUnit)")
                     .gridColumnAlignment(.trailing)
             }
             Divider()
 
             GridRow {
                 Text("config water ratio short")
-                Text("\(config.waterToCoffeeBeansWeightRatio, specifier: "%.1f")")
+                Text("\(appConfig.coffeeConfig.waterToCoffeeBeansWeightRatio, specifier: "%.1f")")
                     .gridColumnAlignment(.trailing)
             }
             Divider()
 
             GridRow {
                 Text("config 1st water percent")
-                Text("\(config.firstWaterPercent * 100, specifier: "%.0f")%")
+                Text("\(appConfig.coffeeConfig.firstWaterPercent * 100, specifier: "%.0f")%")
                     .gridColumnAlignment(.trailing)
             }
             Divider()
 
             GridRow {
                 Text("config number of partitions of later 6")
-                Text(String(format: "%1.0f", config.partitionsCountOf6))
+                Text(String(format: "%d", appConfig.coffeeConfig.partitionsCountOf6))
                     .gridColumnAlignment(.trailing)
             }
             Divider()
@@ -73,7 +88,7 @@ public struct ShowConfigView: View {
             GridRow {
                 Text("config total time")
                 HStack {
-                    Text((String(format: "%.0f", config.totalTimeSec)))
+                    Text((String(format: "%.0f", appConfig.coffeeConfig.totalTimeSec)))
                     Text("config sec unit")
                 }
                 .gridColumnAlignment(.trailing)
@@ -83,7 +98,7 @@ public struct ShowConfigView: View {
             GridRow {
                 Text("config steaming time short")
                 HStack {
-                    Text(String(format: "%.0f", config.steamingTimeSec))
+                    Text(String(format: "%.0f", appConfig.coffeeConfig.steamingTimeSec))
                     Text("config sec unit")
                 }
                 .gridColumnAlignment(.trailing)
@@ -94,14 +109,14 @@ public struct ShowConfigView: View {
                 Text("config mill settings").gridCellColumns(2)
             }
             GridRow {
-                MillListView(items: $config.mills).gridCellColumns(2)
+                MillListView(items: appConfig.coffeeConfig.mills).gridCellColumns(2)
             }
             Divider()
 
             GridRow {
                 Text("config last edited at")
                 Text(
-                    config.editedAtMilliSec?.toDate().formattedWithSec()
+                    appConfig.coffeeConfig.editedAtMilliSec?.toDate().formattedWithSec()
                         ?? NSLocalizedString("config none last edited at", comment: "")
                 )
                 .gridColumnAlignment(.trailing)
@@ -113,13 +128,13 @@ public struct ShowConfigView: View {
 
 #if DEBUG
     struct ShowConfigView_Previews: PreviewProvider {
-        @State static var config = Config.defaultValue()
+        @State static var appConfig = AppConfig.defaultValue()
         @State static var isLock = false
 
         static var previews: some View {
             ShowConfigView(
-                config: $config,
-                isLock: $isLock
+                $appConfig,
+                $isLock
             )
         }
     }

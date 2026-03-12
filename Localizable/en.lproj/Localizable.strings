@@ -71,6 +71,7 @@
 "config empty" = "No data";
 "config note placeholder" = "Something to characterize configuration";
 "config note empty string" = "No note";
+"config note cannot edit" = "Cannot edit for now";
 "config save button" = "Save current setting as new";
 "config current config have already been saved" = "The current configuration has already been saved.";
 "config load setting alert title" = "Notice";

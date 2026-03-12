@@ -7,7 +7,7 @@ struct BeforeChecklistView: View {
 
     // We cannot get the number of `viewModel.currentConfig.beforeChecklist` on the initialization
     // so `checks` is initialized `checklistSizeLimit` false values for now.
-    @State private var checks: [Bool] = (0..<Config.maxCheckListSize).map { _ in false }
+    @State private var checks: [Bool] = (0..<CoffeeConfig.maxCheckListSize).map { _ in false }
 
     @State private var editingIndex: Int? = .none
 
@@ -28,13 +28,13 @@ struct BeforeChecklistView: View {
                     Group {
                         if isAllChecked() {
                             Button(action: {
-                                checks = checks.prefix(viewModel.currentConfig.beforeChecklist.count).map({ _ in false })
+                                checks = checks.prefix(viewModel.currentConfig.coffeeConfig.beforeChecklist.count).map({ _ in false })
                             }) {
                                 Text("before check list reset")
                             }
                         } else {
                             Button(action: {
-                                checks = checks.prefix(viewModel.currentConfig.beforeChecklist.count).map({ _ in true })
+                                checks = checks.prefix(viewModel.currentConfig.coffeeConfig.beforeChecklist.count).map({ _ in true })
                             }) {
                                 Text("before check list check all")
                             }
@@ -47,7 +47,7 @@ struct BeforeChecklistView: View {
                         .disabled(appEnvironment.isTimerStarted)
                 }
             ) {
-                ForEach(Array(viewModel.currentConfig.beforeChecklist.enumerated()), id: \.element) { i, item in
+                ForEach(Array(viewModel.currentConfig.coffeeConfig.beforeChecklist.enumerated()), id: \.element) { i, item in
                     Group {
                         if !mode.isEditing {
                             Toggle(isOn: $checks[i]) {
@@ -68,47 +68,47 @@ struct BeforeChecklistView: View {
                     .moveDisabled(appEnvironment.isTimerStarted)
                 }
                 .onDelete(perform: { indexSet in
-                    viewModel.currentConfig.beforeChecklist.remove(atOffsets: indexSet)
+                    viewModel.currentConfig.coffeeConfig.beforeChecklist.remove(atOffsets: indexSet)
                     tmpBeforeChecklist.remove(atOffsets: indexSet)
                     checks.remove(atOffsets: indexSet)
                     checks.append(false)
                 })
                 .onMove(perform: { src, dest in
-                    viewModel.currentConfig.beforeChecklist.move(fromOffsets: src, toOffset: dest)
+                    viewModel.currentConfig.coffeeConfig.beforeChecklist.move(fromOffsets: src, toOffset: dest)
                     tmpBeforeChecklist.move(fromOffsets: src, toOffset: dest)
                     checks.move(fromOffsets: src, toOffset: dest)
                 })
                 .onChange(of: mode) { oldValue, newValue in
                     if newValue.isEditing {
-                        tmpBeforeChecklist = viewModel.currentConfig.beforeChecklist
+                        tmpBeforeChecklist = viewModel.currentConfig.coffeeConfig.beforeChecklist
                     } else {
-                        viewModel.currentConfig.beforeChecklist = tmpBeforeChecklist
+                        viewModel.currentConfig.coffeeConfig.beforeChecklist = tmpBeforeChecklist
                     }
                 }
                 .onAppear {
                     if tmpBeforeChecklist.isEmpty {
-                        tmpBeforeChecklist = viewModel.currentConfig.beforeChecklist
+                        tmpBeforeChecklist = viewModel.currentConfig.coffeeConfig.beforeChecklist
                     }
                 }
                 HStack {
                     Spacer()
                     Button(action: {
-                        let beforeChecklistLastCount = viewModel.currentConfig.beforeChecklist.count
-                        if beforeChecklistLastCount < Config.maxCheckListSize {
-                            editingIndex = .some(viewModel.currentConfig.beforeChecklist.count)
+                        let beforeChecklistLastCount = viewModel.currentConfig.coffeeConfig.beforeChecklist.count
+                        if beforeChecklistLastCount < CoffeeConfig.maxCheckListSize {
+                            editingIndex = .some(viewModel.currentConfig.coffeeConfig.beforeChecklist.count)
 
                             // `beforeChecklist` is identified by its body string.
                             // If the bodies of two items are the same then the items are the same.
                             // To avoid two items identify as the same `placeholder` is required.
                             let placeholder = String(
                                 format: NSLocalizedString("before check list placeholder template", comment: ""), beforeChecklistLastCount + 1)
-                            viewModel.currentConfig.beforeChecklist.append(placeholder)
+                            viewModel.currentConfig.coffeeConfig.beforeChecklist.append(placeholder)
                             tmpBeforeChecklist.append(placeholder)
                         }
                     }) {
                         Image(systemName: "plus.circle")
                     }
-                    .disabled(!mode.isEditing || viewModel.currentConfig.beforeChecklist.count >= Config.maxCheckListSize)
+                    .disabled(!mode.isEditing || viewModel.currentConfig.coffeeConfig.beforeChecklist.count >= CoffeeConfig.maxCheckListSize)
                     Spacer()
                 }
             }
@@ -116,7 +116,7 @@ struct BeforeChecklistView: View {
         .onChange(of: appEnvironment.isTimerStarted) { oldValue, newValue in
             // The checklist will be reset when the timer is reset.
             if oldValue == true && newValue == false {
-                checks = (0..<Config.maxCheckListSize).map { _ in false }
+                checks = (0..<CoffeeConfig.maxCheckListSize).map { _ in false }
             }
         }
         .environment(\.editMode, $mode)
@@ -144,7 +144,7 @@ struct BeforeChecklistView: View {
     }
 
     private func isAllChecked() -> Bool {
-        checks.prefix(viewModel.currentConfig.beforeChecklist.count).allSatisfy({ $0 })
+        checks.prefix(viewModel.currentConfig.coffeeConfig.beforeChecklist.count).allSatisfy({ $0 })
     }
 }
 
@@ -152,18 +152,8 @@ struct BeforeChecklistView: View {
     let epochTimeMillis: UInt64 = 1_723_792_539_843
 
     struct BeforeChecklistView_Previews: PreviewProvider {
-        @State static var currentConfig = CurrentConfigViewModel.init(
-            Config.init(
-                coffeeBeansWeight: 20,
-                partitionsCountOf6: 3,
-                waterToCoffeeBeansWeightRatio: 16,
-                firstWaterPercent: 0.5,
-                totalTimeSec: 210,
-                steamingTimeSec: 45,
-                note: "note",
-                beforeChecklist: ["aaaa", "bbb"],
-                editedAtMilliSec: epochTimeMillis
-            )
+        @State static var currentConfig = CurrentConfigViewModel(
+            AppConfig.defaultValue()
         )
 
         static var previews: some View {

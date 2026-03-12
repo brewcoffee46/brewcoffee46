@@ -14,27 +14,28 @@ final class SaveLoadConfigServiceTests: XCTestCase {
     }
 
     func testSaveCurrentConfigSuccessfully() {
-        let config = Config(
-            coffeeBeansWeight: Config.initCoffeeBeansWeight,
+        let config = CoffeeConfig(
             partitionsCountOf6: 3,
-            waterToCoffeeBeansWeightRatio: Config.initWaterToCoffeeBeansWeightRatio,
+            waterToCoffeeBeansWeightRatio: CoffeeConfig.initWaterToCoffeeBeansWeightRatio,
             firstWaterPercent: 0.5,
-            totalTimeSec: 210,
-            steamingTimeSec: 45,
+            totalTimeMilliSec: 210_000,
+            steamingTimeMilliSec: 45_000,
             note: "",
-            beforeChecklist: Config.initBeforeCheckList,
+            beforeChecklist: CoffeeConfig.initBeforeCheckList,
             editedAtMilliSec: .none,
-            version: Config.currentVersion,
+            version: CoffeeConfig.currentVersion,
         )
+        let globalConfig = GlobalConfig.defaultValue()
+        let appConfig = AppConfig(config, globalConfig)
 
-        let mockUserDefaultsService = MockUserDefaultsService<Config>(successResult)
+        let mockUserDefaultsService = MockUserDefaultsService<AppConfig>(successResult)
         Container.shared.userDefaultsService.register {
             mockUserDefaultsService
         }
         let sut = SaveLoadConfigServiceImpl()
 
-        let actual = sut.saveCurrentConfig(config: config)
+        let actual = sut.saveCurrentConfig(appConfig)
         XCTAssertTrue(actual.isSuccess())
-        XCTAssertEqual(mockUserDefaultsService.inputValues, [config])
+        XCTAssertEqual(mockUserDefaultsService.inputValues, [appConfig])
     }
 }

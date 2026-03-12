@@ -5,7 +5,7 @@ protocol ConvertDegreeService {
     /// - Parameters:
     ///     - progressTime: seconds
     func fromProgressTime(
-        _ config: Config,
+        _ config: CoffeeConfig,
         _ pointerInfo: PointerInfo,
         _ dripInfo: DripInfo,
         _ progressTime: Double
@@ -13,7 +13,7 @@ protocol ConvertDegreeService {
 
     /// - Returns: progress time (seconds).
     func toProgressTime(
-        _ config: Config,
+        _ config: CoffeeConfig,
         _ pointerInfo: PointerInfo,
         _ dripInfo: DripInfo,
         _ degree: Double
@@ -22,7 +22,7 @@ protocol ConvertDegreeService {
 
 final class ConvertDegreeServiceImpl: ConvertDegreeService, Sendable {
     func fromProgressTime(
-        _ config: Config,
+        _ config: CoffeeConfig,
         _ pointerInfo: PointerInfo,
         _ dripInfo: DripInfo,
         _ progressTime: Double
@@ -58,7 +58,7 @@ final class ConvertDegreeServiceImpl: ConvertDegreeService, Sendable {
     private let fortyPercentDegree = 360 * 0.4
 
     func toProgressTime(
-        _ config: Config,
+        _ config: CoffeeConfig,
         _ pointerInfo: PointerInfo,
         _ dripInfo: DripInfo,
         _ degree: Double

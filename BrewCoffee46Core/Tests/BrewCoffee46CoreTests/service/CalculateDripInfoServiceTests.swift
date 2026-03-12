@@ -14,7 +14,7 @@ final class CalculateDripInfoServiceTests: XCTestCase {
             expectedWaterAmount = waterAmount
         }
 
-        func calculate(_ config: Config) -> WaterAmount {
+        func calculate(_ config: AppConfig) -> WaterAmount {
             return expectedWaterAmount
         }
     }
@@ -33,15 +33,15 @@ final class CalculateDripInfoServiceTests: XCTestCase {
 
         let expected = DripInfo.defaultValue()
 
-        let actual = sut.calculate(Config.defaultValue())
+        let actual = sut.calculate(AppConfig.defaultValue())
 
         XCTAssertEqual(actual, expected)
     }
 
     @MainActor
     func test_calculate_when_the_first_water_amount_is_100_percent_successfully() throws {
-        var config = Config.defaultValue()
-        config.firstWaterPercent = 1.0
+        var config = AppConfig.defaultValue()
+        config.coffeeConfig.firstWaterPercent = 1.0
         let mockCalculateWaterAmountService = MockCalculateWaterAmountService(waterAmountFirstIs100Percent)
 
         Container.shared.calculateWaterAmountService.register {
@@ -55,9 +55,9 @@ final class CalculateDripInfoServiceTests: XCTestCase {
 
     @MainActor
     func test_calculate_when_the_number_of_sixty_percent_is_1() throws {
-        var config = Config.defaultValue()
-        config.firstWaterPercent = 1.0
-        config.partitionsCountOf6 = 1
+        var config = AppConfig.defaultValue()
+        config.coffeeConfig.firstWaterPercent = 1.0
+        config.coffeeConfig.partitionsCountOf6 = 1
         let mockCalculateWaterAmountService = MockCalculateWaterAmountService(waterAmountFirstIs100PercentSixtyIs1)
 
         Container.shared.calculateWaterAmountService.register {

@@ -7,7 +7,7 @@ protocol WatchConnectionService: Sendable {
 
     func isReachable() -> Bool
 
-    func sendConfigs(_ configs: [Config]) async -> ResultNea<Void, CoffeeError>
+    func sendConfigs(_ configs: [CoffeeConfig]) async -> ResultNea<Void, CoffeeError>
 }
 
 final class WatchConnectionServiceImpl: NSObject, WatchConnectionService {
@@ -30,7 +30,7 @@ final class WatchConnectionServiceImpl: NSObject, WatchConnectionService {
 
     private let encoder = JSONEncoder()
 
-    func sendConfigs(_ configs: [Config]) async -> ResultNea<Void, CoffeeError> {
+    func sendConfigs(_ configs: [CoffeeConfig]) async -> ResultNea<Void, CoffeeError> {
         do {
             let json = try encoder.encode(configs)
 

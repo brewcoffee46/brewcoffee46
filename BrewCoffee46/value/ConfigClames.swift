@@ -6,7 +6,7 @@ struct ConfigClaims: Claims, Equatable {
     let iss: String
     let iat: Date
     let version: Int
-    let config: Config
+    let config: CoffeeConfig
 }
 
 struct ConfigClaimsWithURL: Equatable {

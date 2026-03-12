@@ -11,12 +11,12 @@ struct SaveLoadView: View {
 
     @Environment(\.scenePhase) private var scenePhase
 
-    @State private var configs: [Config] = []
-    @State private var legacySavedConfigs: [Config] = []
+    @State private var configs: [CoffeeConfig] = []
+    @State private var legacySavedConfigs: [CoffeeConfig] = []
 
     @State private var isLoadAlertPresented: Bool = false
     @State private var isLegacyLoadAlertPresented: Bool = false
-    @State private var selectedConfig: Config? = .none
+    @State private var selectedConfig: CoffeeConfig? = .none
 
     @State private var isEditing: Bool = false
     @State private var mode: EditMode = .inactive
@@ -26,23 +26,23 @@ struct SaveLoadView: View {
             Section(header: Text("config save load current config")) {
                 VStack {
                     ShowConfigView(
-                        config: Binding(
+                        Binding(
                             get: {
                                 var config = viewModel.currentConfig
 
                                 if let lastUpdatedAt = viewModel.currentConfigLastUpdatedAt {
-                                    config.editedAtMilliSec = lastUpdatedAt
+                                    config.coffeeConfig.editedAtMilliSec = lastUpdatedAt
                                 }
                                 return config
                             },
                             set: { viewModel.currentConfig = $0 }
                         ),
-                        isLock: (mode.isEditing || self.appEnvironment.isTimerStarted).getOnlyBinding
+                        (mode.isEditing || self.appEnvironment.isTimerStarted).getOnlyBinding
                     )
                     HStack {
                         Spacer()
                         Button(action: {
-                            var config = viewModel.currentConfig
+                            var config = viewModel.currentConfig.coffeeConfig
 
                             if let lastUpdatedAt = viewModel.currentConfigLastUpdatedAt {
                                 config.editedAtMilliSec = lastUpdatedAt
@@ -58,20 +58,14 @@ struct SaveLoadView: View {
                                 Image(systemName: "plus.square.on.square")
                             }
                         }
-                        .disabled(mode.isEditing || configs.contains(viewModel.currentConfig))
+                        .disabled(mode.isEditing || configs.contains(viewModel.currentConfig.coffeeConfig))
                         .buttonStyle(BorderlessButtonStyle())
                     }
-                    if configs.contains(viewModel.currentConfig) {
+                    if configs.contains(viewModel.currentConfig.coffeeConfig) {
                         HStack {
                             Spacer()
-                            Image(systemName: "exclamationmark.triangle")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 8, height: 8)
-                            Text("config current config have already been saved")
-                                .font(.system(size: 10))
+                            InfoTextView("config current config have already been saved")
                         }
-                        .foregroundStyle(Color.primary.opacity(0.5))
                     }
                 }
             }
@@ -112,7 +106,7 @@ struct SaveLoadView: View {
                                 action: {
                                     isLoadAlertPresented.toggle()
                                     if let config = selectedConfig {
-                                        viewModel.currentConfig = config
+                                        viewModel.currentConfig.coffeeConfig = config
                                         viewModel.currentConfigLastUpdatedAt = .none
                                         selectedConfig = .none
                                     }

@@ -88,7 +88,7 @@ struct ClockView: View {
                             endDegree = (ceil(newValue) - newValue) * 365
                         } else {
                             endDegree = convertDegreeService.fromProgressTime(
-                                viewModel.currentConfig,
+                                viewModel.currentConfig.coffeeConfig,
                                 pointerInfo,
                                 viewModel.dripInfo,
                                 newValue
@@ -103,9 +103,9 @@ struct ClockView: View {
     // Print oblique squares as divisions of a scale.
     private func tick(tick: Int) -> some View {
         let angle: Double = Double(tick) / Double(self.density * 4) * 360
-        let degree = convertDegreeService.fromProgressTime(viewModel.currentConfig, pointerInfo, viewModel.dripInfo, progressTime)
+        let degree = convertDegreeService.fromProgressTime(viewModel.currentConfig.coffeeConfig, pointerInfo, viewModel.dripInfo, progressTime)
         let isMark: Bool = tick % markInterval == 0
-        let caption = convertDegreeService.toProgressTime(viewModel.currentConfig, pointerInfo, viewModel.dripInfo, angle)
+        let caption = convertDegreeService.toProgressTime(viewModel.currentConfig.coffeeConfig, pointerInfo, viewModel.dripInfo, angle)
 
         return VStack {
             Text(isMark ? String(format: "%.0f", round(caption)) : " ")
