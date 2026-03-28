@@ -3,16 +3,16 @@ import Foundation
 
 /// # Save & load user's configuration.
 public protocol SaveLoadConfigService: Sendable {
-    func saveCurrentConfig(config: Config) -> ResultNea<Void, CoffeeError>
+    func saveCurrentConfig(_ config: AppConfig) -> ResultNea<Void, CoffeeError>
 
-    func loadCurrentConfig() -> ResultNea<Config?, CoffeeError>
+    func loadCurrentConfig() -> ResultNea<AppConfig?, CoffeeError>
 
-    func saveAll(configs: [Config]) -> ResultNea<Void, CoffeeError>
+    func saveAll(configs: [CoffeeConfig]) -> ResultNea<Void, CoffeeError>
 
-    func loadAll() -> ResultNea<[Config]?, CoffeeError>
+    func loadAll() -> ResultNea<[CoffeeConfig]?, CoffeeError>
 
     // Save `config` to the last of current all saved configurations.
-    func saveConfig(config: Config) -> ResultNea<Void, CoffeeError>
+    func saveConfig(config: CoffeeConfig) -> ResultNea<Void, CoffeeError>
 
     func delete(key: String) -> Void
 }
@@ -20,23 +20,40 @@ public protocol SaveLoadConfigService: Sendable {
 public final class SaveLoadConfigServiceImpl: SaveLoadConfigService {
     private let userDefaultsService = Container.shared.userDefaultsService()
 
-    public func saveCurrentConfig(config: Config) -> ResultNea<Void, CoffeeError> {
-        return userDefaultsService.setEncodable(config, forKey: userDefaultsKey(SaveLoadConfigServiceImpl.temporaryCurrentConfigKey))
+    public func saveCurrentConfig(_ config: AppConfig) -> ResultNea<Void, CoffeeError> {
+        return userDefaultsService.setEncodable(config, forKey: userDefaultsKey(SaveLoadConfigServiceImpl.currentAppConfigKey))
     }
 
-    public func loadCurrentConfig() -> ResultNea<Config?, CoffeeError> {
-        return userDefaultsService.getDecodable(forKey: userDefaultsKey(SaveLoadConfigServiceImpl.temporaryCurrentConfigKey))
+    public func loadCurrentConfig() -> ResultNea<AppConfig?, CoffeeError> {
+        userDefaultsService.getDecodable(
+            forKey: userDefaultsKey(SaveLoadConfigServiceImpl.currentAppConfigKey)
+        ).flatMap { (appConfigOpt: AppConfig?) in
+            if let appConfig = appConfigOpt {
+                .success(appConfig)
+            } else {
+                // If `appConfig` is not found then try to load only legacy `CoffeeConfig`.
+                userDefaultsService.getDecodable(
+                    forKey: userDefaultsKey(SaveLoadConfigServiceImpl.lagacyCurrentConfigKey)
+                ).map { (configOpt: CoffeeConfig?) in
+                    if let config = configOpt {
+                        .some(AppConfig(config, GlobalConfig.defaultValue()))
+                    } else {
+                        .none
+                    }
+                }
+            }
+        }
     }
 
-    public func saveAll(configs: [Config]) -> ResultNea<Void, CoffeeError> {
+    public func saveAll(configs: [CoffeeConfig]) -> ResultNea<Void, CoffeeError> {
         return userDefaultsService.setEncodable(configs, forKey: userDefaultsKey(SaveLoadConfigServiceImpl.configsKey))
     }
 
-    public func loadAll() -> ResultNea<[Config]?, CoffeeError> {
+    public func loadAll() -> ResultNea<[CoffeeConfig]?, CoffeeError> {
         return userDefaultsService.getDecodable(forKey: userDefaultsKey(SaveLoadConfigServiceImpl.configsKey))
     }
 
-    public func saveConfig(config: Config) -> ResultNea<Void, CoffeeError> {
+    public func saveConfig(config: CoffeeConfig) -> ResultNea<Void, CoffeeError> {
         return loadAll().flatMap { configsOpt in
             if var configs = configsOpt {
                 configs.insert(config, at: 0)
@@ -60,7 +77,9 @@ public final class SaveLoadConfigServiceImpl: SaveLoadConfigService {
 extension SaveLoadConfigServiceImpl {
     static internal let keyPrefix = "saved_config"
 
-    static internal let temporaryCurrentConfigKey = "temporaryCurrentConfig"
+    static internal let lagacyCurrentConfigKey = "temporaryCurrentConfig"
+
+    static internal let currentAppConfigKey = "currentAppConfig"
 
     static internal let configsKey = "configs"
 }

@@ -12,7 +12,7 @@ final class MockValidateInputService: ValidateInputService {
         self.dummyResult = dummyResult
     }
 
-    func validate(config: Config) -> ResultNea<Void, CoffeeError> {
+    func validate(_ config: AppConfig) -> ResultNea<Void, CoffeeError> {
         dummyResult
     }
 }
@@ -22,20 +22,20 @@ final class RawSettingConvertServiceTests: XCTestCase {
     let ms = [
         RawMill(name: "Comandante C60", value: "4.5")
     ]
-    let initConfig = Config(
-        coffeeBeansWeight: 11.8,
-        partitionsCountOf6: 4.0,
+    let initConfig = CoffeeConfig(
+        partitionsCountOf6: 4,
         waterToCoffeeBeansWeightRatio: 15.9,
         firstWaterPercent: 0.5,
-        totalTimeSec: 210.0,
-        steamingTimeSec: 40.0,
-        note: .none,
+        totalTimeMilliSec: 210_000,
+        steamingTimeMilliSec: 40_000,
+        note: "",
         beforeChecklist: [],
         editedAtMilliSec: BrewCoffee46TestsShared.epochTimeMillis,
         mills: [
             Mill(name: "Comandante C60", value: "4.5")
         ]
     )
+    let globalConfig = GlobalConfig(11_800)
 
     override class func setUp() {
         Container.shared.reset()
@@ -50,6 +50,7 @@ final class RawSettingConvertServiceTests: XCTestCase {
     }
 
     func testConvertToOnCalculateCoffeeBeansWeightFromWaterIsFalse() {
+        let appConfig = AppConfig(initConfig, globalConfig)
         let rawSetting = RawSetting(
             calculateCoffeeBeansWeightFromWater: false,
             waterAmount: dummyValue,
@@ -63,15 +64,16 @@ final class RawSettingConvertServiceTests: XCTestCase {
         )
         let sut = RawSettingConvertServiceImpl()
 
-        let actual = sut.toConfig(rawSetting, initConfig)
+        let actual = sut.toConfig(rawSetting, appConfig)
 
         XCTAssertTrue(actual.isSuccess())
-        actual.forEach { config in
-            XCTAssertEqual(config.coffeeBeansWeight, rawSetting.coffeeBeansWeight)
+        actual.forEach { (config: AppConfig) in
+            XCTAssertEqual(config.globalConfig.coffeeBeansWeightG, rawSetting.coffeeBeansWeight)
         }
     }
 
     func testConvertToOnCalculateCoffeeBeansWeightFromWaterIsTrue() {
+        let appConfig = AppConfig(initConfig, globalConfig)
         let rawSetting = RawSetting(
             calculateCoffeeBeansWeightFromWater: true,
             waterAmount: 187.6,
@@ -85,15 +87,16 @@ final class RawSettingConvertServiceTests: XCTestCase {
         )
         let sut = RawSettingConvertServiceImpl()
 
-        let actual = sut.toConfig(rawSetting, initConfig)
+        let actual = sut.toConfig(rawSetting, appConfig)
 
         XCTAssertTrue(actual.isSuccess())
-        actual.forEach { config in
-            XCTAssertEqual(config.totalWaterAmount(), rawSetting.waterAmount)
+        actual.forEach { (config: AppConfig) in
+            XCTAssertEqual(config.totalWaterAmountG(), rawSetting.waterAmount)
         }
     }
 
     func testConvertToAndConvertFrom() {
+        let appConfig = AppConfig(initConfig, globalConfig)
         let rawSetting = RawSetting(
             calculateCoffeeBeansWeightFromWater: false,
             waterAmount: dummyValue,
@@ -108,16 +111,17 @@ final class RawSettingConvertServiceTests: XCTestCase {
 
         let sut = RawSettingConvertServiceImpl()
 
-        let actual1 = sut.fromConfig(initConfig, rawSetting)
-        let actual2 = sut.toConfig(actual1, initConfig)
+        let actual1 = sut.fromConfig(appConfig, rawSetting)
+        let actual2 = sut.toConfig(actual1, appConfig)
 
         XCTAssertTrue(actual2.isSuccess())
         actual2.forEach { actualConfig in
-            XCTAssertEqual(initConfig, actualConfig)
+            XCTAssertEqual(appConfig, actualConfig)
         }
     }
 
     func testWaterAmountOfConfigEqaulsToRawSettingWhenCalculateCoffeeBeansWeightFromWaterIsTrue() {
+        let appConfig = AppConfig(initConfig, globalConfig)
         let rawSetting = RawSetting(
             calculateCoffeeBeansWeightFromWater: true,
             waterAmount: 400.2,
@@ -132,7 +136,7 @@ final class RawSettingConvertServiceTests: XCTestCase {
 
         let sut = RawSettingConvertServiceImpl()
 
-        let actual1 = sut.toConfig(rawSetting, initConfig)
+        let actual1 = sut.toConfig(rawSetting, appConfig)
         XCTAssertTrue(actual1.isSuccess())
 
         actual1.forEach { config in

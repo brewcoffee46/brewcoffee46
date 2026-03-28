@@ -1,8 +1,11 @@
 import SwiftUI
 
 struct InfoView: View {
+    static private let marketingVersion = (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "Unknown"
+    static private let projectVersion = (Bundle.main.infoDictionary?["CFBundleVersion"] as? String) ?? "Unknown"
+
     #if DEBUG
-        private let debug: String = " (Debug)"
+        private let debug: String = "-\(projectVersion) (Debug)"
     #else
         private let debug: String = ""
     #endif
@@ -10,7 +13,7 @@ struct InfoView: View {
     var body: some View {
         Form {
             Section(header: Text("info version")) {
-                Text("\((Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String)!)\(debug)")
+                Text("\(InfoView.marketingVersion)\(debug)")
             }
 
             Section(header: Text("info license header")) {

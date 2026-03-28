@@ -21,11 +21,8 @@ struct UniversalLinksImportView: View {
 
                 Section(header: Text("config universal links import imported config")) {
                     ShowConfigView(
-                        config: Binding(
-                            get: { config },
-                            set: { c in config = c }
-                        ),
-                        isLock: false.getOnlyBinding
+                        $viewModel.currentConfig,
+                        false.getOnlyBinding
                     )
 
                     HStack {
@@ -120,7 +117,7 @@ struct UniversalLinksImportView: View {
         .navigationTitle("config universal links import title")
     }
 
-    private func exportJSON(_ config: Config) {
+    private func exportJSON(_ config: CoffeeConfig) {
         viewModel.errors = ""
         switch config.toJSON(isPrettyPrint: true) {
         case .success(let j):
@@ -144,7 +141,7 @@ struct UniversalLinksImportView: View {
                                 string:
                                     "https://brewcoffee46.github.io/app/v1.html?config=eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJpYXQiOjE3NTg1MjQ3MjQuNzExNTk3LCJpc3MiOiJCcmV3Q29mZmVlNDYiLCJ2ZXJzaW9uIjoxLCJjb25maWciOnsidG90YWxUaW1lU2VjIjoyMTAsImNvZmZlZUJlYW5zV2VpZ2h0IjoxNiwiZmlyc3RXYXRlclBlcmNlbnQiOjAuNSwibm90ZSI6IuOCqOODs-OCuOODi-OCouODm-ODg-ODiOOCs-ODvOODkuODvCIsInBhcnRpdGlvbnNDb3VudE9mNiI6MywiYmVmb3JlQ2hlY2tsaXN0IjpbIuOBiua5r-OCkuayuOOBi-OBmSIsIuODleOCo-ODq-OCv-ODvOOCkuODieODquODg-ODkeODvOOBq-OCu-ODg-ODiCIsIuODleOCo-ODq-OCv-ODvOOCkuODquODs-OCuSIsIuOCs-ODvOODkuODvOeyieOCkuOCu-ODg-ODiCIsIuOCueOCseODvOODq-OCkuODquOCu-ODg-ODiCJdLCJlZGl0ZWRBdE1pbGxpU2VjIjoxNzU4NTI0NjY2ODc4LCJ2ZXJzaW9uIjoxLCJzdGVhbWluZ1RpbWVTZWMiOjQ1LCJ3YXRlclRvQ29mZmVlQmVhbnNXZWlnaHRSYXRpbyI6MTZ9fQ"
                             )!,
-                            configClaims: ConfigClaims(iss: "dummy", iat: Date.now, version: 1, config: Config.defaultValue())
+                            configClaims: ConfigClaims(iss: "dummy", iat: Date.now, version: 1, config: CoffeeConfig.defaultValue())
                         )
                         return env
                     }()

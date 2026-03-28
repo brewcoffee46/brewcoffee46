@@ -1,38 +1,37 @@
 import Factory
 import Foundation
 
-public struct Config: Equatable, Sendable {
-    public var coffeeBeansWeight: Double
-
-    public var partitionsCountOf6: Double
+public struct CoffeeConfig: Equatable, Hashable, Sendable {
+    public var partitionsCountOf6: Int
 
     public var waterToCoffeeBeansWeightRatio: Double
 
     public var firstWaterPercent: Double
 
-    public var totalTimeSec: Double
+    public var totalTimeMilliSec: MilliSecond
 
-    public var steamingTimeSec: Double
+    public var steamingTimeMilliSec: MilliSecond
 
     public var mills: [Mill]
 
-    public var note: String?
+    public var note: String
 
     public var beforeChecklist: [String]
 
     /// Unix epoch time as milli seconds.
-    public var editedAtMilliSec: UInt64?
+    public var editedAtMilliSec: MilliSecond?
 
     // If the JSON compatibility of `Config` falls then `version` will increment.
     public let version: Int
 
     enum CodingKeys: String, CodingKey {
-        case coffeeBeansWeight
         case partitionsCountOf6
         case waterToCoffeeBeansWeightRatio
         case firstWaterPercent
-        case totalTimeSec
-        case steamingTimeSec
+        case totalTimeSec  // legacy config key
+        case totalTimeMilliSec
+        case steamingTimeSec  // legacy config key
+        case steamingTimeMilliSec
         case version
         case mills
         case note
@@ -41,24 +40,22 @@ public struct Config: Equatable, Sendable {
     }
 
     public init(
-        coffeeBeansWeight: Double,
-        partitionsCountOf6: Double,
+        partitionsCountOf6: Int,
         waterToCoffeeBeansWeightRatio: Double,
         firstWaterPercent: Double,
-        totalTimeSec: Double,
-        steamingTimeSec: Double,
-        note: String?,
+        totalTimeMilliSec: UInt64,
+        steamingTimeMilliSec: UInt64,
+        note: String,
         beforeChecklist: [String],
         editedAtMilliSec: UInt64?,
         mills: [Mill] = [],
-        version: Int = Config.currentVersion
+        version: Int = CoffeeConfig.currentVersion
     ) {
-        self.coffeeBeansWeight = coffeeBeansWeight
         self.partitionsCountOf6 = partitionsCountOf6
         self.waterToCoffeeBeansWeightRatio = waterToCoffeeBeansWeightRatio
         self.firstWaterPercent = firstWaterPercent
-        self.totalTimeSec = totalTimeSec
-        self.steamingTimeSec = steamingTimeSec
+        self.totalTimeMilliSec = totalTimeMilliSec
+        self.steamingTimeMilliSec = steamingTimeMilliSec
         self.mills = mills
         self.note = note
         self.beforeChecklist = beforeChecklist
@@ -67,10 +64,10 @@ public struct Config: Equatable, Sendable {
     }
 }
 
-extension Config {
-    public static let currentVersion: Int = 1
+extension CoffeeConfig {
+    public static let currentVersion: Int = 2
 
-    public static let initCoffeeBeansWeight: Double = 30.0
+    public static let validVersions: Set<Int> = [currentVersion, 1]
 
     public static let initWaterToCoffeeBeansWeightRatio: Double = 15.0
 
@@ -80,27 +77,26 @@ extension Config {
         NSLocalizedString("before check list \(i)", comment: "")
     }
 
-    public static func defaultValue() -> Config {
-        Config(
-            coffeeBeansWeight: Config.initCoffeeBeansWeight,
+    public static func defaultValue() -> CoffeeConfig {
+        CoffeeConfig(
             partitionsCountOf6: 3,
-            waterToCoffeeBeansWeightRatio: Config.initWaterToCoffeeBeansWeightRatio,
+            waterToCoffeeBeansWeightRatio: CoffeeConfig.initWaterToCoffeeBeansWeightRatio,
             firstWaterPercent: 0.5,
-            totalTimeSec: 210,
-            steamingTimeSec: 45,
+            totalTimeMilliSec: 210_000,
+            steamingTimeMilliSec: 45_000,
             note: "",
-            beforeChecklist: Config.initBeforeCheckList,
+            beforeChecklist: CoffeeConfig.initBeforeCheckList,
             editedAtMilliSec: .none,
-            version: Config.currentVersion
+            version: CoffeeConfig.currentVersion
         )
     }
 
-    public func totalWaterAmount() -> Double {
-        roundCentesimal(coffeeBeansWeight * self.waterToCoffeeBeansWeightRatio)
+    public var totalTimeSec: Double {
+        Double(totalTimeMilliSec) / 1000.0
     }
 
-    public func fortyPercentWaterAmount() -> Double {
-        roundCentesimal(totalWaterAmount() * 0.4)
+    public var steamingTimeSec: Double {
+        Double(steamingTimeMilliSec) / 1000.0
     }
 
     public func toJSON(isPrettyPrint: Bool) -> ResultNea<String, CoffeeError> {
@@ -115,11 +111,11 @@ extension Config {
         }
     }
 
-    public static func fromJSON(_ json: String) -> ResultNea<Config, CoffeeError> {
+    public static func fromJSON(_ json: String) -> ResultNea<CoffeeConfig, CoffeeError> {
         let decoder = JSONDecoder()
         let jsonData = json.data(using: .utf8)!
         do {
-            let config = try decoder.decode(Config.self, from: jsonData)
+            let config = try decoder.decode(CoffeeConfig.self, from: jsonData)
             if config.version == currentVersion {
                 return Result.success(config)
             } else {
@@ -131,52 +127,46 @@ extension Config {
     }
 }
 
-extension Config: Decodable {
+extension CoffeeConfig: Decodable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        coffeeBeansWeight = try values.decode(Double.self, forKey: .coffeeBeansWeight)
-        partitionsCountOf6 = try Double(values.decode(Int.self, forKey: .partitionsCountOf6))
+        let version = try values.decode(Int.self, forKey: .version)
+        partitionsCountOf6 = try values.decode(Int.self, forKey: .partitionsCountOf6)
         waterToCoffeeBeansWeightRatio = try values.decode(Double.self, forKey: .waterToCoffeeBeansWeightRatio)
         firstWaterPercent = try values.decode(Double.self, forKey: .firstWaterPercent)
-        totalTimeSec = try Double(values.decode(Int.self, forKey: .totalTimeSec))
-        steamingTimeSec = try Double(values.decode(Int.self, forKey: .steamingTimeSec))
+
+        if version == 1 {
+            let totalTimeSec = try values.decode(Double.self, forKey: .totalTimeSec)
+            let steamingTimeSec = try values.decode(Double.self, forKey: .steamingTimeSec)
+            totalTimeMilliSec = MilliSecond.fromSecond(totalTimeSec)
+            steamingTimeMilliSec = MilliSecond.fromSecond(steamingTimeSec)
+        } else {
+            totalTimeMilliSec = try values.decode(UInt64.self, forKey: .totalTimeMilliSec)
+            steamingTimeMilliSec = try values.decode(UInt64.self, forKey: .steamingTimeMilliSec)
+        }
+
         mills = try values.decodeIfPresent([Mill].self, forKey: .mills) ?? []
-        note = try values.decodeIfPresent(String.self, forKey: .note)
-        let rawBeforeChecklist = try values.decodeIfPresent([String].self, forKey: .beforeChecklist) ?? Config.initBeforeCheckList
-        beforeChecklist = Array(rawBeforeChecklist.prefix(Config.maxCheckListSize))
+        note = try values.decodeIfPresent(String.self, forKey: .note) ?? ""
+        let rawBeforeChecklist = try values.decodeIfPresent([String].self, forKey: .beforeChecklist) ?? CoffeeConfig.initBeforeCheckList
+        beforeChecklist = Array(rawBeforeChecklist.prefix(CoffeeConfig.maxCheckListSize))
         editedAtMilliSec = try values.decodeIfPresent(UInt64.self, forKey: .editedAtMilliSec)
-        version = try values.decode(Int.self, forKey: .version)
+
+        self.version = CoffeeConfig.currentVersion
     }
 }
 
-extension Config: Encodable {
+extension CoffeeConfig: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(coffeeBeansWeight, forKey: .coffeeBeansWeight)
         try container.encode(Int(partitionsCountOf6), forKey: .partitionsCountOf6)
         try container.encode(waterToCoffeeBeansWeightRatio, forKey: .waterToCoffeeBeansWeightRatio)
         try container.encode(firstWaterPercent, forKey: .firstWaterPercent)
-        try container.encode(totalTimeSec, forKey: .totalTimeSec)
-        try container.encode(steamingTimeSec, forKey: .steamingTimeSec)
+        try container.encode(totalTimeMilliSec, forKey: .totalTimeMilliSec)
+        try container.encode(steamingTimeMilliSec, forKey: .steamingTimeMilliSec)
         try container.encode(mills, forKey: .mills)
-        try container.encodeIfPresent(note, forKey: .note)
+        try container.encode(note, forKey: .note)
         try container.encode(beforeChecklist, forKey: .beforeChecklist)
         try container.encodeIfPresent(editedAtMilliSec, forKey: .editedAtMilliSec)
         try container.encode(version, forKey: .version)
-    }
-}
-
-extension Config: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(coffeeBeansWeight)
-        hasher.combine(partitionsCountOf6)
-        hasher.combine(firstWaterPercent)
-        hasher.combine(steamingTimeSec)
-        hasher.combine(totalTimeSec)
-        hasher.combine(waterToCoffeeBeansWeightRatio)
-        hasher.combine(note)
-        hasher.combine(beforeChecklist)
-        hasher.combine(editedAtMilliSec)
-        hasher.combine(version)
     }
 }

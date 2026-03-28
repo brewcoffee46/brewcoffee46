@@ -7,11 +7,11 @@ import XCTest
 
 final class MockJWTService: JWTService, @unchecked Sendable {
     let dummyConfigClaims: ResultNea<ConfigClaims, CoffeeError>
-    let dummyStringFunc: (Config) -> ResultNea<String, CoffeeError>
+    let dummyStringFunc: (CoffeeConfig) -> ResultNea<String, CoffeeError>
 
     init(
         dummyConfigClaims: ResultNea<ConfigClaims, CoffeeError>,
-        dummyStringFunc: @escaping (Config) -> ResultNea<String, CoffeeError>
+        dummyStringFunc: @escaping (CoffeeConfig) -> ResultNea<String, CoffeeError>
     ) {
         self.dummyConfigClaims = dummyConfigClaims
         self.dummyStringFunc = dummyStringFunc
@@ -21,7 +21,7 @@ final class MockJWTService: JWTService, @unchecked Sendable {
         return dummyConfigClaims
     }
 
-    func sign(config: Config) -> ResultNea<String, CoffeeError> {
+    func sign(config: CoffeeConfig) -> ResultNea<String, CoffeeError> {
         return dummyStringFunc(config)
     }
 }
@@ -36,7 +36,7 @@ final class ConfigurationLinkServiceTests: XCTestCase {
         iss: "iss",
         iat: getDate(),
         version: 1,
-        config: Config.defaultValue()
+        config: CoffeeConfig.defaultValue()
     )
 
     func testGetFromURLSuccessfully() throws {
@@ -72,7 +72,7 @@ final class ConfigurationLinkServiceTests: XCTestCase {
 
     func testGenerateURLSuccessfully() throws {
         let dummyString = "dummy"
-        let config = Config.defaultValue()
+        let config = CoffeeConfig.defaultValue()
         let expectedEditedAtMilliSec = config.editedAtMilliSec
         let mockJWTService = MockJWTService(
             dummyConfigClaims: .success(configClaims),
@@ -113,7 +113,7 @@ final class ConfigurationLinkServiceTests: XCTestCase {
         }
         let sut = ConfigurationLinkServiceImpl()
 
-        let actual = sut.generate(config: Config.defaultValue(), currentConfigLastUpdatedAt: currentConfigLastUpdatedAt)
+        let actual = sut.generate(config: CoffeeConfig.defaultValue(), currentConfigLastUpdatedAt: currentConfigLastUpdatedAt)
         XCTAssertEqual(
             actual,
             .success(

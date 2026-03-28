@@ -3,19 +3,18 @@ import XCTest
 
 @testable import BrewCoffee46Core
 
-final class ConfigTests: XCTestCase {
+final class CoffeeConfigTests: XCTestCase {
     func testDecodeFromJsonWithoutBeforeChecklistSuccessfully() throws {
-        let expected = Config(
-            coffeeBeansWeight: 24,
+        let expected = CoffeeConfig(
             partitionsCountOf6: 3,
             waterToCoffeeBeansWeightRatio: 16,
             firstWaterPercent: 0.5,
-            totalTimeSec: 210,
-            steamingTimeSec: 45,
+            totalTimeMilliSec: 210_000,
+            steamingTimeMilliSec: 45_000,
             note: "note",
-            beforeChecklist: Config.initBeforeCheckList,
+            beforeChecklist: CoffeeConfig.initBeforeCheckList,
             editedAtMilliSec: .none,
-            version: 1
+            version: 2
         )
         let json = """
             {
@@ -30,24 +29,23 @@ final class ConfigTests: XCTestCase {
             }
             """
 
-        XCTAssertEqual(Config.fromJSON(json), .success(expected))
+        XCTAssertEqual(CoffeeConfig.fromJSON(json), .success(expected))
     }
 
     func testDecodeFromJsonSuccessfully() throws {
-        let expected = Config(
-            coffeeBeansWeight: 24,
+        let expected = CoffeeConfig(
             partitionsCountOf6: 3,
             waterToCoffeeBeansWeightRatio: 16,
             firstWaterPercent: 0.5,
-            totalTimeSec: 210,
-            steamingTimeSec: 45,
+            totalTimeMilliSec: 210_000,
+            steamingTimeMilliSec: 45_000,
             note: "note",
             beforeChecklist: [
                 "first",
                 "second",
             ],
             editedAtMilliSec: .none,
-            version: 1
+            version: 2
         )
         let json = """
             {
@@ -63,24 +61,23 @@ final class ConfigTests: XCTestCase {
             }
             """
 
-        XCTAssertEqual(Config.fromJSON(json), .success(expected))
+        XCTAssertEqual(CoffeeConfig.fromJSON(json), .success(expected))
     }
 
     func testDecodeFromJsonWithEditedAtMilliSecSuccessfully() throws {
-        let expected = Config(
-            coffeeBeansWeight: 24,
+        let expected = CoffeeConfig(
             partitionsCountOf6: 3,
             waterToCoffeeBeansWeightRatio: 16,
             firstWaterPercent: 0.5,
-            totalTimeSec: 210,
-            steamingTimeSec: 45,
+            totalTimeMilliSec: 210_000,
+            steamingTimeMilliSec: 45_000,
             note: "note",
             beforeChecklist: [
                 "first",
                 "second",
             ],
             editedAtMilliSec: .some(epochTimeMillis),
-            version: 1
+            version: 2
         )
         let json = """
             {
@@ -97,6 +94,6 @@ final class ConfigTests: XCTestCase {
             }
             """
 
-        XCTAssertEqual(Config.fromJSON(json), .success(expected))
+        XCTAssertEqual(CoffeeConfig.fromJSON(json), .success(expected))
     }
 }

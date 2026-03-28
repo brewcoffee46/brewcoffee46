@@ -108,3 +108,6 @@ GoogleService-Info*.plist
 
 # license-plist artifacts
 BrewCoffee46/Settings.bundle/com.mono0926.LicensePlist*
+
+# auto update CFBundleVersion
+InfoPlistPrefix.h

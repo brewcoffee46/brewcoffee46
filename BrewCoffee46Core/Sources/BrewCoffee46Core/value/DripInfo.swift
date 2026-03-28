@@ -22,7 +22,9 @@ public struct DripInfo: Equatable {
 
 extension DripInfo {
     static public func defaultValue() -> DripInfo {
-        DripInfo(
+        let config = CoffeeConfig.defaultValue()
+
+        return DripInfo(
             dripTimings: [
                 DripTiming(waterAmount: 90.0, dripAt: 0.0),
                 DripTiming(waterAmount: 180.0, dripAt: 45.0),
@@ -31,7 +33,7 @@ extension DripInfo {
                 DripTiming(waterAmount: 450.0, dripAt: 168.75),
             ],
             waterAmount: WaterAmount.defaultValue(),
-            totalTimeSec: Config.defaultValue().totalTimeSec
+            totalTimeSec: config.totalTimeSec,
         )
     }
 }

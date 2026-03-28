@@ -1,10 +1,10 @@
 import SwiftUI
 
 public struct MillListView: View {
-    @Binding private var items: [Mill]
+    private var items: [Mill]
 
-    public init(items: Binding<[Mill]>) {
-        self._items = items
+    public init(items: [Mill]) {
+        self.items = items
     }
 
     public var body: some View {

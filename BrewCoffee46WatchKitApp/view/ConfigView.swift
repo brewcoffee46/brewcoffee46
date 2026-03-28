@@ -11,9 +11,9 @@ struct ConfigView: View {
             Section(header: Text("config save load current config")) {
                 ScrollView {
                     ShowConfigView(
-                        config: $viewModel.currentConfig,
+                        $viewModel.currentConfig,
                         // In WatchKitApp, editing configuration is always disabled so `isLock` is always `true`.
-                        isLock: $alwaysLocked
+                        $alwaysLocked
                     )
                 }
             }

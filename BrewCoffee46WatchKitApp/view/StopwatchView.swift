@@ -59,17 +59,17 @@ struct StopwatchView: View {
                                 .fixedSize()
                                 .frame(alignment: .bottom)
                                 .foregroundColor(
-                                    progressTime < viewModel.currentConfig.totalTimeSec ? .primary : .red
+                                    progressTime < viewModel.currentConfig.coffeeConfig.totalTimeSec ? .primary : .red
                                 )
                             Spacer()
-                            Text(String(format: "/ %3.0f sec", viewModel.currentConfig.totalTimeSec))
+                            Text(String(format: "/ %3.0f sec", viewModel.currentConfig.coffeeConfig.totalTimeSec))
                                 .font(Font(UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)))
                                 .fixedSize()
                                 .frame(alignment: .bottom)
                         }
                         Spacer()
                         Button(action: {
-                            if progressTime < viewModel.currentConfig.totalTimeSec {
+                            if progressTime < viewModel.currentConfig.coffeeConfig.totalTimeSec {
                                 isStop︎AlertPresented.toggle()
                             } else {
                                 stopTimer()
@@ -114,7 +114,7 @@ struct StopwatchView: View {
                             let result = await dripTimingNotificationService.registerNotifications(
                                 dripTimings: viewModel.dripInfo.dripTimings,
                                 firstDripAtSec: countDownInit,
-                                totalTimeSec: viewModel.currentConfig.totalTimeSec
+                                totalTimeSec: viewModel.currentConfig.coffeeConfig.totalTimeSec
                             )
                             result.recoverWithErrorLog(&viewModel.log)
                         }
@@ -183,7 +183,7 @@ struct StopwatchView: View {
                             if index == totalDripCount - 1 {
                                 ProgressView(
                                     value: (progressTime - viewModel.dripInfo.dripTimings[index].dripAt)
-                                        / (viewModel.currentConfig.totalTimeSec - viewModel.dripInfo.dripTimings[index].dripAt)
+                                        / (viewModel.currentConfig.coffeeConfig.totalTimeSec - viewModel.dripInfo.dripTimings[index].dripAt)
                                 )
                                 .tint(.blue)
                             } else {

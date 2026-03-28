@@ -8,6 +8,8 @@ struct RootView: View {
 
     @Injected(\.saveLoadConfigService) private var saveLoadConfigService
 
+    @State var rawGlobalConfig = RawGlobalConfig(coffeeBeansWeightMg: 1000_0)
+
     var body: some View {
         List {
             NavigationLink(value: Route.selectConfig) {
@@ -18,7 +20,7 @@ struct RootView: View {
                     }
                     Spacer()
                     HStack(alignment: .bottom) {
-                        Text(viewModel.currentConfig.note ??? NSLocalizedString("config note empty string", comment: ""))
+                        Text(viewModel.currentConfig.coffeeConfig.note ??? NSLocalizedString("config note empty string", comment: ""))
                         Spacer()
                         Image(systemName: "ellipsis.circle.fill")
                             .resizable()
@@ -29,8 +31,8 @@ struct RootView: View {
             }
             .disabled(appEnvironment.isTimerStarted)
 
-            Stepper(value: $viewModel.currentConfig.coffeeBeansWeight, step: 0.1) {
-                Text("\(viewModel.currentConfig.coffeeBeansWeight, specifier: "%.1f")\(weightUnit)")
+            Stepper(value: $rawGlobalConfig.coffeeBeansWeightG, step: 0.1) {
+                Text("\(rawGlobalConfig.coffeeBeansWeightG, specifier: "%.1f")\(weightUnit)")
                     .font(.system(size: 19))
             }
             .disabled(appEnvironment.isTimerStarted)
@@ -57,6 +59,8 @@ struct RootView: View {
             )
         }
         .onAppear {
+            rawGlobalConfig.coffeeBeansWeightG = viewModel.currentConfig.globalConfig.coffeeBeansWeightG
+
             if viewModel.allConfigs.isEmpty {
                 saveLoadConfigService.loadAll().map {
                     if let allConfigs = $0 {
@@ -64,6 +68,9 @@ struct RootView: View {
                     }
                 }.forEachError { viewModel.log = $0.getAllErrorMessage() }
             }
+        }
+        .onChange(of: rawGlobalConfig) { (_, newValue) in
+            self.viewModel.currentConfig.globalConfig.coffeeBeansWeightMg = MilliGram.fromGram(newValue.coffeeBeansWeightG)
         }
         .navigation(path: $appEnvironment.rootPath)
     }

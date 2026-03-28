@@ -6,7 +6,6 @@ public final class MockUserDefaultsService<T>: UserDefaultsService, @unchecked S
 
     public init(_ dummyResult: ResultNea<Any?, CoffeeError>) {
         self.dummyResult = dummyResult
-        //self.inputValues = inputValues
     }
 
     public func setEncodable<A: Encodable>(_ value: A, forKey defaultName: String) -> ResultNea<Void, CoffeeError> {

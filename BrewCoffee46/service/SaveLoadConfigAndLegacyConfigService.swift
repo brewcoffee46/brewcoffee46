@@ -2,7 +2,7 @@ import BrewCoffee46Core
 import Factory
 
 public protocol SaveLoadConfigAndLegacyConfigService: SaveLoadConfigService {
-    func loadAllLegacyConfigs() -> ResultNea<[Config], CoffeeError>
+    func loadAllLegacyConfigs() -> ResultNea<[CoffeeConfig], CoffeeError>
 
     func deleteAllLegacyConfigs() -> Void
 }
@@ -15,11 +15,11 @@ final class SaveLoadConfigAndLegacyConfigServiceImpl: SaveLoadConfigAndLegacyCon
         "saved_config_\(key)"
     }
 
-    func loadAllLegacyConfigs() -> ResultNea<[Config], CoffeeError> {
+    func loadAllLegacyConfigs() -> ResultNea<[CoffeeConfig], CoffeeError> {
         return Array(0..<SaveLoadConfigAndLegacyConfigServiceImpl.numberOfLegacySavedConfigs)
             .reduce(
                 .success([]),
-                { (acc: ResultNea<[Config], CoffeeError>, i: Int) -> ResultNea<[Config], CoffeeError> in
+                { (acc: ResultNea<[CoffeeConfig], CoffeeError>, i: Int) -> ResultNea<[CoffeeConfig], CoffeeError> in
                     acc.flatMap { results in
                         userDefaultsService
                             .getDecodable(forKey: legacyConfigDefaultsKey(String(i)))
@@ -35,23 +35,23 @@ final class SaveLoadConfigAndLegacyConfigServiceImpl: SaveLoadConfigAndLegacyCon
         }
     }
 
-    func saveCurrentConfig(config: Config) -> ResultNea<Void, CoffeeError> {
-        saveLoadConfigService.saveCurrentConfig(config: config)
+    func saveCurrentConfig(_ config: AppConfig) -> ResultNea<Void, CoffeeError> {
+        saveLoadConfigService.saveCurrentConfig(config)
     }
 
-    func loadCurrentConfig() -> ResultNea<Config?, CoffeeError> {
+    func loadCurrentConfig() -> ResultNea<AppConfig?, CoffeeError> {
         saveLoadConfigService.loadCurrentConfig()
     }
 
-    func saveAll(configs: [Config]) -> ResultNea<Void, CoffeeError> {
+    func saveAll(configs: [CoffeeConfig]) -> ResultNea<Void, CoffeeError> {
         saveLoadConfigService.saveAll(configs: configs)
     }
 
-    func loadAll() -> ResultNea<[Config]?, CoffeeError> {
+    func loadAll() -> ResultNea<[CoffeeConfig]?, CoffeeError> {
         saveLoadConfigService.loadAll()
     }
 
-    func saveConfig(config: Config) -> ResultNea<Void, CoffeeError> {
+    func saveConfig(config: CoffeeConfig) -> ResultNea<Void, CoffeeError> {
         saveLoadConfigService.saveConfig(config: config)
     }
 

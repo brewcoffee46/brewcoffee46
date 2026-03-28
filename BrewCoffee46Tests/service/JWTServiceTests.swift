@@ -12,17 +12,16 @@ final class JWTServiceTests: XCTestCase {
         Container.shared.reset()
     }
 
-    let config = Config(
-        coffeeBeansWeight: 30.0,
+    let config = CoffeeConfig(
         partitionsCountOf6: 3,
         waterToCoffeeBeansWeightRatio: 15.0,
         firstWaterPercent: 0.5,
-        totalTimeSec: 210,
-        steamingTimeSec: 45,
+        totalTimeMilliSec: 210_000,
+        steamingTimeMilliSec: 45_000,
         note: "note",
         beforeChecklist: [],
         editedAtMilliSec: .none,
-        version: 1
+        version: 2
     )
     func testGenerateJWTFromConfigSuccessfully() {
         Container.shared.dateService.register {

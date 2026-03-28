@@ -31,8 +31,7 @@ settings:
     ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
     DEAD_CODE_STRIPPING: YES
     ENABLE_USER_SCRIPT_SANDBOXING: NO
-    MARKETING_VERSION: 2.15.1
-    CURRENT_PROJECT_VERSION: 2.15.1
+    MARKETING_VERSION: 3.0.0
     SWIFT_VERSION: '6.3'
     MTL_FAST_MATH: 'YES'
     SWIFT_STRICT_CONCURRENCY: 'complete'
@@ -58,6 +57,9 @@ targets:
         IPHONEOS_DEPLOYMENT_TARGET: 17.0
         SDKROOT: iphoneos
         INFOPLIST_FILE: BrewCoffee46/Info.plist
+        # To auto update CURRENT_PROJECT_VERSION
+        INFOPLIST_PREPROCESS: YES
+        INFOPLIST_PREFIX_HEADER: InfoPlistPrefix.h
         CODE_SIGN_IDENTITY: Apple Development
         CODE_SIGN_STYLE: Automatic
         CODE_SIGN_ENTITLEMENTS: BrewCoffee46/brewcoffee46.entitlements
@@ -159,6 +161,9 @@ targets:
         CODE_SIGN_IDENTITY: Apple Development
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_ASSET_PATHS: '"BrewCoffee46WatchKitApp/Preview Content"'
+        # To auto update CURRENT_PROJECT_VERSION
+        INFOPLIST_PREPROCESS: YES
+        INFOPLIST_PREFIX_HEADER: 'InfoPlistPrefix.h'
         INFOPLIST_FILE: 'BrewCoffee46WatchKitApp/Info.plist'
         DEVELOPMENT_TEAM: 3KDN4W8346
         PRODUCT_NAME: BrewCoffee46WatchKitApp
@@ -212,6 +217,13 @@ targets:
 schemes:
   brewcoffee46:
     build:
+      preActions:
+        - script: |
+            cd "${PROJECT_DIR}"
+            GIT_REV=$(git rev-list HEAD | wc -l | tr -d ' ')
+            echo "#define FLW_BUILD_NUMBER "${GIT_REV}"\n" > "InfoPlistPrefix.h"
+          name: Generate InfoPlistPrefix.h to auto update CFBundleVersion
+          settingsTarget: brewcoffee46
       targets:
         brewcoffee46: all
     run:
@@ -237,6 +249,13 @@ schemes:
 
   brewcoffee46WatchKitApp:
     build:
+      preActions:
+        - script: |
+            cd "${PROJECT_DIR}"
+            GIT_REV=$(git rev-list HEAD | wc -l | tr -d ' ')
+            echo "#define FLW_BUILD_NUMBER "${GIT_REV}"\n" > "InfoPlistPrefix.h"
+          name: Generate InfoPlistPrefix.h to auto update CFBundleVersion
+          settingsTarget: brewcoffee46WatchKitApp
       targets:
         brewcoffee46WatchKitApp: all
     run:

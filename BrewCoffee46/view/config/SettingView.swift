@@ -44,10 +44,11 @@ struct SettingView: View {
                 TipsView(
                     showTips,
                     content: HStack {
-                        Text(viewModel.currentConfig.note ??? NSLocalizedString("config note empty string", comment: ""))
+                        Text(viewModel.currentConfig.coffeeConfig.note ??? NSLocalizedString("config note empty string", comment: ""))
                         Spacer()
                         Text(
-                            (viewModel.currentConfigLastUpdatedAt ?? viewModel.currentConfig.editedAtMilliSec)?.toDate().formattedWithSec()
+                            (viewModel.currentConfigLastUpdatedAt ?? viewModel.currentConfig.coffeeConfig.editedAtMilliSec)?.toDate()
+                                .formattedWithSec()
                                 ?? NSLocalizedString("config none last edited at", comment: ""))
                     },
                     tips: Text("config show current note tips")
@@ -62,7 +63,7 @@ struct SettingView: View {
                 }.onChange(of: viewModel.currentConfig, initial: true) {
                     configurationLinkService
                         .generate(
-                            config: viewModel.currentConfig,
+                            config: viewModel.currentConfig.coffeeConfig,
                             currentConfigLastUpdatedAt: viewModel.currentConfigLastUpdatedAt
                         )
                         .map { universalLinksConfigUrl = $0 }
@@ -268,7 +269,7 @@ struct SettingView: View {
             ) {
                 TipView(MillTip(), arrowEdge: .none)
                 VStack {
-                    MillListView(items: $viewModel.currentConfig.mills)
+                    MillListView(items: viewModel.currentConfig.coffeeConfig.mills)
                         .sheet(isPresented: $showMillEditSheet) {
                             MillSettingView(
                                 mills: $rawSetting.mills,
@@ -301,7 +302,9 @@ struct SettingView: View {
             }
         }
         .onChange(of: viewModel.currentConfig, initial: true) { _, newValue in
-            rawSetting = rawSettingConvertService.fromConfig(newValue, rawSetting)
+            rawSetting = rawSettingConvertService.fromConfig(
+                viewModel.currentConfig, rawSetting,
+            )
         }
         .onChange(of: rawSetting) { _, newValue in
             rawSettingConvertService.toConfig(newValue, viewModel.currentConfig).map { config in
@@ -312,9 +315,9 @@ struct SettingView: View {
                 // Due to this feedback, this `onChange` will be called at most twice unfortunately
                 // but for now we don't know the better way.
                 if rawSetting.calculateCoffeeBeansWeightFromWater {
-                    rawSetting.coffeeBeansWeight = config.coffeeBeansWeight
+                    rawSetting.coffeeBeansWeight = viewModel.currentConfig.globalConfig.coffeeBeansWeightG
                 } else {
-                    rawSetting.waterAmount = config.totalWaterAmount()
+                    rawSetting.waterAmount = viewModel.currentConfig.totalWaterAmountG()
                 }
             }
             .recoverWithErrorLog(&viewModel.errors)

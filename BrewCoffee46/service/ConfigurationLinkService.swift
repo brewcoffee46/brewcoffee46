@@ -8,7 +8,7 @@ protocol ConfigurationLinkService: Sendable {
     func get(url: URL) -> ResultNea<ConfigClaims, CoffeeError>
 
     /// Generate configuration link URL from `Config`.
-    func generate(config: Config, currentConfigLastUpdatedAt: UInt64?) -> ResultNea<URL, CoffeeError>
+    func generate(config: CoffeeConfig, currentConfigLastUpdatedAt: UInt64?) -> ResultNea<URL, CoffeeError>
 }
 
 extension ConfigurationLinkServiceImpl {
@@ -29,7 +29,7 @@ final class ConfigurationLinkServiceImpl: ConfigurationLinkService {
         }
     }
 
-    func generate(config: Config, currentConfigLastUpdatedAt: UInt64?) -> ResultNea<URL, CoffeeError> {
+    func generate(config: CoffeeConfig, currentConfigLastUpdatedAt: UInt64?) -> ResultNea<URL, CoffeeError> {
         var updateConfig = config
         if let lastUpdatedAt = currentConfigLastUpdatedAt {
             updateConfig.editedAtMilliSec = lastUpdatedAt

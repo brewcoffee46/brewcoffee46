@@ -47,11 +47,14 @@ struct JsonImportExportView: View {
                     .frame(maxHeight: .infinity)
             }
             if let importedConfig = appEnvironment.importedConfigClaimsWithURL?.configClaims {
+                let appConfig = AppConfig(importedConfig.config, viewModel.currentConfig.globalConfig)
                 ShowConfigView(
-                    config: Binding(
-                        get: { importedConfig.config },
+                    Binding(
+                        get: { appConfig },
                         set: { _ in () }
-                    ), isLock: true.getOnlyBinding)
+                    ),
+                    true.getOnlyBinding
+                )
             }
             Section(
                 header: HStack {
@@ -78,9 +81,9 @@ struct JsonImportExportView: View {
 
     private func updateConfig() {
         viewModel.errors = ""
-        switch Config.fromJSON(json) {
+        switch CoffeeConfig.fromJSON(json) {
         case .success(let config):
-            viewModel.currentConfig = config
+            viewModel.currentConfig.coffeeConfig = config
         case .failure(let errors):
             viewModel.errors = "\(errors)"
         }
@@ -88,7 +91,7 @@ struct JsonImportExportView: View {
 
     private func exportJSON() {
         viewModel.errors = ""
-        switch viewModel.currentConfig.toJSON(isPrettyPrint: isPrettyPrint) {
+        switch viewModel.currentConfig.coffeeConfig.toJSON(isPrettyPrint: isPrettyPrint) {
         case .success(let j):
             json = j
         case .failure(let errors):
@@ -112,7 +115,7 @@ struct JsonImportExportView: View {
                         let env = AppEnvironment.init()
                         env.importedConfigClaimsWithURL = ConfigClaimsWithURL(
                             url: URL(string: "https://example.com")!,
-                            configClaims: ConfigClaims(iss: "dummy", iat: Date.now, version: 1, config: Config.defaultValue())
+                            configClaims: ConfigClaims(iss: "dummy", iat: Date.now, version: 1, config: CoffeeConfig.defaultValue())
                         )
                         return env
                     }()

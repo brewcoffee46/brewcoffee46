@@ -7,7 +7,7 @@ final class CurrentConfigViewModel: ObservableObject {
     @Injected(\.calculateDripInfoService) private var calculateDripInfoService
     @Injected(\.saveLoadConfigService) private var saveLoadConfigService
 
-    @Published var currentConfig: Config = Config.defaultValue() {
+    @Published var currentConfig: AppConfig = AppConfig.defaultValue() {
         didSet {
             dripInfo = calculateDripInfoService.calculate(currentConfig)
         }
@@ -23,7 +23,7 @@ final class CurrentConfigViewModel: ObservableObject {
             .recoverWithErrorLog(&errors)
     }
 
-    init(_ config: Config) {
+    init(_ config: AppConfig) {
         currentConfig = config
     }
 }
