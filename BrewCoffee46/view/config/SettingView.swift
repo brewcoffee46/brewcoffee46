@@ -81,7 +81,7 @@ struct SettingView: View {
                         case .success(let configsOpt):
                             if let configs = configsOpt {
                                 Task {
-                                    let result = await watchConnectionService.sendConfigsAsJson(configs)
+                                    let result = await watchConnectionService.sendConfigs(configs)
                                     switch result {
                                     case .success():
                                         didSuccessSendingConfig = true
@@ -91,8 +91,6 @@ struct SettingView: View {
                                         showTipsWhenSendingConfigFailure = true
                                     }
                                 }
-                            } else {
-                                print("none configs")
                             }
                         case .failure(let error):
                             didSuccessSendingConfig = false
