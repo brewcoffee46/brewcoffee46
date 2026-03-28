@@ -1,4 +1,4 @@
-public struct Mill: Equatable {
+public struct Mill: Equatable, Sendable {
     public let version: Int
 
     public let name: String

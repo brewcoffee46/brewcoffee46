@@ -7,7 +7,7 @@ protocol WatchConnectionService: Sendable {
 
     func isReachable() -> Bool
 
-    func sendConfigsAsJson(_ configs: [Config]) async -> ResultNea<Void, CoffeeError>
+    func sendConfigs(_ configs: [Config]) async -> ResultNea<Void, CoffeeError>
 }
 
 final class WatchConnectionServiceImpl: NSObject, WatchConnectionService {
@@ -30,15 +30,17 @@ final class WatchConnectionServiceImpl: NSObject, WatchConnectionService {
 
     private let encoder = JSONEncoder()
 
-    func sendConfigsAsJson(_ configs: [Config]) async -> ResultNea<Void, CoffeeError> {
-        await withCheckedContinuation { continuation in
-            if session.activationState != .activated {
-                continuation.resume(returning: .failure(NonEmptyArray(CoffeeError.watchSessionIsNotActivated)))
-                return
-            }
+    func sendConfigs(_ configs: [Config]) async -> ResultNea<Void, CoffeeError> {
+        do {
+            let json = try encoder.encode(configs)
 
-            do {
-                let configsJson = try String(data: encoder.encode(configs), encoding: .utf8)!
+            return await withCheckedContinuation { continuation in
+                if session.activationState != .activated {
+                    continuation.resume(returning: .failure(NonEmptyArray(CoffeeError.watchSessionIsNotActivated)))
+                    return
+                }
+
+                let configsJson = String(data: json, encoding: .utf8)!
                 session.sendMessage(
                     [watchKitAppConfigsKey: configsJson],
                     replyHandler: { data in
@@ -48,9 +50,9 @@ final class WatchConnectionServiceImpl: NSObject, WatchConnectionService {
                         continuation.resume(returning: .failure(NonEmptyArray(.sendMessageToWatchOSFailure(error))))
                     }
                 )
-            } catch {
-                continuation.resume(returning: .failure(NonEmptyArray(CoffeeError.jsonError(error))))
             }
+        } catch {
+            return .failure(NonEmptyArray(CoffeeError.jsonError(error)))
         }
     }
 }
