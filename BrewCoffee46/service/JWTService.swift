@@ -42,6 +42,6 @@ final class JWTServiceImpl: JWTService {
 
 extension Container {
     var jwtService: Factory<JWTService> {
-        Factory(self) { JWTServiceImpl() }
+        Factory(self) { JWTServiceImpl() }.cached
     }
 }

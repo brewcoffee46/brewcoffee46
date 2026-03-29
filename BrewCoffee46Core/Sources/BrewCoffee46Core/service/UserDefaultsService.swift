@@ -42,6 +42,6 @@ public final class UserDefaultsServiceImpl: UserDefaultsService {
 
 extension Container {
     public var userDefaultsService: Factory<UserDefaultsService> {
-        Factory(self) { UserDefaultsServiceImpl() }
+        Factory(self) { UserDefaultsServiceImpl() }.cached
     }
 }

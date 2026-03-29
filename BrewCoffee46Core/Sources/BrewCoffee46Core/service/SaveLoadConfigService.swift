@@ -86,6 +86,6 @@ extension SaveLoadConfigServiceImpl {
 
 extension Container {
     public var saveLoadConfigService: Factory<SaveLoadConfigService> {
-        Factory(self) { SaveLoadConfigServiceImpl() }
+        Factory(self) { SaveLoadConfigServiceImpl() }.cached
     }
 }

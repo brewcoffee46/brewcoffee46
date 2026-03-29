@@ -45,6 +45,6 @@ final class ConfigurationLinkServiceImpl: ConfigurationLinkService {
 
 extension Container {
     var configurationLinkService: Factory<ConfigurationLinkService> {
-        Factory(self) { ConfigurationLinkServiceImpl() }
+        Factory(self) { ConfigurationLinkServiceImpl() }.cached
     }
 }

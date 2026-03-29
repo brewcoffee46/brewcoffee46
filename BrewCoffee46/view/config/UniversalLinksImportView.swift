@@ -16,7 +16,7 @@ struct UniversalLinksImportView: View {
     var body: some View {
         Form {
             if let importedConfigClaimsWithURL = appEnvironment.importedConfigClaimsWithURL {
-                var config = importedConfigClaimsWithURL.configClaims.config
+                let config = importedConfigClaimsWithURL.configClaims.config
                 let url = importedConfigClaimsWithURL.url
 
                 Section(header: Text("config universal links import imported config")) {

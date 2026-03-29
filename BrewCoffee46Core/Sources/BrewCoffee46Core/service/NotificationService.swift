@@ -64,6 +64,6 @@ extension NotificationServiceImpl {
 
 extension Container {
     public var notificationService: Factory<NotificationService> {
-        Factory(self) { NotificationServiceImpl() }
+        Factory(self) { NotificationServiceImpl() }.cached
     }
 }

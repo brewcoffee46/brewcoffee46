@@ -89,6 +89,6 @@ final class ConvertDegreeServiceImpl: ConvertDegreeService, Sendable {
 
 extension Container {
     var convertDegreeService: Factory<ConvertDegreeService> {
-        Factory(self) { ConvertDegreeServiceImpl() }
+        Factory(self) { ConvertDegreeServiceImpl() }.cached
     }
 }

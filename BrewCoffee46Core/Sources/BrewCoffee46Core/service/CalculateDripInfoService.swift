@@ -39,6 +39,6 @@ public final class CalculateDripInfoServiceImpl: CalculateDripInfoService {
 
 extension Container {
     public var calculateDripInfoService: Factory<CalculateDripInfoService> {
-        Factory(self) { CalculateDripInfoServiceImpl() }
+        Factory(self) { CalculateDripInfoServiceImpl() }.cached
     }
 }

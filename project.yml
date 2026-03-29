@@ -19,7 +19,7 @@ packages:
     from: 2.5.3
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk.git
-    from: 12.2.0
+    from: 12.11.0
   SwiftJWT:
     url: https://github.com/Kitura/Swift-JWT.git
     from: 4.0.2
@@ -34,6 +34,7 @@ settings:
     MARKETING_VERSION: 3.0.0
     SWIFT_VERSION: '6.3'
     MTL_FAST_MATH: 'YES'
+    ENABLE_DEBUG_DYLIB: NO
     SWIFT_STRICT_CONCURRENCY: 'complete'
     DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
   configs:
