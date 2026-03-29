@@ -221,8 +221,8 @@ schemes:
       preActions:
         - script: |
             cd "${PROJECT_DIR}"
-            GIT_REV=$(git rev-list HEAD | wc -l | tr -d ' ')
-            echo "#define FLW_BUILD_NUMBER "${GIT_REV}"\n" > "InfoPlistPrefix.h"
+            DATE=$(date "+%Y%m%d%H%M%S")
+            echo "#define FLW_BUILD_NUMBER "${DATE}"\n" > "InfoPlistPrefix.h"
           name: Generate InfoPlistPrefix.h to auto update CFBundleVersion
           settingsTarget: brewcoffee46
       targets:
@@ -253,8 +253,8 @@ schemes:
       preActions:
         - script: |
             cd "${PROJECT_DIR}"
-            GIT_REV=$(git rev-list HEAD | wc -l | tr -d ' ')
-            echo "#define FLW_BUILD_NUMBER "${GIT_REV}"\n" > "InfoPlistPrefix.h"
+            DATE=$(date "+%Y%m%d%H%M%S")
+            echo "#define FLW_BUILD_NUMBER "${DATE}"\n" > "InfoPlistPrefix.h"
           name: Generate InfoPlistPrefix.h to auto update CFBundleVersion
           settingsTarget: brewcoffee46WatchKitApp
       targets:
