@@ -19,7 +19,7 @@ packages:
     from: 2.5.3
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk.git
-    from: 12.2.0
+    from: 12.11.0
   SwiftJWT:
     url: https://github.com/Kitura/Swift-JWT.git
     from: 4.0.2
@@ -44,6 +44,7 @@ settings:
       SWIFT_OPTIMIZATION_LEVEL: -Onone
       GCC_OPTIMIZATION_LEVEL: 0
     Release:
+      ENABLE_DEBUG_DYLIB: NO
       MTL_ENABLE_DEBUG_INFO: NO
       SWIFT_OPTIMIZATION_LEVEL: -Owholemodule
 targets:
@@ -220,8 +221,8 @@ schemes:
       preActions:
         - script: |
             cd "${PROJECT_DIR}"
-            GIT_REV=$(git rev-list HEAD | wc -l | tr -d ' ')
-            echo "#define FLW_BUILD_NUMBER "${GIT_REV}"\n" > "InfoPlistPrefix.h"
+            DATE=$(date "+%Y%m%d%H%M%S")
+            echo "#define FLW_BUILD_NUMBER "${DATE}"\n" > "InfoPlistPrefix.h"
           name: Generate InfoPlistPrefix.h to auto update CFBundleVersion
           settingsTarget: brewcoffee46
       targets:
@@ -252,8 +253,8 @@ schemes:
       preActions:
         - script: |
             cd "${PROJECT_DIR}"
-            GIT_REV=$(git rev-list HEAD | wc -l | tr -d ' ')
-            echo "#define FLW_BUILD_NUMBER "${GIT_REV}"\n" > "InfoPlistPrefix.h"
+            DATE=$(date "+%Y%m%d%H%M%S")
+            echo "#define FLW_BUILD_NUMBER "${DATE}"\n" > "InfoPlistPrefix.h"
           name: Generate InfoPlistPrefix.h to auto update CFBundleVersion
           settingsTarget: brewcoffee46WatchKitApp
       targets:

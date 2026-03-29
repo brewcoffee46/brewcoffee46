@@ -32,6 +32,6 @@ public final class SaveLoadTimerStartAtServiceImpl: SaveLoadTimerStartAtService 
 
 extension Container {
     public var saveLoadTimerStartAtService: Factory<SaveLoadTimerStartAtService> {
-        Factory(self) { SaveLoadTimerStartAtServiceImpl() }
+        Factory(self) { SaveLoadTimerStartAtServiceImpl() }.cached
     }
 }

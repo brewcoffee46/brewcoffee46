@@ -28,6 +28,6 @@ public final class CalculateWaterAmountServiceImpl: CalculateWaterAmountService 
 
 extension Container {
     public var calculateWaterAmountService: Factory<CalculateWaterAmountService> {
-        Factory(self) { CalculateWaterAmountServiceImpl() }
+        Factory(self) { CalculateWaterAmountServiceImpl() }.cached
     }
 }

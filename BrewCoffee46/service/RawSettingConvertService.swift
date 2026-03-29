@@ -77,6 +77,6 @@ final class RawSettingConvertServiceImpl: RawSettingConvertService {
 
 extension Container {
     var rawSettingConvertService: Factory<RawSettingConvertService> {
-        Factory(self) { RawSettingConvertServiceImpl() }
+        Factory(self) { RawSettingConvertServiceImpl() }.cached
     }
 }

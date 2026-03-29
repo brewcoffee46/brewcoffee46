@@ -20,6 +20,6 @@ public final class DateServiceImpl: DateService {
 
 extension Container {
     public var dateService: Factory<DateService> {
-        Factory(self) { DateServiceImpl() }
+        Factory(self) { DateServiceImpl() }.cached
     }
 }

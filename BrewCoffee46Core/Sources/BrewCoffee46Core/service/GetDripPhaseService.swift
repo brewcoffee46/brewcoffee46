@@ -104,6 +104,6 @@ public final class GetDripPhaseServiceImpl: GetDripPhaseService {
 
 extension Container {
     public var getDripPhaseService: Factory<GetDripPhaseService> {
-        Factory(self) { GetDripPhaseServiceImpl() }
+        Factory(self) { GetDripPhaseServiceImpl() }.cached
     }
 }

@@ -82,6 +82,6 @@ public final class DripTimingNotificationServiceImpl: DripTimingNotificationServ
 
 extension Container {
     public var dripTimingNotificationService: Factory<DripTimingNotificationService> {
-        Factory(self) { DripTimingNotificationServiceImpl() }
+        Factory(self) { DripTimingNotificationServiceImpl() }.cached
     }
 }

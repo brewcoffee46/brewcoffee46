@@ -46,6 +46,6 @@ public final class ValidateInputServiceImpl: ValidateInputService {
 
 extension Container {
     public var validateInputService: Factory<ValidateInputService> {
-        Factory(self) { ValidateInputServiceImpl() }
+        Factory(self) { ValidateInputServiceImpl() }.cached
     }
 }

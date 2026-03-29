@@ -104,6 +104,6 @@ extension RequestReviewServiceImpl {
 
 extension Container {
     var requestReviewService: Factory<RequestReviewService> {
-        Factory(self) { RequestReviewServiceImpl() }
+        Factory(self) { RequestReviewServiceImpl() }.cached
     }
 }

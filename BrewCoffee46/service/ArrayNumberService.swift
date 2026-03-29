@@ -64,6 +64,6 @@ final class ArrayNumberServiceImpl: ArrayNumberService {
 
 extension Container {
     var arrayNumberService: Factory<ArrayNumberService> {
-        Factory(self) { ArrayNumberServiceImpl() }
+        Factory(self) { ArrayNumberServiceImpl() }.cached
     }
 }

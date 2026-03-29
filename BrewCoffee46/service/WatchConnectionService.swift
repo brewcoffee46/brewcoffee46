@@ -60,7 +60,7 @@ final class WatchConnectionServiceImpl: NSObject, WatchConnectionService {
 extension Container {
     @MainActor
     var watchConnectionService: Factory<WatchConnectionService> {
-        Factory(self) { WatchConnectionServiceImpl() }
+        Factory(self) { WatchConnectionServiceImpl() }.cached
     }
 }
 
