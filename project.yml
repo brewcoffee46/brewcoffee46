@@ -44,7 +44,6 @@ settings:
       SWIFT_OPTIMIZATION_LEVEL: -Onone
       GCC_OPTIMIZATION_LEVEL: 0
     Release:
-      ENABLE_DEBUG_DYLIB: NO
       MTL_ENABLE_DEBUG_INFO: NO
       SWIFT_OPTIMIZATION_LEVEL: -Owholemodule
 targets:
@@ -69,6 +68,7 @@ targets:
         PRODUCT_NAME: BrewCoffee46
         PROVISIONING_PROFILE_SPECIFIER: ''
         CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED: YES
+        ENABLE_DEBUG_DYLIB: NO
         OTHER_LDFLAGS:
           - $(inherited)
           - -ObjC
@@ -143,6 +143,7 @@ targets:
         PROVISIONING_PROFILE_SPECIFIER: ''
         PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]: ''
         TEST_HOST: $(BUILT_PRODUCTS_DIR)/BrewCoffee46.app/BrewCoffee46
+        ENABLE_DEBUG_DYLIB: YES
     sources:
       - BrewCoffee46Tests
     dependencies:
@@ -170,6 +171,7 @@ targets:
         PRODUCT_NAME: BrewCoffee46WatchKitApp
         PROVISIONING_PROFILE_SPECIFIER: ''
         CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED: YES
+        ENABLE_DEBUG_DYLIB: NO
         OTHER_LDFLAGS:
           - $(inherited)
           - $(OTHER_LDFLAGS)
