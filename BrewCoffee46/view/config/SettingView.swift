@@ -301,12 +301,23 @@ struct SettingView: View {
                 }
             }
         }
-        .onChange(of: viewModel.currentConfig, initial: true) { _, newValue in
+        .onChange(of: viewModel.currentConfig, initial: true) { oldValue, newValue in
+            // Avoid infinite loop between `onChange(of: viewModel.currentConfig)` and .onChange(of: rawSetting),
+            // update only if `updatedRawSetting` is not the same `rawSetting`.
+            if oldValue == newValue {
+                return
+            }
+
             rawSetting = rawSettingConvertService.fromConfig(
                 viewModel.currentConfig, rawSetting,
             )
         }
-        .onChange(of: rawSetting) { _, newValue in
+        .onChange(of: rawSetting) { oldValue, newValue in
+            // This check is also to avoid the infinite loop.
+            if oldValue == newValue {
+                return
+            }
+
             rawSettingConvertService.toConfig(newValue, viewModel.currentConfig).map { config in
                 viewModel.currentConfig = config
                 viewModel.currentConfigLastUpdatedAt = dateService.nowEpochTimeMillis()
