@@ -18,6 +18,7 @@ struct SettingView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     @State private var rawSetting: RawSetting = RawSetting.defaultValue()
+    @State private var hasRawSettingInitialized: Bool = false
 
     @State private var showTips: Bool = false
     @State private var didSuccessSendingConfig: Bool? = .none
@@ -304,9 +305,10 @@ struct SettingView: View {
         .onChange(of: viewModel.currentConfig, initial: true) { oldValue, newValue in
             // Avoid infinite loop between `onChange(of: viewModel.currentConfig)` and .onChange(of: rawSetting),
             // update only if `updatedRawSetting` is not the same `rawSetting`.
-            if oldValue == newValue {
+            if hasRawSettingInitialized && oldValue == newValue {
                 return
             }
+            hasRawSettingInitialized = true
 
             rawSetting = rawSettingConvertService.fromConfig(
                 viewModel.currentConfig, rawSetting,
@@ -318,9 +320,13 @@ struct SettingView: View {
                 return
             }
 
+            // `rawSetting` is update in `onChange(of: rawSetting)` so it seems to enter infinite loop
+            // but `Equatable` of `RawSetting` does not care `editedAtMilliSec` field so
+            // infinite loop will be avoided by `if oldValue == newValue { return }` above.
+            rawSetting.editedAtMilliSec = dateService.nowEpochTimeMillis()
+
             rawSettingConvertService.toConfig(newValue, viewModel.currentConfig).map { config in
                 viewModel.currentConfig = config
-                viewModel.currentConfigLastUpdatedAt = dateService.nowEpochTimeMillis()
 
                 // We have to feedback beans weight from water amount or its inverse.
                 // Due to this feedback, this `onChange` will be called at most twice unfortunately
@@ -337,7 +343,16 @@ struct SettingView: View {
         .navigation(path: $appEnvironment.configPath)
         .currentConfigSaveLoadModifier(
             $viewModel.currentConfig,
-            $viewModel.currentConfigLastUpdatedAt,
+            // To synchronise `viewModel.currentConfigLastUpdatedAt` & `rawSetting.editedAtMilliSec`
+            // this custom `Binding` is required. Note that `viewModel.currentConfig.coffeeConfig.editedAtMilliSec`
+            // will be set on `onChange(of: rawSetting)`.
+            Binding<MilliSecond?>(
+                get: { viewModel.currentConfigLastUpdatedAt },
+                set: { newValue in
+                    viewModel.currentConfigLastUpdatedAt = newValue
+                    rawSetting.editedAtMilliSec = newValue
+                }
+            ),
             $viewModel.errors
         )
     }

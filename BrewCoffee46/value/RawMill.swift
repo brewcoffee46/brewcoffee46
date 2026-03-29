@@ -1,6 +1,6 @@
 import Foundation
 
-struct RawMill: Equatable, Identifiable {
+struct RawMill: Identifiable {
     /// `RawMill` is used in `ForEach` view and its ordering is editable by `EditButton`.
     /// If a `RawMill` data which is same `name` and `value` then `ForEach` doesn't distinguish
     /// which data will be edited. So `id` is required to identify which data would be edited.
@@ -15,4 +15,11 @@ extension RawMill {
         name: NSLocalizedString("config mill name default", comment: ""),
         value: NSLocalizedString("config mill value default", comment: ""),
     )
+}
+
+// `Equatable` instance of `RawMill` does not contain `id` because `id` is required for `ForEach` view.
+extension RawMill: Equatable {
+    static func == (lhs: RawMill, rhs: RawMill) -> Bool {
+        lhs.name == rhs.name && lhs.value == rhs.value
+    }
 }
