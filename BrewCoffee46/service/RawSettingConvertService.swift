@@ -37,7 +37,7 @@ final class RawSettingConvertServiceImpl: RawSettingConvertService {
             steamingTimeMilliSec: MilliSecond.fromSecond(rawSetting.steamingTimeSec),
             note: appConfig.coffeeConfig.note,
             beforeChecklist: appConfig.coffeeConfig.beforeChecklist,
-            editedAtMilliSec: dateService.nowEpochTimeMillis(),
+            editedAtMilliSec: rawSetting.editedAtMilliSec,
             mills: rawSetting.mills.map { mill in
                 Mill(name: mill.name, value: mill.value)
             }
@@ -68,6 +68,7 @@ final class RawSettingConvertServiceImpl: RawSettingConvertService {
             totalTimeSec: appConfig.coffeeConfig.totalTimeSec,
             steamingTimeSec: appConfig.coffeeConfig.steamingTimeSec,
             coffeeBeansWeight: appConfig.globalConfig.coffeeBeansWeightMg.gram,
+            editedAtMilliSec: appConfig.coffeeConfig.editedAtMilliSec,
             mills: appConfig.coffeeConfig.mills.map { mill in
                 RawMill(name: mill.name, value: mill.value)
             }

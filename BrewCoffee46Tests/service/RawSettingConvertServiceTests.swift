@@ -60,6 +60,7 @@ final class RawSettingConvertServiceTests: XCTestCase {
             totalTimeSec: 210.0,
             steamingTimeSec: 40.0,
             coffeeBeansWeight: 11.8,
+            editedAtMilliSec: BrewCoffee46TestsShared.epochTimeMillis,
             mills: ms
         )
         let sut = RawSettingConvertServiceImpl()
@@ -83,6 +84,7 @@ final class RawSettingConvertServiceTests: XCTestCase {
             totalTimeSec: 210.0,
             steamingTimeSec: 40.0,
             coffeeBeansWeight: dummyValue,
+            editedAtMilliSec: BrewCoffee46TestsShared.epochTimeMillis,
             mills: ms
         )
         let sut = RawSettingConvertServiceImpl()
@@ -106,6 +108,7 @@ final class RawSettingConvertServiceTests: XCTestCase {
             totalTimeSec: 210.0,
             steamingTimeSec: 40.0,
             coffeeBeansWeight: 11.8,
+            editedAtMilliSec: BrewCoffee46TestsShared.epochTimeMillis,
             mills: ms
         )
 
@@ -131,6 +134,7 @@ final class RawSettingConvertServiceTests: XCTestCase {
             totalTimeSec: 210.0,
             steamingTimeSec: 40.0,
             coffeeBeansWeight: 27.4,
+            editedAtMilliSec: BrewCoffee46TestsShared.epochTimeMillis,
             mills: ms
         )
 
