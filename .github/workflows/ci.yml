@@ -106,6 +106,6 @@ jobs:
           ./.github/workflows/convert.sh BrewCoffee46.app/BrewCoffee46.debug.dylib brewCoffee46.lcov
 
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
