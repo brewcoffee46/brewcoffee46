@@ -91,6 +91,7 @@ struct SaveLoadView: View {
                         }) {
                             HStack {
                                 Text(config.note ??? NSLocalizedString("config note empty string", comment: ""))
+                                    .multilineTextAlignment(.leading)
                                 Spacer()
                                 Text(
                                     config.editedAtMilliSec?.toDate().formattedWithSec()
