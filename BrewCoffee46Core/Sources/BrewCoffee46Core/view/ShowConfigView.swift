@@ -29,31 +29,44 @@ public struct ShowConfigView: View {
                         Image(systemName: "pencil.and.list.clipboard")
                     }
                 }
-                Group {
-                    VStack {
-                        TextField(
-                            notePlaceholder,
-                            text: $appConfig.coffeeConfig.note,
-                            onEditingChanged: { (hasChanged) in
-                                if hasChanged && appConfig.coffeeConfig.note.isEmpty {
-                                    notePlaceholder = ""
-                                } else if !hasChanged && appConfig.coffeeConfig.note.isEmpty {
-                                    notePlaceholder = NSLocalizedString("config note empty string", comment: "")
-                                }
-                            }
-                        )
-                        .multilineTextAlignment(.trailing)
-                        .background()
-                        .disabled(isLock)
-                        if isLock {
-                            HStack {
-                                Spacer()
-                                InfoTextView("config note cannot edit")
+                .gridCellColumns(2)
+                .gridColumnAlignment(.leading)
+            }
+            GridRow {
+                if isLock {
+                    HStack {
+                        Spacer()
+                        Text(appConfig.coffeeConfig.note == "" ? notePlaceholder : appConfig.coffeeConfig.note)
+                            .foregroundStyle(Color.primary.opacity(0.5))
+                    }
+                    .gridCellColumns(2)
+                } else {
+                    TextField(
+                        notePlaceholder,
+                        text: $appConfig.coffeeConfig.note,
+                        onEditingChanged: { (hasChanged) in
+                            if hasChanged && appConfig.coffeeConfig.note.isEmpty {
+                                notePlaceholder = ""
+                            } else if !hasChanged && appConfig.coffeeConfig.note.isEmpty {
+                                notePlaceholder = NSLocalizedString("config note empty string", comment: "")
                             }
                         }
-                    }
+                    )
+                    .multilineTextAlignment(.trailing)
+                    .lineLimit(1...3)
+                    .background()
+                    .disabled(isLock)
+                    .gridCellColumns(2)
                 }
-                .gridColumnAlignment(.trailing)
+            }
+            if isLock {
+                GridRow {
+                    HStack {
+                        Spacer()
+                        InfoTextView("config note cannot edit")
+                    }
+                    .gridCellColumns(2)
+                }
             }
             Divider()
 
