@@ -146,7 +146,10 @@ struct SaveLoadView: View {
             }
 
         }
-        .navigationTitle("navigation title save load")
+        .navigation(
+            path: $appEnvironment.configPath,
+            title: "navigation title save load"
+        )
         .environment(\.editMode, $mode)
         .onAppear {
             saveLoadConfigService

@@ -34,6 +34,9 @@ struct StopwatchView: View {
     @State private var hasRingingIndex: Int = 0
     @State private var isStop︎AlertPresented: Bool = false
 
+    @State private var rawCoffeeBeansWeight: Double = RawSetting.defaultValue().coffeeBeansWeight
+    @State private var isDiscloseCoffeeBeansSetting: Bool = true
+
     @Injected(\.requestReviewService) private var requestReviewService
     @Injected(\.dripTimingNotificationService) private var dripTimingNotificationService
     @Injected(\.getDripPhaseService) private var getDripPhaseService
@@ -64,7 +67,9 @@ struct StopwatchView: View {
                 GeometryReader { (geometry: GeometryProxy) in
                     VStack {
                         PhaseListView(progressTime: $progressTime)
-                            .frame(height: geometry.size.height * 0.7)
+                            .frame(height: isDiscloseCoffeeBeansSetting ? geometry.size.height * 0.3 : geometry.size.height * 0.6)
+                        Divider()
+                        coffeeBeansPicker
                         Divider()
                         timerController
                     }
@@ -87,14 +92,18 @@ struct StopwatchView: View {
                         }
                     }
                     Divider()
+                    coffeeBeansPicker
+                    Divider()
                     PhaseListView(progressTime: $progressTime)
                     Divider()
                     timerController
                 }
             }
         }
-        .navigationTitle("navigation title stopwatch")
-        .navigation(path: $appEnvironment.stopwatchPath)
+        .navigation(
+            path: $appEnvironment.stopwatchPath,
+            title: "navigation title stopwatch"
+        )
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 saveLoadTimerStartAtService.loadStartAt().forEach { (startAtOpt: Date?) in
@@ -237,6 +246,50 @@ struct StopwatchView: View {
         if nth > hasRingingIndex && progressTime <= viewModel.currentConfig.coffeeConfig.totalTimeSec {
             AudioServicesPlaySystemSound(soundIdRing)
             hasRingingIndex = nth
+        }
+    }
+
+    private var coffeeBeansPicker: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Text("stopwatch current config name")
+                Text(viewModel.currentConfig.coffeeConfig.note ??? NSLocalizedString("config note empty string", comment: ""))
+                Spacer()
+                Spacer()
+                Spacer()
+                Button(action: {
+                    withAnimation {
+                        isDiscloseCoffeeBeansSetting.toggle()
+                    }
+                }) {
+                    if isDiscloseCoffeeBeansSetting {
+                        Text("stopwatch change coffee beans fold")
+                    } else {
+                        Text("stopwatch change coffee beans expand")
+                    }
+                }
+                Spacer()
+            }
+            NumberPickerView(
+                digit: numberPickerDigit,
+                max: coffeeBeansWeightMaxGram,
+                min: coffeeBeansWeightMinGram,
+                target: $rawCoffeeBeansWeight,
+                isDisable: $appEnvironment.isTimerStarted
+            )
+            .onChange(of: viewModel.currentConfig.globalConfig.coffeeBeansWeightMg) { (_, newValue) in
+                if viewModel.currentConfig.globalConfig.coffeeBeansWeightG != rawCoffeeBeansWeight {
+                    rawCoffeeBeansWeight = viewModel.currentConfig.globalConfig.coffeeBeansWeightG
+                }
+            }
+            .onChange(of: rawCoffeeBeansWeight) { (_, newValue) in
+                if rawCoffeeBeansWeight != viewModel.currentConfig.globalConfig.coffeeBeansWeightG {
+                    viewModel.currentConfig.globalConfig.coffeeBeansWeightMg = MilliGram.fromGram(newValue)
+                }
+            }
+            .frame(height: isDiscloseCoffeeBeansSetting ? nil : 0, alignment: .top)
+            .clipped()
         }
     }
 }

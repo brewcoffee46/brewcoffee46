@@ -18,6 +18,9 @@
 "before check list 8" = "Flatten the coffee grounds";
 "before check list 9" = "Reset the scale value";
 
+"stopwatch current config name" = "current configuration:";
+"stopwatch change coffee beans fold" = "Hide";
+"stopwatch change coffee beans expand" = "Expand";
 "stop alert title" = "Notice";
 "stop alert message" = "Do you want to stop counting?";
 "stop alert cancel" = "Cancel";
@@ -30,8 +33,8 @@
 "config show tips" = "Show Tips";
 "config show current note tips" = "Current configuration";
 
-"config watchos app setting" = "watchOS App setting";
-"config send current setting to watchos app" = "Send saved setting to watchOS App";
+"config watchos app setting" = "watchOS App configuration";
+"config send current setting to watchos app" = "Send saved configuration to watchOS App";
 "config watch session is not activated" = "watchOS session cannot be reachable!";
 "config watchos sending failure tips" = "Tips: retry after WatchOS App launched";
 
@@ -53,7 +56,7 @@
 
 "config timer setting" = "Timer settings";
 "config total time" = "Total brewing time";
-"config total time tips" = "If the brewing would be too fast or slow, change your grinder setting";
+"config total time tips" = "If the brewing would be too fast or slow, change your mill setting";
 "config sec unit" = "sec";
 "config steaming time" = "Steaming(1st -> 2nd drip) time";
 "config steaming time short" = "Steaming time";
@@ -72,15 +75,15 @@
 "config note placeholder" = "Something to characterize configuration";
 "config note empty string" = "No note";
 "config note cannot edit" = "Cannot edit for now";
-"config save button" = "Save current setting as new";
+"config save button" = "Save current configuration as new";
 "config current config have already been saved" = "The current configuration has already been saved.";
 "config load setting alert title" = "Notice";
-"config load setting alert message" = "After loading setting (%@ - %@), the current configuration will be overwritten. Do you sure to load this setting?";
+"config load setting alert message" = "After loading configuration (%@ - %@), the current configuration will be overwritten. Do you sure to load this configuration?";
 "config load setting alert cancel" = "Cancel";
 "config load setting alert load" = "Load";
 
 "config delete setting alert title" = "Notice";
-"config delete setting alert message" = "Do you sure to delete this setting?";
+"config delete setting alert message" = "Do you sure to delete this configuration?";
 "config delete setting alert cancel" = "Cancel";
 "config delete setting alert delete" = "Delete";
 "config last edited at" = "Updated at";
@@ -146,10 +149,10 @@
 "tips stopwatch start detail" = "Pour boiled water specified amount & timing after you tap “Start” button!";
 "tips universal links issue" = "Configuration sharing";
 "tips universal links issue detail" = "you can share your configuration with [URL](https://brewcoffee46.github.io/app/v1.html?config=eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJpYXQiOjE3NTg1MjQ3MjQuNzExNTk3LCJpc3MiOiJCcmV3Q29mZmVlNDYiLCJ2ZXJzaW9uIjoxLCJjb25maWciOnsidG90YWxUaW1lU2VjIjoyMTAsImNvZmZlZUJlYW5zV2VpZ2h0IjoxNiwiZmlyc3RXYXRlclBlcmNlbnQiOjAuNSwibm90ZSI6IuOCqOODs-OCuOODi-OCouODm-ODg-ODiOOCs-ODvOODkuODvCIsInBhcnRpdGlvbnNDb3VudE9mNiI6MywiYmVmb3JlQ2hlY2tsaXN0IjpbIuOBiua5r-OCkuayuOOBi-OBmSIsIuODleOCo-ODq-OCv-ODvOOCkuODieODquODg-ODkeODvOOBq-OCu-ODg-ODiCIsIuODleOCo-ODq-OCv-ODvOOCkuODquODs-OCuSIsIuOCs-ODvOODkuODvOeyieOCkuOCu-ODg-ODiCIsIuOCueOCseODvOODq-OCkuODquOCu-ODg-ODiCJdLCJlZGl0ZWRBdE1pbGxpU2VjIjoxNzU4NTI0NjY2ODc4LCJ2ZXJzaW9uIjoxLCJzdGVhbWluZ1RpbWVTZWMiOjQ1LCJ3YXRlclRvQ29mZmVlQmVhbnNXZWlnaHRSYXRpbyI6MTZ9fQ).";
-"tips universal links config save" = "Save setting";
-"tips universal links config save detail" = "Let's save the setting!";
+"tips universal links config save" = "Save configuration";
+"tips universal links config save detail" = "Let's save the configuration!";
 "tips config note edit" = "Edit config's note";
-"tips config note edit detail" = "You can edit notes or memos of this setting.";
+"tips config note edit detail" = "You can edit notes or memos of this configuration.";
 "tips mill" = "Write your mill setting!";
 "tips mill detail" = "Push “Edit” button to save your mill setting!";
 "tips mill edit" = "Let's add your mill settings!";

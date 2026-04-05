@@ -31,10 +31,7 @@ struct SettingView: View {
 
     @State private var showMillEditSheet: Bool = false
 
-    private let digit = 1
     private let timerStep: Double = 1.0
-    private let coffeeBeansWeightMax = 125.0
-    private let coffeeBeansWeightMin = 1.0
 
     var body: some View {
         Form {
@@ -339,8 +336,10 @@ struct SettingView: View {
             }
             .recoverWithErrorLog(&viewModel.errors)
         }
-        .navigationTitle("navigation title configuration")
-        .navigation(path: $appEnvironment.configPath)
+        .navigation(
+            path: $appEnvironment.configPath,
+            title: "navigation title configuration"
+        )
         .currentConfigSaveLoadModifier(
             $viewModel.currentConfig,
             // To synchronise `viewModel.currentConfigLastUpdatedAt` & `rawSetting.editedAtMilliSec`
@@ -385,8 +384,9 @@ struct SettingView: View {
         VStack {
             coffeeBeansAndWaterWeightView
             NumberPickerView(
-                digit: digit,
-                max: coffeeBeansWeightMax,
+                digit: numberPickerDigit,
+                max: coffeeBeansWeightMaxGram,
+                min: coffeeBeansWeightMinGram,
                 target: $rawSetting.coffeeBeansWeight,
                 isDisable: $appEnvironment.isTimerStarted
             )
@@ -397,8 +397,9 @@ struct SettingView: View {
         VStack {
             coffeeBeansAndWaterWeightView
             NumberPickerView(
-                digit: digit,
-                max: coffeeBeansWeightMax * rawSetting.waterToCoffeeBeansWeightRatio,
+                digit: numberPickerDigit,
+                max: coffeeBeansWeightMaxGram * rawSetting.waterToCoffeeBeansWeightRatio,
+                min: coffeeBeansWeightMinGram,
                 target: $rawSetting.waterAmount,
                 isDisable: $appEnvironment.isTimerStarted
             )

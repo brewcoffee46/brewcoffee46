@@ -18,6 +18,9 @@
 "before check list 8" = "コーヒー粉を平坦にならす";
 "before check list 9" = "スケールをリセット";
 
+"stopwatch current config name" = "現在の設定:";
+"stopwatch change coffee beans fold" = "隠す";
+"stopwatch change coffee beans expand" = "表示";
 "stop alert title" = "確認";
 "stop alert message" = "ストップウォッチを止めますか？";
 "stop alert cancel" = "戻る";
