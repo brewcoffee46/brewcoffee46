@@ -31,7 +31,11 @@ struct RootView: View {
             }
             .disabled(appEnvironment.isTimerStarted)
 
-            Stepper(value: $rawGlobalConfig.coffeeBeansWeightG, step: 0.1) {
+            Stepper(
+                value: $rawGlobalConfig.coffeeBeansWeightG,
+                in: coffeeBeansWeightMinGram...coffeeBeansWeightMaxGram,
+                step: 0.1
+            ) {
                 Text("\(rawGlobalConfig.coffeeBeansWeightG, specifier: "%.1f")\(weightUnit)")
                     .font(.system(size: 19))
             }

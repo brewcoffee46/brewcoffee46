@@ -7,6 +7,12 @@ public struct TupleFloat: Equatable {
     public var integer: Int
     public var decimal: Int
     public let digit: Int
+
+    public init(integer: Int, decimal: Int, digit: Int) {
+        self.integer = integer
+        self.decimal = decimal
+        self.digit = digit
+    }
 }
 
 extension TupleFloat {

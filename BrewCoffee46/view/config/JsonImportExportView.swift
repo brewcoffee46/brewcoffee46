@@ -76,7 +76,10 @@ struct JsonImportExportView: View {
                     .hidden(viewModel.errors == "")
             }
         }
-        .navigationTitle("config import export")
+        .navigation(
+            path: $appEnvironment.configPath,
+            title: "config import export"
+        )
     }
 
     private func updateConfig() {

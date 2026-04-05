@@ -34,6 +34,9 @@ struct StopwatchView: View {
     @State private var hasRingingIndex: Int = 0
     @State private var isStop︎AlertPresented: Bool = false
 
+    @State private var rawCoffeeBeansWeight: Double = RawSetting.defaultValue().coffeeBeansWeight
+    @State private var isDiscloseCoffeeBeansSetting: Bool = true
+
     @Injected(\.requestReviewService) private var requestReviewService
     @Injected(\.dripTimingNotificationService) private var dripTimingNotificationService
     @Injected(\.getDripPhaseService) private var getDripPhaseService
@@ -64,7 +67,9 @@ struct StopwatchView: View {
                 GeometryReader { (geometry: GeometryProxy) in
                     VStack {
                         PhaseListView(progressTime: $progressTime)
-                            .frame(height: geometry.size.height * 0.7)
+                            .frame(height: isDiscloseCoffeeBeansSetting ? geometry.size.height * 0.3 : geometry.size.height * 0.6)
+                        Divider()
+                        coffeeBeansPicker
                         Divider()
                         timerController
                     }
@@ -87,14 +92,18 @@ struct StopwatchView: View {
                         }
                     }
                     Divider()
+                    coffeeBeansPicker
+                    Divider()
                     PhaseListView(progressTime: $progressTime)
                     Divider()
                     timerController
                 }
             }
         }
-        .navigationTitle("navigation title stopwatch")
-        .navigation(path: $appEnvironment.stopwatchPath)
+        .navigation(
+            path: $appEnvironment.stopwatchPath,
+            title: "navigation title stopwatch"
+        )
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 saveLoadTimerStartAtService.loadStartAt().forEach { (startAtOpt: Date?) in
@@ -142,7 +151,6 @@ struct StopwatchView: View {
 
         return VStack {
             if self.timer == nil {
-                TipView(StopwatchTip(), arrowEdge: .bottom)
                 Button(action: { startTimer() }) {
                     Text("Start")
                         .font(.system(size: 20))
@@ -158,6 +166,7 @@ struct StopwatchView: View {
                         }
                 }
                 .foregroundColor(.green)
+                .popoverTip(StopwatchTip(), arrowEdge: .leading)
             } else {
                 Button(action: {
                     if progressTime < viewModel.currentConfig.coffeeConfig.totalTimeSec {
@@ -237,6 +246,48 @@ struct StopwatchView: View {
         if nth > hasRingingIndex && progressTime <= viewModel.currentConfig.coffeeConfig.totalTimeSec {
             AudioServicesPlaySystemSound(soundIdRing)
             hasRingingIndex = nth
+        }
+    }
+
+    private var coffeeBeansPicker: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Image(systemName: "slider.horizontal.3")
+                Text(viewModel.currentConfig.coffeeConfig.note ??? NSLocalizedString("config note empty string", comment: ""))
+                Spacer()
+                Spacer()
+                Spacer()
+                Button(action: {
+                    withAnimation {
+                        isDiscloseCoffeeBeansSetting.toggle()
+                    }
+                }) {
+                    Image(systemName: "line.3.horizontal")
+                }
+                .buttonStyle(PlainButtonStyle())
+                .foregroundStyle(Color.accentColor)
+                Spacer()
+            }
+            NumberPickerView(
+                digit: numberPickerDigit,
+                max: coffeeBeansWeightMaxGram,
+                min: coffeeBeansWeightMinGram,
+                target: $rawCoffeeBeansWeight,
+                isDisable: $appEnvironment.isTimerStarted
+            )
+            .onChange(of: viewModel.currentConfig.globalConfig.coffeeBeansWeightMg, initial: true) { (_, newValue) in
+                if viewModel.currentConfig.globalConfig.coffeeBeansWeightG != rawCoffeeBeansWeight {
+                    rawCoffeeBeansWeight = viewModel.currentConfig.globalConfig.coffeeBeansWeightG
+                }
+            }
+            .onChange(of: rawCoffeeBeansWeight) { (_, newValue) in
+                if rawCoffeeBeansWeight != viewModel.currentConfig.globalConfig.coffeeBeansWeightG {
+                    viewModel.currentConfig.globalConfig.coffeeBeansWeightMg = MilliGram.fromGram(newValue)
+                }
+            }
+            .frame(height: isDiscloseCoffeeBeansSetting ? nil : 0, alignment: .top)
+            .clipped()
         }
     }
 }

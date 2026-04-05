@@ -120,8 +120,10 @@ struct BeforeChecklistView: View {
             }
         }
         .environment(\.editMode, $mode)
-        .navigationTitle("navigation title before checklist")
-        .navigation(path: $appEnvironment.beforeChecklistPath)
+        .navigation(
+            path: $appEnvironment.beforeChecklistPath,
+            title: "navigation title before checklist"
+        )
         .sheet(isPresented: $willMoveToStopwatch) {
             Button(action: {
                 willMoveToStopwatch = false
