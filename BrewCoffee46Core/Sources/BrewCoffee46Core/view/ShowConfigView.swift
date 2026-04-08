@@ -36,7 +36,7 @@ public struct ShowConfigView: View {
                 if isLock {
                     HStack {
                         Spacer()
-                        Text(appConfig.coffeeConfig.note == "" ? notePlaceholder : appConfig.coffeeConfig.note)
+                        Text(appConfig.coffeeConfig.note ??? notePlaceholder)
                             .foregroundStyle(Color.primary.opacity(0.5))
                     }
                     .gridCellColumns(2)

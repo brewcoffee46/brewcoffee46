@@ -34,7 +34,16 @@ struct NavigationModifier: ViewModifier {
 }
 
 extension View {
-    func navigation(path: Binding<[Route]>) -> some View {
-        self.modifier(NavigationModifier(path: path))
+    func navigation(path: Binding<[Route]>, title: String) -> some View {
+        self
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text(NSLocalizedString(title, comment: ""))
+                        .font(.system(size: 28, weight: .bold))
+                }
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .modifier(NavigationModifier(path: path))
     }
 }

@@ -29,7 +29,7 @@ final class RawSettingConvertServiceImpl: RawSettingConvertService {
                 rawSetting.coffeeBeansWeight
             }
 
-        let config = CoffeeConfig(
+        var newConfig = CoffeeConfig(
             partitionsCountOf6: Int(rawSetting.partitionsCountOf6),
             waterToCoffeeBeansWeightRatio: rawSetting.waterToCoffeeBeansWeightRatio,
             firstWaterPercent: rawSetting.firstWaterPercent,
@@ -37,13 +37,20 @@ final class RawSettingConvertServiceImpl: RawSettingConvertService {
             steamingTimeMilliSec: MilliSecond.fromSecond(rawSetting.steamingTimeSec),
             note: appConfig.coffeeConfig.note,
             beforeChecklist: appConfig.coffeeConfig.beforeChecklist,
-            editedAtMilliSec: rawSetting.editedAtMilliSec,
+            // For now set to old `editedAtMilliSec` to determine whether `CoffeeConfig` is the same as old one.
+            // If it's the same, which means that the modification is only `GlobalConfig` so
+            // it's not necessary to change `editedAtMilliSec`.
+            editedAtMilliSec: appConfig.coffeeConfig.editedAtMilliSec,
             mills: rawSetting.mills.map { mill in
                 Mill(name: mill.name, value: mill.value)
             }
         )
+        if newConfig != appConfig.coffeeConfig {
+            newConfig.editedAtMilliSec = rawSetting.editedAtMilliSec
+        }
+
         let globalConfig = GlobalConfig(MilliGram.fromGram(coffeeBeansWeight))
-        let appConfig = AppConfig(config, globalConfig)
+        let appConfig = AppConfig(newConfig, globalConfig)
 
         return validateInputService.validate(appConfig).map { () in appConfig }
     }

@@ -114,7 +114,10 @@ struct UniversalLinksImportView: View {
                 .fraction(0.3),
             ])
         }
-        .navigationTitle("config universal links import title")
+        .navigation(
+            path: $appEnvironment.configPath,
+            title: "config universal links import title"
+        )
     }
 
     private func exportJSON(_ config: CoffeeConfig) {

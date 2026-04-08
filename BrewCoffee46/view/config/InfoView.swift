@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct InfoView: View {
+    @EnvironmentObject var appEnvironment: AppEnvironment
+
     static private let marketingVersion = (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "Unknown"
     static private let projectVersion = (Bundle.main.infoDictionary?["CFBundleVersion"] as? String) ?? "Unknown"
 
@@ -60,7 +62,10 @@ struct InfoView: View {
                 }
             }
         }
-        .navigationTitle("navigation title information")
+        .navigation(
+            path: $appEnvironment.configPath,
+            title: "navigation title information"
+        )
     }
 }
 
