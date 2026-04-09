@@ -24,7 +24,7 @@ struct EditableMillItem: View {
                 isExpanded.toggle()
             }) {
                 HStack {
-                    TextField(item.name, text: $tmpItem.name, axis: .vertical)
+                    TextField(tmpItem.name, text: $tmpItem.name, axis: .vertical)
                         .disabled(!mode.isEditing)
                         .lineLimit(1)
                         .font(.headline)
@@ -53,17 +53,13 @@ struct EditableMillItem: View {
             }
         }
         .millItemModifier()
-        .onChange(of: mode) { oldValue, newValue in
+        .onChange(of: mode) { _, _ in
             if mode.isEditing {
                 tmpItem = item
-            } else {
-                item = tmpItem
             }
         }
-        .onAppear {
-            if tmpItem != item {
-                tmpItem = item
-            }
+        .onChange(of: tmpItem, initial: true) { _, newValue in
+            item = newValue
         }
     }
 }
