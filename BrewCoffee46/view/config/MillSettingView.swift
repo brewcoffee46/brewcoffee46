@@ -43,15 +43,11 @@ struct MillSettingView: View {
                 }
                 .listRowSeparator(.hidden)
 
+                TipView(MillItemTip(), arrowEdge: .bottom)
                 ForEach(Array(mills.enumerated()), id: \.self.element.id) { i, item in
-                    VStack {
-                        if i == 0 {
-                            TipView(MillItemTip(), arrowEdge: .bottom)
-                        }
-                        EditableMillItem(item: $mills[i], mode: $millEditMode)
-                            .deleteDisabled(disableMoveAndDelete())
-                            .moveDisabled(disableMoveAndDelete())
-                    }
+                    EditableMillItem(item: $mills[i], mode: $millEditMode)
+                        .deleteDisabled(disableMoveAndDelete())
+                        .moveDisabled(disableMoveAndDelete())
                 }
                 .onDelete(perform: { indexSet in
                     mills.remove(atOffsets: indexSet)
