@@ -43,7 +43,7 @@ extension View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(.automatic, for: .navigationBar)
             .modifier(NavigationModifier(path: path))
     }
 }
