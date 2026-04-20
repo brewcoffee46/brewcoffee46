@@ -177,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/yonaskolb/XcodeGen.git",
       "state" : {
-        "revision" : "90dfa9da31eeb3b95153e22f46dce676d9ebaba7",
-        "version" : "2.45.3"
+        "revision" : "8d3d3476a69ae3e5d68e1adccc701c410c05eb36",
+        "version" : "2.45.4"
       }
     },
     {
