@@ -1,5 +1,5 @@
 import BrewCoffee46Core
-import Factory
+import FactoryKit
 
 /// # Provide both converters `RawSetting` to `Config` and its inverse.
 protocol RawSettingConvertService: Sendable {

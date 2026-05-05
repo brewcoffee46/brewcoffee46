@@ -1,4 +1,4 @@
-import Factory
+import FactoryKit
 
 /// ### This interface is a representation of the calculation of water amount.
 public protocol CalculateWaterAmountService: Sendable {

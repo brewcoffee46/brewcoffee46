@@ -1,7 +1,7 @@
 import AudioToolbox
 import BrewCoffee46Core
 import Combine
-import Factory
+import FactoryKit
 import StoreKit
 import SwiftUI
 import TipKit

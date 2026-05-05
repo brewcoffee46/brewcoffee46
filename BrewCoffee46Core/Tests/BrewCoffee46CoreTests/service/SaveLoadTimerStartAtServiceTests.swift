@@ -1,5 +1,5 @@
 import BrewCoffee46TestsShared
-import Factory
+import FactoryKit
 import Foundation
 import XCTest
 

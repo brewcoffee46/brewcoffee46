@@ -1,6 +1,6 @@
 import BrewCoffee46Core
 import BrewCoffee46TestsShared
-import Factory
+import FactoryKit
 import XCTest
 
 @testable import BrewCoffee46

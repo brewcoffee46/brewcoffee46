@@ -1,4 +1,4 @@
-import Factory
+import FactoryKit
 import Foundation
 
 /// # Notify drip notifications to user.

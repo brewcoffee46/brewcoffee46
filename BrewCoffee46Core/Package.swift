@@ -30,7 +30,7 @@ let package = Package(
             dependencies: [
                 "BrewCoffee46Core",
                 "BrewCoffee46TestsShared",
-                .product(name: "FactoryTesting", package: "Factory")
+                .product(name: "FactoryTesting", package: "Factory"),
             ]
         ),
     ]
