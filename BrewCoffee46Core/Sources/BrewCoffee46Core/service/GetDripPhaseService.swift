@@ -1,4 +1,4 @@
-import Factory
+import FactoryKit
 
 /// # Get the Nth phase in the `progressTime`.
 public protocol GetDripPhaseService: Sendable {

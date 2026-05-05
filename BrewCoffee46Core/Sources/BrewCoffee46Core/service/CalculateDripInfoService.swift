@@ -1,4 +1,4 @@
-import Factory
+import FactoryKit
 
 /// # Interface to calculate drip info (= water amount & drip time) service
 ///

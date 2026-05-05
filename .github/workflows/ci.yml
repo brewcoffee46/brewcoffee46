@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         os: [ 'macos-26' ]
-        xcode-version: [ '26.4' ]
+        xcode-version: [ '26.4.1' ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -50,7 +50,7 @@ jobs:
       matrix:
         os: [ 'macos-26' ]
         xcode-version: [ '26.4' ]
-        ios-version: [ '26.4' ]
+        ios-version: [ '26.4.1' ]
         ios-device-name: [ 'iPhone 17' ]
     runs-on: ${{ matrix.os }}
     env:
@@ -76,10 +76,6 @@ jobs:
 
       - name: Generate xcodeproj
         run:  .build/release/xcodegen generate
-
-      # Workaround for https://github.com/actions/runner-images/issues/13853
-      - name: Download latest iOS & watchOS platform for Xcode
-        run: xcodebuild -downloadPlatform iOS && xcodebuild -downloadPlatform watchOS
 
       - name: Test for core
         run: |

@@ -1,5 +1,5 @@
 import BrewCoffee46Core
-import Factory
+import FactoryKit
 import SwiftJWT
 
 /// # Sign/Verify `Config` which is encoded/decoded JWT.

@@ -1,5 +1,5 @@
 import BrewCoffee46Core
-import Factory
+import FactoryKit
 @preconcurrency import WatchConnectivity
 
 protocol WatchConnectionService: Sendable {

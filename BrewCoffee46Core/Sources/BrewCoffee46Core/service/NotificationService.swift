@@ -1,4 +1,4 @@
-import Factory
+import FactoryKit
 @preconcurrency import UserNotifications
 
 /// # Local notifications manager

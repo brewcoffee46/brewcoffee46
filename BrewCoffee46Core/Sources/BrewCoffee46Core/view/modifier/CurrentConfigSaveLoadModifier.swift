@@ -1,4 +1,4 @@
-import Factory
+import FactoryKit
 import SwiftUI
 
 /// When leave/back app, load/save the current configuration.

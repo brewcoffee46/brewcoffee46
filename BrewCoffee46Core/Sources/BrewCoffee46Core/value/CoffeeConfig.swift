@@ -1,4 +1,4 @@
-import Factory
+import FactoryKit
 import Foundation
 
 public struct CoffeeConfig: Equatable, Hashable, Sendable {

@@ -1,5 +1,5 @@
 import BrewCoffee46Core
-import Factory
+import FactoryKit
 import Foundation
 
 /// # ArrayNumber to/from `Double`

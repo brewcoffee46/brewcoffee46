@@ -1,5 +1,5 @@
 import BrewCoffee46Core
-import Factory
+import FactoryKit
 
 public protocol SaveLoadConfigAndLegacyConfigService: SaveLoadConfigService {
     func loadAllLegacyConfigs() -> ResultNea<[CoffeeConfig], CoffeeError>
