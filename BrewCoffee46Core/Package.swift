@@ -10,7 +10,7 @@ let package = Package(
         .library(name: "BrewCoffee46TestsShared", targets: ["BrewCoffee46TestsShared"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/hmlongco/Factory.git", from: "2.5.3")
+        .package(url: "https://github.com/hmlongco/Factory.git", from: "3.0.0")
     ],
     targets: [
         .target(
@@ -22,7 +22,7 @@ let package = Package(
         .target(
             name: "BrewCoffee46Core",
             dependencies: [
-                "Factory"
+                .product(name: "FactoryKit", package: "Factory")
             ]
         ),
         .testTarget(
@@ -30,6 +30,7 @@ let package = Package(
             dependencies: [
                 "BrewCoffee46Core",
                 "BrewCoffee46TestsShared",
+                .product(name: "FactoryTesting", package: "Factory")
             ]
         ),
     ]

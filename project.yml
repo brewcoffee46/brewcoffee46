@@ -16,7 +16,7 @@ packages:
     from: 1.4.0
   Factory:
     url: https://github.com/hmlongco/Factory.git
-    from: 2.5.3
+    from: 3.0.0
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk.git
     from: 12.11.0
@@ -86,6 +86,7 @@ targets:
         product: BrewCoffee46Core
       - package: SwiftUITooltip
       - package: Factory
+        product: FactoryKit
       - package: SwiftJWT
       - package: Firebase
         product: FirebaseAnalytics
@@ -149,6 +150,8 @@ targets:
       - target: brewcoffee46
       - package: BrewCoffee46Core
         product: BrewCoffee46TestsShared
+      - package: Factory
+        product: FactoryTesting
     type: bundle.unit-test
 
   brewcoffee46WatchKitApp:
@@ -187,6 +190,7 @@ targets:
       - package: BrewCoffee46Core
         product: BrewCoffee46Core
       - package: Factory
+        product: FactoryKit
       - package: Firebase
         product: FirebaseAnalytics
       - package: Firebase
