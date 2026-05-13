@@ -11,12 +11,17 @@ struct MillSettingView: View {
 
     @State private var millEditMode: EditMode = .inactive
 
+    // If we don't use `tmpMills`, `TextField` will edit `mills` directory.
+    // It causes to re-render `TextField` so the editing will be suspended.
+    @State private var tmpMills: [RawMill]
+
     init(
         mills: Binding<[RawMill]>,
         showMillEditSheet: Binding<Bool>
     ) {
         self._mills = mills
         self._showMillEditSheet = showMillEditSheet
+        self.tmpMills = mills.wrappedValue
     }
 
     var body: some View {
@@ -44,22 +49,22 @@ struct MillSettingView: View {
                 .listRowSeparator(.hidden)
 
                 TipView(MillItemTip(), arrowEdge: .bottom)
-                ForEach(Array(mills.enumerated()), id: \.self.element.id) { i, item in
-                    EditableMillItem(item: $mills[i], mode: $millEditMode)
+                ForEach($tmpMills) { item in
+                    EditableMillItem(item: item, mode: $millEditMode)
                         .deleteDisabled(disableMoveAndDelete())
                         .moveDisabled(disableMoveAndDelete())
                 }
                 .onDelete(perform: { indexSet in
-                    mills.remove(atOffsets: indexSet)
+                    tmpMills.remove(atOffsets: indexSet)
                 })
                 .onMove(perform: { src, dest in
-                    mills.move(fromOffsets: src, toOffset: dest)
+                    tmpMills.move(fromOffsets: src, toOffset: dest)
                 })
 
                 HStack {
                     Spacer()
                     Button(action: {
-                        mills.append(RawMill.defaultValue)
+                        tmpMills.append(RawMill.defaultValue())
                     }) {
                         Image(systemName: "plus.circle")
                     }
@@ -69,6 +74,13 @@ struct MillSettingView: View {
                 }
             }
             .environment(\.editMode, $millEditMode)
+            .onChange(of: millEditMode) { _, newValue in
+                if newValue.isEditing {
+                    tmpMills = mills
+                } else {
+                    mills = tmpMills
+                }
+            }
 
             Button(action: {
                 showMillEditSheet.toggle()
@@ -89,7 +101,7 @@ struct MillSettingView: View {
 #if DEBUG
     struct MillSettingView_Previews: PreviewProvider {
         @State static var showMillEditSheet: Bool = false
-        @State static var mills: [RawMill] = [RawMill.defaultValue]
+        @State static var mills: [RawMill] = [RawMill.defaultValue()]
 
         static var previews: some View {
             Text("Background")

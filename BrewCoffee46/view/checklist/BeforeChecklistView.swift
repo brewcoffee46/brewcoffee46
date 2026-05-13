@@ -78,7 +78,7 @@ struct BeforeChecklistView: View {
                     tmpBeforeChecklist.move(fromOffsets: src, toOffset: dest)
                     checks.move(fromOffsets: src, toOffset: dest)
                 })
-                .onChange(of: mode) { oldValue, newValue in
+                .onChange(of: mode) { _, newValue in
                     if newValue.isEditing {
                         tmpBeforeChecklist = viewModel.currentConfig.coffeeConfig.beforeChecklist
                     } else {
