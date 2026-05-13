@@ -6,9 +6,6 @@ struct EditableMillItem: View {
     @Binding private var mode: EditMode
 
     @State private var isExpanded = true
-    // If we don't use `tmpItem`, `TextField` will edit `item` directory.
-    // It causes to re-render `TextField` so the editing will be suspended.
-    @State private var tmpItem: RawMill = RawMill.defaultValue
 
     init(
         item: Binding<RawMill>,
@@ -24,7 +21,7 @@ struct EditableMillItem: View {
                 isExpanded.toggle()
             }) {
                 HStack {
-                    TextField(tmpItem.name, text: $tmpItem.name, axis: .vertical)
+                    TextField(item.name, text: $item.name, axis: .vertical)
                         .disabled(!mode.isEditing)
                         .lineLimit(1)
                         .font(.headline)
@@ -43,7 +40,7 @@ struct EditableMillItem: View {
             .border(.primary, width: 0)
 
             if isExpanded {
-                TextField(item.value, text: $tmpItem.value, axis: .vertical)
+                TextField(item.value, text: $item.value, axis: .vertical)
                     .disabled(!mode.isEditing)
                     .lineLimit(1...3)
                     .font(.body)
@@ -53,13 +50,5 @@ struct EditableMillItem: View {
             }
         }
         .millItemModifier()
-        .onChange(of: mode) { _, _ in
-            if mode.isEditing {
-                tmpItem = item
-            }
-        }
-        .onChange(of: tmpItem, initial: true) { _, newValue in
-            item = newValue
-        }
     }
 }

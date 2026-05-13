@@ -11,10 +11,12 @@ struct RawMill: Identifiable {
 }
 
 extension RawMill {
-    static let defaultValue = RawMill(
-        name: NSLocalizedString("config mill name default", comment: ""),
-        value: NSLocalizedString("config mill value default", comment: ""),
-    )
+    static func defaultValue() -> RawMill {
+        RawMill.init(
+            name: NSLocalizedString("config mill name default", comment: ""),
+            value: NSLocalizedString("config mill value default", comment: ""),
+        )
+    }
 }
 
 // `Equatable` instance of `RawMill` does not contain `id` because `id` is required for `ForEach` view.

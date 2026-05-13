@@ -16,8 +16,8 @@ public struct MillListView: View {
         } else {
             ScrollView {
                 VStack {
-                    ForEach(items, id: \.self) { item in
-                        MillItem(item: item)
+                    ForEach(Array(items.enumerated()), id: \.offset) { i, _ in
+                        MillItem(item: items[i])
                     }
                 }
             }
