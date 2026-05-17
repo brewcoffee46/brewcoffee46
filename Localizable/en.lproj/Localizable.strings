@@ -123,7 +123,7 @@
 "notification after 4th drip suffix" = "%dth of %d Drip Now";
 "notification drip end" = "End of Dripping";
 
-"watch kit app 2nd drip" = "1st of %d";
+"watch kit app 1st drip" = "1st of %d";
 "watch kit app 2nd drip" = "2nd of %d";
 "watch kit app 3rd drip" = "3rd of %d";
 "watch kit app after 4th drip suffix" = "%dth of %d";
