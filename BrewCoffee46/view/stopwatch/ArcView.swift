@@ -80,7 +80,7 @@ struct Arc: Shape {
             )
             p.addArc(
                 center: center,
-                radius: radius / 1.5,
+                radius: radius / 1.3,
                 startAngle: .degrees(self.endDegrees),
                 endAngle: .degrees(self.startDegrees),
                 clockwise: true

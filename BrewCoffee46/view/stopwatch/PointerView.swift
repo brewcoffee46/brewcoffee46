@@ -26,7 +26,7 @@ struct PointerView: View {
                     )
                     .offset(y: -offset)
                 Spacer()
-                Pointer(offset: offset, lineLength: isOnGoing ? 70 : 95)
+                Pointer(offset: offset, lineLength: isOnGoing ? 90 : 115)
                     .stroke(lineWidth: isOnGoing ? 1.5 : 1)
                     .opacity(0.5)
                     .foregroundColor(
