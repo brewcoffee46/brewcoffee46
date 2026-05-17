@@ -18,6 +18,11 @@
 "before check list 8" = "Flatten the coffee grounds";
 "before check list 9" = "Reset the scale value";
 
+"stopwatch 1st drip" = "1st";
+"stopwatch 2nd drip" = "2nd";
+"stopwatch 3rd drip" = "3rd";
+"stopwatch after 4th drip" = "%dth";
+
 "stop alert title" = "Notice";
 "stop alert message" = "Do you want to stop counting?";
 "stop alert cancel" = "Cancel";

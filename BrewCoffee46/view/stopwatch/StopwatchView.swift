@@ -51,6 +51,7 @@ struct StopwatchView: View {
 
     var body: some View {
         ViewThatFits(in: .horizontal) {
+            // Landscape
             HStack {
                 GeometryReader { (geometry: GeometryProxy) in
                     ZStack(alignment: .center) {
@@ -61,7 +62,6 @@ struct StopwatchView: View {
                             totalTime: viewModel.currentConfig.coffeeConfig.totalTimeSec
                         )
                         .frame(height: geometry.size.width * 0.95)
-                        stopWatchCountShow
                     }
                 }
                 GeometryReader { (geometry: GeometryProxy) in
@@ -77,6 +77,7 @@ struct StopwatchView: View {
             }
             .frame(minWidth: appEnvironment.minWidth)
 
+            // Portrait
             GeometryReader { (geometry: GeometryProxy) in
                 VStack {
                     Group {
@@ -88,7 +89,6 @@ struct StopwatchView: View {
                                 totalTime: viewModel.currentConfig.coffeeConfig.totalTimeSec
                             )
                             .frame(height: geometry.size.width * 0.9)
-                            stopWatchCountShow
                         }
                     }
                     Divider()
@@ -116,29 +116,6 @@ struct StopwatchView: View {
         }
         .onChange(of: viewModel.dripInfo, initial: true) { _, newValue in
             pointerInfo = PointerInfo(newValue)
-        }
-    }
-
-    private var stopWatchCountShow: some View {
-        let progressInt = if progressTime < 0 { ceil(progressTime) } else { floor(progressTime) }
-
-        return VStack(alignment: .center) {
-            HStack(alignment: .center) {
-                Text(
-                    String(
-                        format: "%03d.%02d ",  // The suffix space is required to alignment.
-                        Int(progressInt),
-                        Int((progressTime < 0 ? progressInt - progressTime : progressTime - progressInt) * 100))
-                )
-                .font(Font(UIFont.monospacedSystemFont(ofSize: 38, weight: .light)))
-                .fixedSize()
-                .foregroundColor(
-                    progressTime < viewModel.currentConfig.coffeeConfig.totalTimeSec ? .primary : .red
-                )
-            }
-            Text(String(format: "/ %3.0f sec", viewModel.currentConfig.coffeeConfig.totalTimeSec))
-                .font(Font(UIFont.monospacedSystemFont(ofSize: 16, weight: .light)))
-                .frame(alignment: .bottom)
         }
     }
 
