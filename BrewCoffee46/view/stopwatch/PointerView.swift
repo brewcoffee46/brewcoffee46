@@ -15,7 +15,7 @@ struct PointerView: View {
         ZStack {
             VStack {
                 Text(String(format: "%.1f", waterAmount) + weightUnit)
-                    .font(.system(size: 18))
+                    .font(Font(UIFont.monospacedSystemFont(ofSize: 17, weight: .regular)))
                     .foregroundColor(
                         isOnGoing ? .accentColor : .primary
                     )

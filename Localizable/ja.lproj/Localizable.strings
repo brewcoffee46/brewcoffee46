@@ -18,11 +18,6 @@
 "before check list 8" = "コーヒー粉を平坦にならす";
 "before check list 9" = "スケールをリセット";
 
-"stopwatch 1st drip" = "1st";
-"stopwatch 2nd drip" = "2nd";
-"stopwatch 3rd drip" = "3rd";
-"stopwatch after 4th drip" = "%dth";
-
 "stop alert title" = "確認";
 "stop alert message" = "ストップウォッチを止めますか？";
 "stop alert cancel" = "戻る";
