@@ -61,7 +61,7 @@ struct StopwatchView: View {
                             steamingTime: viewModel.currentConfig.coffeeConfig.steamingTimeSec,
                             totalTime: viewModel.currentConfig.coffeeConfig.totalTimeSec
                         )
-                        .frame(height: geometry.size.width * 0.95)
+                        .frame(height: geometry.size.width * 0.9)
                     }
                 }
                 GeometryReader { (geometry: GeometryProxy) in
@@ -88,7 +88,7 @@ struct StopwatchView: View {
                                 steamingTime: viewModel.currentConfig.coffeeConfig.steamingTimeSec,
                                 totalTime: viewModel.currentConfig.coffeeConfig.totalTimeSec
                             )
-                            .frame(height: geometry.size.width * 0.9)
+                            .frame(height: geometry.size.width * 0.85)
                         }
                     }
                     Divider()

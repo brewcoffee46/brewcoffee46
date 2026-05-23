@@ -204,16 +204,8 @@ struct ClockView: View {
     }
 
     private var stopWatchNthText: some View {
-        // `nth` starts with 0 so `nth` is 0 that means 1st drip.
-        if nth <= 0 {
-            Text("stopwatch 1st drip")
-        } else if nth == 1 {
-            Text("stopwatch 2nd drip")
-        } else if nth == 2 {
-            Text("stopwatch 3rd drip")
-        } else {
-            Text(String(format: NSLocalizedString("stopwatch after 4th drip", comment: ""), nth + 1))
-        }
+        Text("#\(nth + 1)")
+            .font(Font(UIFont.monospacedSystemFont(ofSize: 17, weight: .thin)))
     }
 
     private var stopWatchCountShow: some View {
@@ -223,9 +215,9 @@ struct ClockView: View {
             HStack(alignment: .center) {
                 Text(
                     String(
-                        format: "%03d.%02d ",  // The suffix space is required to alignment.
+                        format: "%03d.%01d ",  // The suffix space is required to alignment.
                         Int(progressInt),
-                        Int((progressTime < 0 ? progressInt - progressTime : progressTime - progressInt) * 100))
+                        Int((progressTime < 0 ? progressInt - progressTime : progressTime - progressInt) * 10))
                 )
                 .font(Font(UIFont.monospacedSystemFont(ofSize: 38, weight: .light)))
                 .fixedSize()
@@ -259,7 +251,7 @@ struct ClockView: View {
                         steamingTime: 50,
                         totalTime: 180
                     )
-                    .frame(height: geometry.size.width * 0.9)
+                    .frame(height: geometry.size.width * 0.8)
                 }
                 Spacer()
             }
