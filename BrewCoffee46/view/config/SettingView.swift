@@ -277,6 +277,14 @@ struct SettingView: View {
                 }
             }
 
+            Section(header: Text("config switch settings")) {
+                Toggle("config switch use switch", isOn: $viewModel.currentConfig.globalConfig.useSwitch)
+
+                ForEach(0..<rawSetting.switches.count, id: \.self) { i in
+                    Toggle("config switch \(i)", isOn: $rawSetting.switches[i])
+                }
+            }
+
             Section(header: Text("config json")) {
                 NavigationLink(value: Route.jsonImportExport) {
                     Text("config import export")

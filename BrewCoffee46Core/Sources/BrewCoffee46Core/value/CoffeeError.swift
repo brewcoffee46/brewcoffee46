@@ -30,6 +30,8 @@ public enum CoffeeError: Error, Sendable {
 
     case configQueryParameterNotFound
 
+    case numberOfSwitchesIsInvalid
+
     public func getMessage() -> String {
         switch self {
         case .coffeeBeansWeightUnderZeroError:
@@ -76,6 +78,9 @@ public enum CoffeeError: Error, Sendable {
 
         case .configQueryParameterNotFound:
             return "Configuration query parameter not found."
+
+        case .numberOfSwitchesIsInvalid:
+            return "The number of switches is invalid."
         }
     }
 }

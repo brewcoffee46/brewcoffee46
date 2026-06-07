@@ -15,6 +15,7 @@ struct RawSetting {
     var steamingTimeSec: Double
     var coffeeBeansWeight: Double
     var mills: [RawMill]
+    var switches: [Bool]
     var editedAtMilliSec: MilliSecond?
 
     init(
@@ -27,7 +28,8 @@ struct RawSetting {
         steamingTimeSec: Double,
         coffeeBeansWeight: Double,
         editedAtMilliSec: MilliSecond?,
-        mills: [RawMill]
+        mills: [RawMill],
+        switches: [Bool]
     ) {
         self.calculateCoffeeBeansWeightFromWater = calculateCoffeeBeansWeightFromWater
         self.waterAmount = waterAmount
@@ -39,6 +41,7 @@ struct RawSetting {
         self.coffeeBeansWeight = coffeeBeansWeight
         self.editedAtMilliSec = editedAtMilliSec
         self.mills = mills
+        self.switches = switches
     }
 }
 
@@ -57,7 +60,8 @@ extension RawSetting {
             editedAtMilliSec: defaultAppConfig.coffeeConfig.editedAtMilliSec,
             mills: defaultAppConfig.coffeeConfig.mills.map { mill in
                 RawMill(name: mill.name, value: mill.value)
-            }
+            },
+            switches: defaultAppConfig.coffeeConfig.switches.map { $0.toBool() }
         )
     }
 }
@@ -76,5 +80,6 @@ extension RawSetting: Equatable {
             && lhs.steamingTimeSec == rhs.steamingTimeSec
             && lhs.coffeeBeansWeight == rhs.coffeeBeansWeight
             && lhs.mills == rhs.mills
+            && lhs.switches == rhs.switches
     }
 }

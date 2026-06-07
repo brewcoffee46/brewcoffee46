@@ -11,6 +11,11 @@ public final class ValidateInputServiceImpl: ValidateInputService {
             validateCoffeeBeansWeight(appConfig.globalConfig.coffeeBeansWeightG) |+| validationNumberOf6(appConfig.coffeeConfig.partitionsCountOf6)
             |+| validationTotalTime(steamingTime: appConfig.coffeeConfig.steamingTimeSec, totalTime: appConfig.coffeeConfig.totalTimeSec)
             |+| validationFirstWaterPercent(appConfig.coffeeConfig.firstWaterPercent)
+            |+| validationSwitches(
+                appConfig.coffeeConfig.switches,
+                appConfig.coffeeConfig.firstWaterPercent,
+                appConfig.coffeeConfig.partitionsCountOf6
+            )
 
         return validatedTuple.map { _ in
             ()
@@ -41,6 +46,16 @@ public final class ValidateInputServiceImpl: ValidateInputService {
         _ firstWaterPercent: Double
     ) -> ResultNea<Void, CoffeeError> {
         firstWaterPercent > 0 ? ResultNea.success(()) : CoffeeError.firstWaterPercentIsZeroError.toFailureNel()
+    }
+
+    private func validationSwitches(
+        _ switches: [Switch],
+        _ firstWaterPercent: Double,
+        _ countOf6: Int
+    ) -> ResultNea<Void, CoffeeError> {
+        let countOf2 = firstWaterPercent == 0 || firstWaterPercent == 1 ? 1 : 2
+
+        return switches.count == countOf2 + countOf6 ? ResultNea.success(()) : CoffeeError.numberOfSwitchesIsInvalid.toFailureNel()
     }
 }
 

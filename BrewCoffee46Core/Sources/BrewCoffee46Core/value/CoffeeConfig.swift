@@ -18,6 +18,8 @@ public struct CoffeeConfig: Equatable, Hashable, Sendable {
 
     public var beforeChecklist: [String]
 
+    public var switches: [Switch]
+
     /// Unix epoch time as milli seconds.
     public var editedAtMilliSec: MilliSecond?
 
@@ -36,6 +38,7 @@ public struct CoffeeConfig: Equatable, Hashable, Sendable {
         case mills
         case note
         case beforeChecklist
+        case switches
         case editedAtMilliSec
     }
 
@@ -48,6 +51,7 @@ public struct CoffeeConfig: Equatable, Hashable, Sendable {
         note: String,
         beforeChecklist: [String],
         editedAtMilliSec: UInt64?,
+        switches: [Switch],
         mills: [Mill] = [],
         version: Int = CoffeeConfig.currentVersion
     ) {
@@ -59,6 +63,7 @@ public struct CoffeeConfig: Equatable, Hashable, Sendable {
         self.mills = mills
         self.note = note
         self.beforeChecklist = beforeChecklist
+        self.switches = switches
         self.editedAtMilliSec = editedAtMilliSec
         self.version = version
     }
@@ -87,6 +92,7 @@ extension CoffeeConfig {
             note: "",
             beforeChecklist: CoffeeConfig.initBeforeCheckList,
             editedAtMilliSec: .none,
+            switches: [.open, .open, .open, .open, .open],
             version: CoffeeConfig.currentVersion
         )
     }
@@ -149,6 +155,7 @@ extension CoffeeConfig: Decodable {
         note = try values.decodeIfPresent(String.self, forKey: .note) ?? ""
         let rawBeforeChecklist = try values.decodeIfPresent([String].self, forKey: .beforeChecklist) ?? CoffeeConfig.initBeforeCheckList
         beforeChecklist = Array(rawBeforeChecklist.prefix(CoffeeConfig.maxCheckListSize))
+        switches = try values.decodeIfPresent([Switch].self, forKey: .switches) ?? []
         editedAtMilliSec = try values.decodeIfPresent(UInt64.self, forKey: .editedAtMilliSec)
 
         self.version = CoffeeConfig.currentVersion
@@ -166,6 +173,7 @@ extension CoffeeConfig: Encodable {
         try container.encode(mills, forKey: .mills)
         try container.encode(note, forKey: .note)
         try container.encode(beforeChecklist, forKey: .beforeChecklist)
+        try container.encode(switches, forKey: .switches)
         try container.encodeIfPresent(editedAtMilliSec, forKey: .editedAtMilliSec)
         try container.encode(version, forKey: .version)
     }

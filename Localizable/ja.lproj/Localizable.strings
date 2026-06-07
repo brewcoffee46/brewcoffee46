@@ -65,6 +65,9 @@
 "config mill setting edit" = "編集";
 "config mill settings sheet title" = "Mill setting";
 
+"config switch settings" = "HARIO Switch設定";
+"config switch use switch" = "Switchを使う";
+
 "config save load setting" = "設定の保存と読み込み";
 "config save load current config" = "現在の設定";
 "config saved data" = "保存ずみ設定";

@@ -41,15 +41,19 @@ final class RawSettingConvertServiceImpl: RawSettingConvertService {
             // If it's the same, which means that the modification is only `GlobalConfig` so
             // it's not necessary to change `editedAtMilliSec`.
             editedAtMilliSec: appConfig.coffeeConfig.editedAtMilliSec,
+            switches: rawSetting.switches.map { Switch.fromBool($0) },
             mills: rawSetting.mills.map { mill in
                 Mill(name: mill.name, value: mill.value)
-            }
+            },
         )
         if newConfig != appConfig.coffeeConfig {
             newConfig.editedAtMilliSec = rawSetting.editedAtMilliSec
         }
 
-        let globalConfig = GlobalConfig(MilliGram.fromGram(coffeeBeansWeight))
+        let globalConfig = GlobalConfig(
+            MilliGram.fromGram(coffeeBeansWeight),
+            appConfig.globalConfig.useSwitch
+        )
         let appConfig = AppConfig(newConfig, globalConfig)
 
         return validateInputService.validate(appConfig).map { () in appConfig }
@@ -78,7 +82,8 @@ final class RawSettingConvertServiceImpl: RawSettingConvertService {
             editedAtMilliSec: appConfig.coffeeConfig.editedAtMilliSec,
             mills: appConfig.coffeeConfig.mills.map { mill in
                 RawMill(name: mill.name, value: mill.value)
-            }
+            },
+            switches: appConfig.coffeeConfig.switches.map { $0.toBool() }
         )
     }
 }
