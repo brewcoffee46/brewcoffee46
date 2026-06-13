@@ -7,7 +7,9 @@ public protocol DripTimingNotificationService: Sendable {
         dripTimings: [DripTiming],
         firstDripAtSec: Double,
         totalTimeSec: Double
-    ) async -> ResultNea<Void, CoffeeError>
+    ) async -> ResultNea<[DripTimingNotification], CoffeeError>
+
+    func removePending(_ notifications: [DripTimingNotification]) -> Void
 
     func removePendingAll() -> Void
 }
@@ -19,13 +21,14 @@ public final class DripTimingNotificationServiceImpl: DripTimingNotificationServ
         dripTimings: [DripTiming],
         firstDripAtSec: Double,
         totalTimeSec: Double
-    ) async -> ResultNea<Void, CoffeeError> {
-        return await withTaskGroup(of: ResultNea<Void, CoffeeError>.self) { group in
+    ) async -> ResultNea<[DripTimingNotification], CoffeeError> {
+        return await withTaskGroup(of: ResultNea<DripTimingNotification, CoffeeError>.self) { group in
             var errors: [CoffeeError] = []
+            var notifications: [DripTimingNotification] = []
 
             let numberOfAllDrips = dripTimings.count
             for (i, info) in dripTimings.enumerated() {
-                let notifiedAt = Int(floor(info.dripAt) + firstDripAtSec)
+                let notifiedAt = floor(info.dripAt.second) + firstDripAtSec
 
                 group.addTask {
                     let title =
@@ -38,41 +41,57 @@ public final class DripTimingNotificationServiceImpl: DripTimingNotificationServ
                         } else {
                             String(format: NSLocalizedString("notification after 4th drip suffix", comment: ""), (i + 1), numberOfAllDrips)
                         }
-
-                    return await self.notificationService.addNotificationUsingTimer(
+                    let notificationID = await self.notificationService.addNotificationUsingTimer(
                         title: title,
-                        body: "🫖 \(roundCentesimal(info.waterAmount))g 💧",
-                        notifiedInSeconds: notifiedAt
+                        body: "🫖 \(roundCentesimal(info.waterAmount.gram))g 💧",
+                        notifiedInSeconds: Int(notifiedAt)
                     )
+
+                    return notificationID.map { (notificationID: NotificationID) in
+                        DripTimingNotification(
+                            id: notificationID,
+                            notifiedIn: MilliSecond.fromSecond(notifiedAt)
+                        )
+                    }
                 }
 
                 for await result in group {
                     switch result {
                     case .failure(let error):
                         errors += error.toArray()
-                    case .success():
-                        ()
+                    case .success(let notification):
+                        notifications.append(notification)
                     }
                 }
             }
 
+            let lastNotifiedInSeconds = ceil(totalTimeSec) + firstDripAtSec
             switch await notificationService.addNotificationUsingTimer(
                 title: "☕️ " + NSLocalizedString("notification drip end", comment: ""),
                 body: "",
-                notifiedInSeconds: Int(ceil(totalTimeSec) + firstDripAtSec)
+                notifiedInSeconds: Int(lastNotifiedInSeconds)
             ) {
             case .failure(let error):
                 errors += error.toArray()
-            case .success():
-                ()
+            case .success(let notificationID):
+                notifications.append(
+                    DripTimingNotification(
+                        id: notificationID,
+                        notifiedIn: MilliSecond.fromSecond(lastNotifiedInSeconds)
+                    )
+                )
             }
 
             if errors.isEmpty {
-                return .success(())
+                return .success(notifications)
             } else {
                 return .failure(NonEmptyArray(errors.first!, Array(errors.dropFirst())))
             }
         }
+    }
+
+    public func removePending(_ notifications: [DripTimingNotification]) -> Void {
+        notificationService.removePending(notifications.map(\.id))
     }
 
     public func removePendingAll() -> Void {

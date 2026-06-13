@@ -69,7 +69,7 @@ struct ClockView: View {
                     let (degree, dripTiming) = item
 
                     PointerView(
-                        waterAmount: dripTiming.waterAmount,
+                        waterAmount: dripTiming.waterAmount.gram,
                         degree: degree,
                         isOnGoing: nth >= i && appEnvironment.isTimerStarted && progressTime > 0
                     )
@@ -103,10 +103,10 @@ struct ClockView: View {
                             newValue
                         )
 
-                        let currentDripAt = viewModel.dripInfo.dripTimings[nth].dripAt
+                        let currentDripAt = viewModel.dripInfo.dripTimings[nth].dripAt.second
                         nextDripAt =
                             nth + 1 < phase.totalNumberOfDrip
-                            ? viewModel.dripInfo.dripTimings[nth + 1].dripAt : viewModel.currentConfig.coffeeConfig.totalTimeSec
+                            ? viewModel.dripInfo.dripTimings[nth + 1].dripAt.second : viewModel.currentConfig.coffeeConfig.totalTimeSec
                         let currentDripDuration = nextDripAt - currentDripAt
 
                         endDegreeEveryStep = 360.0 * (newValue - currentDripAt) / currentDripDuration
@@ -114,7 +114,7 @@ struct ClockView: View {
                         nth = -1
                         endDegree = (ceil(newValue) - newValue) * 360
                         endDegreeEveryStep = 0.0
-                        nextDripAt = viewModel.dripInfo.dripTimings[1].dripAt
+                        nextDripAt = viewModel.dripInfo.dripTimings[1].dripAt.second
                     }
                 }
                 VStack {

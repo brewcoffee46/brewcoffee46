@@ -1,10 +1,10 @@
 public struct DripTiming: Equatable, Sendable {
-    public let waterAmount: Double  // gram
-    public let dripAt: Double  // sec
+    public let waterAmount: MilliGram
+    public let dripAt: MilliSecond
 
     public init(waterAmount: Double, dripAt: Double) {
-        self.waterAmount = waterAmount
-        self.dripAt = dripAt
+        self.waterAmount = MilliGram.fromGram(waterAmount)
+        self.dripAt = MilliSecond.fromSecond(dripAt)
     }
 }
 

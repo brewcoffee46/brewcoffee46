@@ -1,6 +1,6 @@
 /// # Water amount for 4:6 method.
 public struct WaterAmount: Equatable {
-    // The first and second water amounts (gram)
+    // The first and second water amounts.
     // Note that the second value can be `0.0` but the first value cannot be `0.0`.
     public let fortyPercent: (Double, Double)
 
