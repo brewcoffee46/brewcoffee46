@@ -57,8 +57,8 @@ final class ConvertDegreeServiceTests: XCTestCase {
         let pointerInfo = PointerInfo([0.0, 142.56, 144.0, 216.0, 288.0])
 
         for (degree, dripTiming) in zip(pointerInfo.pointerDegrees, dripInfo.dripTimings) {
-            XCTAssertEqual(sut.toProgressTime(config, pointerInfo, dripInfo, degree), dripTiming.dripAt, accuracy: epsilon)
-            XCTAssertEqual(sut.fromProgressTime(config, pointerInfo, dripInfo, dripTiming.dripAt), degree, accuracy: epsilon)
+            XCTAssertEqual(sut.toProgressTime(config, pointerInfo, dripInfo, degree), dripTiming.dripAt.second, accuracy: epsilon)
+            XCTAssertEqual(sut.fromProgressTime(config, pointerInfo, dripInfo, dripTiming.dripAt.second), degree, accuracy: epsilon)
         }
     }
 
@@ -79,8 +79,8 @@ final class ConvertDegreeServiceTests: XCTestCase {
         let pointerInfo = PointerInfo([0.0, 144.0, 216.0, 288.0])
 
         for (degree, dripTiming) in zip(pointerInfo.pointerDegrees, dripInfo.dripTimings) {
-            XCTAssertEqual(sut.toProgressTime(config, pointerInfo, dripInfo, degree), dripTiming.dripAt, accuracy: epsilon)
-            XCTAssertEqual(sut.fromProgressTime(config, pointerInfo, dripInfo, dripTiming.dripAt), degree, accuracy: epsilon)
+            XCTAssertEqual(sut.toProgressTime(config, pointerInfo, dripInfo, degree), dripTiming.dripAt.second, accuracy: epsilon)
+            XCTAssertEqual(sut.fromProgressTime(config, pointerInfo, dripInfo, dripTiming.dripAt.second), degree, accuracy: epsilon)
         }
     }
 }

@@ -37,7 +37,7 @@ public final class GetDripPhaseServiceImpl: GetDripPhaseService {
         }
 
         if let nth = dripInfo.dripTimings.firstIndex(where: { e in
-            e.dripAt > progressTime
+            e.dripAt.second > progressTime
         }) {
             return DripPhase(
                 dripPhaseType: .dripping(nth),

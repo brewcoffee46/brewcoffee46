@@ -34,9 +34,14 @@ struct StopwatchView: View {
     @State private var hasRingingIndex: Int = 0
     @State private var isStop︎AlertPresented: Bool = false
 
+    // Do not ring for drip timings that were missed while the app was suspended or backgrounded.
+    private let ringSoundAllowedDelaySec = 0.2
+
     @State private var rawCoffeeBeansWeight: Double = RawSetting.defaultValue().coffeeBeansWeight
     @State private var isDiscloseCoffeeBeansSetting: Bool = true
+    @State private var notifications: [DripTimingNotification] = []
 
+    @Injected(\.dateService) private var dateService
     @Injected(\.requestReviewService) private var requestReviewService
     @Injected(\.dripTimingNotificationService) private var dripTimingNotificationService
     @Injected(\.getDripPhaseService) private var getDripPhaseService
@@ -112,6 +117,7 @@ struct StopwatchView: View {
                         startTimer()
                     }
                 }
+                removeElapsedPendingNotifications(notifications, now: dateService.now())
             }
         }
         .onChange(of: viewModel.dripInfo, initial: true) { _, newValue in
@@ -165,7 +171,7 @@ struct StopwatchView: View {
         if self.timer == nil {
             UIApplication.shared.isIdleTimerDisabled = true
             self.appEnvironment.isTimerStarted = true
-            self.startAt = Date()
+            self.startAt = dateService.now()
 
             Task { @MainActor in
                 let result = await dripTimingNotificationService.registerNotifications(
@@ -173,6 +179,7 @@ struct StopwatchView: View {
                     firstDripAtSec: -StopwatchView.progressTimeInit,
                     totalTimeSec: viewModel.currentConfig.coffeeConfig.totalTimeSec
                 )
+                result.forEach { notifications = $0 }
                 result.recoverWithErrorLog(&viewModel.errors)
             }
 
@@ -181,14 +188,15 @@ struct StopwatchView: View {
                 .publish(every: interval, on: .main, in: .default)
                 .autoconnect()
                 .sink { _ in
-                    let now = Date()
+                    let now = dateService.now()
 
                     if let time = self.startAt, progressTime < 0 {
                         progressTime = now.timeIntervalSince(time) + StopwatchView.progressTimeInit
                     } else {
                         if let time = startAt {
+                            let previousProgressTime = progressTime
                             progressTime = now.timeIntervalSince(time) + StopwatchView.progressTimeInit
-                            ringSound()
+                            ringSound(previousProgressTime: previousProgressTime)
 
                             // For the battery life stop `isIdleTimerDisable` after 10 seconds from `totalTimeSec`.
                             if progressTime > (viewModel.currentConfig.coffeeConfig.totalTimeSec + 10.0) && UIApplication.shared.isIdleTimerDisabled {
@@ -198,6 +206,18 @@ struct StopwatchView: View {
                     }
                 }
         }
+    }
+
+    private func removeElapsedPendingNotifications(_ registeredNotifications: [DripTimingNotification], now: Date) {
+        guard let startAt else { return }
+
+        let elapsedTime = now.timeIntervalSince(startAt)
+        let futureNotifications = registeredNotifications.filter { elapsedTime < $0.notifiedIn.second }
+        // Keep state in sync with pending notifications so already-removed IDs are not removed again after the next resume.
+        notifications = futureNotifications
+
+        let elapsedNotifications = registeredNotifications.filter { elapsedTime >= $0.notifiedIn.second }
+        dripTimingNotificationService.removePending(elapsedNotifications)
     }
 
     private func stopTimer() {
@@ -214,16 +234,29 @@ struct StopwatchView: View {
         }
     }
 
-    private func ringSound() {
+    private func ringSound(previousProgressTime: Double) {
         let nth = getDripPhaseService.get(
             dripInfo: viewModel.dripInfo,
             progressTime: progressTime
         ).toInt()
 
-        if nth > hasRingingIndex && progressTime <= viewModel.currentConfig.coffeeConfig.totalTimeSec {
-            AudioServicesPlaySystemSound(soundIdRing)
-            hasRingingIndex = nth
+        guard nth > hasRingingIndex,
+            nth < viewModel.dripInfo.dripTimings.count,
+            progressTime <= viewModel.currentConfig.coffeeConfig.totalTimeSec
+        else {
+            return
         }
+
+        let targetDripAt = viewModel.dripInfo.dripTimings[nth].dripAt.second
+        let didJustPassTarget =
+            previousProgressTime < targetDripAt
+            && targetDripAt <= progressTime
+            && progressTime - targetDripAt <= ringSoundAllowedDelaySec
+
+        if didJustPassTarget {
+            AudioServicesPlaySystemSound(soundIdRing)
+        }
+        hasRingingIndex = nth
     }
 
     private var coffeeBeansPicker: some View {

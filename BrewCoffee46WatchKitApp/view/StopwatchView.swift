@@ -116,6 +116,9 @@ struct StopwatchView: View {
                                 firstDripAtSec: countDownInit,
                                 totalTimeSec: viewModel.currentConfig.coffeeConfig.totalTimeSec
                             )
+                            result.forEach { registeredNotifications in
+                                removeElapsedPendingNotifications(registeredNotifications, now: dateService.now())
+                            }
                             result.recoverWithErrorLog(&viewModel.log)
                         }
                     }) {
@@ -164,9 +167,25 @@ struct StopwatchView: View {
             }
             Spacer()
             Text(
-                "\(roundCentesimal(viewModel.dripInfo.dripTimings[index].waterAmount), specifier: "%.1f")\(weightUnit)"
+                "\(roundCentesimal(Double(viewModel.dripInfo.dripTimings[index].waterAmount.gram)), specifier: "%.1f")\(weightUnit)"
             )
         }
+    }
+
+    private func progressValue(index: Int, totalDripCount: Int, progressTime: Double) -> Double {
+        let currentDripAt = viewModel.dripInfo.dripTimings[index].dripAt
+        let elapsedTime = progressTime - currentDripAt.second
+        let duration: Double
+
+        if index == totalDripCount - 1 {
+            duration = (viewModel.currentConfig.coffeeConfig.totalTimeMilliSec - currentDripAt).second
+        } else {
+            let nextDripAt = viewModel.dripInfo.dripTimings[index + 1].dripAt
+            duration = (nextDripAt - currentDripAt).second
+        }
+
+        guard duration > 0 else { return 0 }
+        return elapsedTime / duration
     }
 
     private func progressView(
@@ -180,19 +199,14 @@ struct StopwatchView: View {
                     VStack {
                         showDripInfo(index: index, totalDripCount: totalDripCount)
                         if index == currentPhase {
-                            if index == totalDripCount - 1 {
-                                ProgressView(
-                                    value: (progressTime - viewModel.dripInfo.dripTimings[index].dripAt)
-                                        / (viewModel.currentConfig.coffeeConfig.totalTimeSec - viewModel.dripInfo.dripTimings[index].dripAt)
+                            ProgressView(
+                                value: progressValue(
+                                    index: index,
+                                    totalDripCount: totalDripCount,
+                                    progressTime: progressTime
                                 )
-                                .tint(.blue)
-                            } else {
-                                ProgressView(
-                                    value: (progressTime - viewModel.dripInfo.dripTimings[index].dripAt)
-                                        / (viewModel.dripInfo.dripTimings[index + 1].dripAt - viewModel.dripInfo.dripTimings[index].dripAt)
-                                )
-                                .tint(.blue)
-                            }
+                            )
+                            .tint(.blue)
                         } else if index > currentPhase {
                             ProgressView(value: 0.0).tint(.blue)
                         } else {
@@ -214,6 +228,14 @@ struct StopwatchView: View {
                 set: { _ in () }
             )
         )
+    }
+
+    private func removeElapsedPendingNotifications(_ registeredNotifications: [DripTimingNotification], now: Date) {
+        guard let startAt else { return }
+
+        let elapsedTime = now.timeIntervalSince(startAt)
+        let elapsedNotifications = registeredNotifications.filter { elapsedTime >= $0.notifiedIn.second }
+        dripTimingNotificationService.removePending(elapsedNotifications)
     }
 
     private func stopTimer() {
