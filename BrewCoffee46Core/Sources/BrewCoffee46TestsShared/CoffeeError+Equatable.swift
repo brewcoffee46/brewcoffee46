@@ -15,11 +15,11 @@ extension CoffeeError: Equatable {
             // This case is too much ad-hoc since ignore the difference of `underlying` between `lhs` and `rhs`.
             // That's the why this `Equatable` implementation is put test code rather than main.
             true
-        case (.arrayNumberConversionError(_), .arrayNumberConversionError(_)):
-            true
-        case (.configQueryParameterNotFound, .configQueryParameterNotFound):
-            true
-        default: false
+        case (.arrayNumberConversionError(_), .arrayNumberConversionError(_)): true
+        case (.configQueryParameterNotFound, .configQueryParameterNotFound): true
+        case (.numberOfSwitchesIsInvalid, .numberOfSwitchesIsInvalid): true
+        default:
+            false
         }
     }
 }

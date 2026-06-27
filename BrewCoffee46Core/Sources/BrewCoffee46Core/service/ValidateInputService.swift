@@ -10,7 +10,8 @@ public final class ValidateInputServiceImpl: ValidateInputService {
 
     public func validate(_ appConfig: AppConfig) -> ResultNea<Void, CoffeeError> {
         let validatedTuple =
-            validateCoffeeBeansWeight(appConfig.globalConfig.coffeeBeansWeightG) |+| validationNumberOf6(appConfig.coffeeConfig.partitionsCountOf6)
+            validateCoffeeBeansWeight(appConfig.globalConfig.coffeeBeansWeightG)
+            |+| validationNumberOf6(appConfig.coffeeConfig.partitionsCountOf6)
             |+| validationTotalTime(steamingTime: appConfig.coffeeConfig.steamingTimeSec, totalTime: appConfig.coffeeConfig.totalTimeSec)
             |+| validationFirstWaterPercent(appConfig.coffeeConfig.firstWaterPercent)
             |+| validationSwitches(appConfig.coffeeConfig)
