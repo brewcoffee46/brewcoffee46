@@ -121,8 +121,8 @@ struct PhaseListView: View {
             newPhaseList.append(
                 Phase(
                     index: i,
-                    waterAmount: info.waterAmount,
-                    dripAt: info.dripAt
+                    waterAmount: info.waterAmount.gram,
+                    dripAt: info.dripAt.second
                 )
             )
         }

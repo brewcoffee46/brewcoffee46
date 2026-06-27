@@ -21,7 +21,7 @@ final class MockNotificationService: NotificationService, @unchecked Sendable {
         title: String,
         body: String,
         notifiedInSeconds: Int
-    ) async -> ResultNea<Void, CoffeeError> {
+    ) async -> ResultNea<NotificationID, CoffeeError> {
         addNotificationUsingTimerArguments.append(
             AddNotificationUsingTimerArgument(
                 title: title,
@@ -29,7 +29,11 @@ final class MockNotificationService: NotificationService, @unchecked Sendable {
                 notifiedInSeconds: notifiedInSeconds
             )
         )
-        return ResultNea.success(())
+        return ResultNea.success(UUID().uuidString)
+    }
+
+    func removePending(_ ids: [NotificationID]) {
+        return
     }
 
     func removePendingAll() {
@@ -55,7 +59,7 @@ final class DripTimingNotificationServiceTests: XCTestCase {
 
     func testArgumentsNotifiedAtOfAddNotificationUsingTimer() async {
         var expectedNotifiedInSeconds: [Int] = dripTimings.map({ dt in
-            Int(floor(dt.dripAt) + firstDripAtSec)
+            Int(floor(dt.dripAt.second) + firstDripAtSec)
         })
         expectedNotifiedInSeconds.append(Int(ceil(totalTimeSec) + firstDripAtSec))
 

@@ -16,7 +16,9 @@ public protocol NotificationService: Sendable {
         title: String,
         body: String,
         notifiedInSeconds: Int
-    ) async -> ResultNea<Void, CoffeeError>
+    ) async -> ResultNea<NotificationID, CoffeeError>
+
+    func removePending(_ ids: [NotificationID]) -> Void
 
     func removePendingAll() -> Void
 }
@@ -31,7 +33,7 @@ public final class NotificationServiceImpl: NotificationService {
     }
 
     public func addNotificationUsingTimer(title: String, body: String, notifiedInSeconds: Int) async
-        -> ResultNea<Void, CoffeeError>
+        -> ResultNea<NotificationID, CoffeeError>
     {
         let result = await request()
 
@@ -46,11 +48,16 @@ public final class NotificationServiceImpl: NotificationService {
             let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
 
             do {
-                return .success(try await UNUserNotificationCenter.current().add(request))
+                try await UNUserNotificationCenter.current().add(request)
+                return .success(NotificationID(identifier))
             } catch {
                 return .failure(NonEmptyArray(.notificationError(error)))
             }
         }
+    }
+
+    public func removePending(_ ids: [NotificationID]) -> Void {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ids)
     }
 
     public func removePendingAll() -> Void {
