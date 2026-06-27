@@ -1,10 +1,13 @@
 import SwiftUI
 
+/// `Switch` represents open/close status of HARIO Switch.
+///   * `open`: keep brewing
+///   * `close`: stop brewing
 public enum Switch: String, Codable, Equatable, Hashable, Sendable {
     case open
     case close
 
-    mutating func toggle() {
+    public mutating func toggle() {
         switch self {
         case .open:
             self = .close

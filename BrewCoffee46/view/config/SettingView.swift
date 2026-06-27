@@ -33,6 +33,18 @@ struct SettingView: View {
 
     private let timerStep: Double = 1.0
 
+    // To animate showing & hiding the switch detail rows when the section toggle changes.
+    private var useSwitchBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.currentConfig.globalConfig.useSwitch },
+            set: { newValue in
+                withAnimation {
+                    viewModel.currentConfig.globalConfig.useSwitch = newValue
+                }
+            }
+        )
+    }
+
     var body: some View {
         Form {
             Toggle("config show tips", isOn: $showTips)
@@ -277,11 +289,30 @@ struct SettingView: View {
                 }
             }
 
-            Section(header: Text("config switch settings")) {
-                Toggle("config switch use switch", isOn: $viewModel.currentConfig.globalConfig.useSwitch)
-
-                ForEach(0..<rawSetting.switches.count, id: \.self) { i in
-                    Toggle("config switch \(i)", isOn: $rawSetting.switches[i])
+            Section(
+                header: HStack {
+                    Text("config switch settings")
+                    Spacer()
+                    HStack {
+                        Text("config switch use switch")
+                        Toggle("", isOn: useSwitchBinding)
+                            .labelsHidden()
+                    }
+                }
+            ) {
+                if viewModel.currentConfig.globalConfig.useSwitch {
+                    Group {
+                        ForEach(0..<rawSetting.switches.count, id: \.self) { i in
+                            Toggle(
+                                String(
+                                    format: NSLocalizedString("config switch settings nth drip", comment: ""),
+                                    i + 1,
+                                ),
+                                isOn: $rawSetting.switches[i],
+                            )
+                        }
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .top)))
                 }
             }
 

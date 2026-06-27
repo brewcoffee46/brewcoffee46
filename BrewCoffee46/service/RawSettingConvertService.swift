@@ -16,6 +16,7 @@ protocol RawSettingConvertService: Sendable {
 
 final class RawSettingConvertServiceImpl: RawSettingConvertService {
     private let validateInputService = Container.shared.validateInputService()
+    private let normalizeSwitchesService = Container.shared.normalizeSwitchesService()
     private let dateService = Container.shared.dateService()
 
     func toConfig(
@@ -46,6 +47,7 @@ final class RawSettingConvertServiceImpl: RawSettingConvertService {
                 Mill(name: mill.name, value: mill.value)
             },
         )
+        newConfig.switches = normalizeSwitchesService.normalize(newConfig)
         if newConfig != appConfig.coffeeConfig {
             newConfig.editedAtMilliSec = rawSetting.editedAtMilliSec
         }
@@ -70,6 +72,8 @@ final class RawSettingConvertServiceImpl: RawSettingConvertService {
                 appConfig.totalWaterAmountG()
             }
 
+        let switches = normalizeSwitchesService.normalize(appConfig.coffeeConfig)
+
         return RawSetting(
             calculateCoffeeBeansWeightFromWater: previousRawSetting.calculateCoffeeBeansWeightFromWater,
             waterAmount: waterAmount,
@@ -83,7 +87,7 @@ final class RawSettingConvertServiceImpl: RawSettingConvertService {
             mills: appConfig.coffeeConfig.mills.map { mill in
                 RawMill(name: mill.name, value: mill.value)
             },
-            switches: appConfig.coffeeConfig.switches.map { $0.toBool() }
+            switches: switches.map { $0.toBool() }
         )
     }
 }

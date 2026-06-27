@@ -6,16 +6,14 @@ public protocol ValidateInputService: Sendable {
 }
 
 public final class ValidateInputServiceImpl: ValidateInputService {
+    private let normalizeSwitchesService = Container.shared.normalizeSwitchesService()
+
     public func validate(_ appConfig: AppConfig) -> ResultNea<Void, CoffeeError> {
         let validatedTuple =
             validateCoffeeBeansWeight(appConfig.globalConfig.coffeeBeansWeightG) |+| validationNumberOf6(appConfig.coffeeConfig.partitionsCountOf6)
             |+| validationTotalTime(steamingTime: appConfig.coffeeConfig.steamingTimeSec, totalTime: appConfig.coffeeConfig.totalTimeSec)
             |+| validationFirstWaterPercent(appConfig.coffeeConfig.firstWaterPercent)
-            |+| validationSwitches(
-                appConfig.coffeeConfig.switches,
-                appConfig.coffeeConfig.firstWaterPercent,
-                appConfig.coffeeConfig.partitionsCountOf6
-            )
+            |+| validationSwitches(appConfig.coffeeConfig)
 
         return validatedTuple.map { _ in
             ()
@@ -48,14 +46,10 @@ public final class ValidateInputServiceImpl: ValidateInputService {
         firstWaterPercent > 0 ? ResultNea.success(()) : CoffeeError.firstWaterPercentIsZeroError.toFailureNel()
     }
 
-    private func validationSwitches(
-        _ switches: [Switch],
-        _ firstWaterPercent: Double,
-        _ countOf6: Int
-    ) -> ResultNea<Void, CoffeeError> {
-        let countOf2 = firstWaterPercent == 0 || firstWaterPercent == 1 ? 1 : 2
-
-        return switches.count == countOf2 + countOf6 ? ResultNea.success(()) : CoffeeError.numberOfSwitchesIsInvalid.toFailureNel()
+    private func validationSwitches(_ coffeeConfig: CoffeeConfig) -> ResultNea<Void, CoffeeError> {
+        coffeeConfig.switches.count == normalizeSwitchesService.expectedSwitchCount(coffeeConfig)
+            ? ResultNea.success(())
+            : CoffeeError.numberOfSwitchesIsInvalid.toFailureNel()
     }
 }
 
