@@ -23,6 +23,8 @@ final class RawSettingConvertServiceTests: XCTestCase {
     let ms = [
         RawMill(name: "Comandante C60", value: "4.5")
     ]
+    let rawSwitches = [true, true, true, true, true, true]
+    let switches: [Switch] = [.open, .open, .open, .open, .open, .open]
     let initConfig = CoffeeConfig(
         partitionsCountOf6: 4,
         waterToCoffeeBeansWeightRatio: 15.9,
@@ -32,6 +34,7 @@ final class RawSettingConvertServiceTests: XCTestCase {
         note: "",
         beforeChecklist: [],
         editedAtMilliSec: BrewCoffee46TestsShared.epochTimeMillis,
+        switches: [.open, .open, .open, .open, .open, .open],
         mills: [
             Mill(name: "Comandante C60", value: "4.5")
         ]
@@ -62,7 +65,8 @@ final class RawSettingConvertServiceTests: XCTestCase {
             steamingTimeSec: 40.0,
             coffeeBeansWeight: 11.8,
             editedAtMilliSec: dummyEpochTimeMills,
-            mills: ms
+            mills: ms,
+            switches: rawSwitches
         )
         let sut = RawSettingConvertServiceImpl()
 
@@ -87,7 +91,8 @@ final class RawSettingConvertServiceTests: XCTestCase {
             steamingTimeSec: 40.0,
             coffeeBeansWeight: dummyValue,
             editedAtMilliSec: dummyEpochTimeMills,
-            mills: ms
+            mills: ms,
+            switches: rawSwitches
         )
         let sut = RawSettingConvertServiceImpl()
 
@@ -112,7 +117,8 @@ final class RawSettingConvertServiceTests: XCTestCase {
             steamingTimeSec: initConfig.steamingTimeSec,
             coffeeBeansWeight: dummyValue,
             editedAtMilliSec: dummyEpochTimeMills,
-            mills: ms
+            mills: ms,
+            switches: rawSwitches
         )
         let sut = RawSettingConvertServiceImpl()
 
@@ -137,7 +143,8 @@ final class RawSettingConvertServiceTests: XCTestCase {
             steamingTimeSec: 40.0,
             coffeeBeansWeight: 11.8,
             editedAtMilliSec: BrewCoffee46TestsShared.epochTimeMillis,
-            mills: ms
+            mills: ms,
+            switches: rawSwitches
         )
 
         let sut = RawSettingConvertServiceImpl()
@@ -163,7 +170,8 @@ final class RawSettingConvertServiceTests: XCTestCase {
             steamingTimeSec: 40.0,
             coffeeBeansWeight: 27.4,
             editedAtMilliSec: BrewCoffee46TestsShared.epochTimeMillis,
-            mills: ms
+            mills: ms,
+            switches: rawSwitches
         )
 
         let sut = RawSettingConvertServiceImpl()

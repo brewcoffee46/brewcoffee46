@@ -21,6 +21,7 @@ final class JWTServiceTests: XCTestCase {
         note: "note",
         beforeChecklist: [],
         editedAtMilliSec: .none,
+        switches: [.open, .open, .open, .open, .open],
         version: 2
     )
     func testGenerateJWTFromConfigSuccessfully() {
@@ -54,7 +55,9 @@ final class JWTServiceTests: XCTestCase {
         let actual = sut.verify(jwt: jwtToken)
         XCTAssertTrue(actual.isSuccess())
         actual.forEach { configClames in
-            XCTAssertEqual(configClames.config, config)
+            var legacyConfig = config
+            legacyConfig.switches = []
+            XCTAssertEqual(configClames.config, legacyConfig)
         }
     }
 }
