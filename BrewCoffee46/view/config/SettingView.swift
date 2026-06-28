@@ -277,6 +277,36 @@ struct SettingView: View {
                 }
             }
 
+            Section(
+                header: HStack {
+                    Text("config switch settings")
+                    Spacer()
+                    HStack {
+                        Text("config switch use switch")
+                        Toggle("", isOn: $viewModel.currentConfig.globalConfig.useSwitch.withAnimation())
+                            .labelsHidden()
+                    }
+                }
+            ) {
+                if viewModel.currentConfig.globalConfig.useSwitch {
+                    Group {
+                        ForEach(0..<rawSetting.switches.count, id: \.self) { i in
+                            HStack {
+                                Text(
+                                    String(
+                                        format: NSLocalizedString("config switch settings nth drip", comment: ""),
+                                        i + 1,
+                                    )
+                                )
+                                Spacer()
+                                switchToggleView(i)
+                            }
+                        }
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+            }
+
             Section(header: Text("config json")) {
                 NavigationLink(value: Route.jsonImportExport) {
                     Text("config import export")
@@ -403,6 +433,18 @@ struct SettingView: View {
                 target: $rawSetting.waterAmount,
                 isDisable: $appEnvironment.isTimerStarted
             )
+        }
+    }
+
+    private func switchToggleView(_ i: Int) -> some View {
+        HStack {
+            Image(systemName: rawSetting.switches[i] ? "spigot" : "spigot.fill")
+                .foregroundStyle(.blue)
+            Toggle("", isOn: $rawSetting.switches[i].withAnimation())
+                .tint(.blue)
+                .labelsHidden()
+            Image(systemName: rawSetting.switches[i] ? "drop.fill" : "drop")
+                .foregroundStyle(.blue)
         }
     }
 }

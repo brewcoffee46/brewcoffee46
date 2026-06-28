@@ -27,6 +27,7 @@ struct SelectConfigView: View {
                 note: note,
                 beforeChecklist: CoffeeConfig.initBeforeCheckList,
                 editedAtMilliSec: .none,
+                switches: [.open, .open, .open, .open, .open],
                 version: CoffeeConfig.currentVersion
             )
         }

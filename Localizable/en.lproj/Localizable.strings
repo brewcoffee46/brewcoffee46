@@ -59,11 +59,15 @@
 "config steaming time short" = "Steaming time";
 
 "config mill settings" = "Mill settings";
-"config mill empty" = "No mill settings";
+"config mill setting empty" = "No mill settings";
 "config mill name default" = "Mill name";
 "config mill value default" = "Setting value";
 "config mill setting edit" = "Edit";
 "config mill settings sheet title" = "Mill settings";
+
+"config switch settings" = "HARIO Switch settings";
+"config switch use switch" = "Use Switch?";
+"config switch settings nth drip" = "%d drip";
 
 "config save load setting" = "Save & Load configuration";
 "config save load current config" = "Current configuration";

@@ -23,6 +23,7 @@ final class SaveLoadConfigServiceTests: XCTestCase {
             note: "",
             beforeChecklist: CoffeeConfig.initBeforeCheckList,
             editedAtMilliSec: .none,
+            switches: [],
             version: CoffeeConfig.currentVersion,
         )
         let globalConfig = GlobalConfig.defaultValue()

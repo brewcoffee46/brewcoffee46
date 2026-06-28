@@ -14,6 +14,7 @@ final class CoffeeConfigTests: XCTestCase {
             note: "note",
             beforeChecklist: CoffeeConfig.initBeforeCheckList,
             editedAtMilliSec: .none,
+            switches: [],
             version: 2
         )
         let json = """
@@ -45,6 +46,7 @@ final class CoffeeConfigTests: XCTestCase {
                 "second",
             ],
             editedAtMilliSec: .none,
+            switches: [],
             version: 2
         )
         let json = """
@@ -77,6 +79,7 @@ final class CoffeeConfigTests: XCTestCase {
                 "second",
             ],
             editedAtMilliSec: .some(epochTimeMillis),
+            switches: [],
             version: 2
         )
         let json = """

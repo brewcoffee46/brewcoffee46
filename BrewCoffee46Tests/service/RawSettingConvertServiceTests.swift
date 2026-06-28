@@ -23,6 +23,8 @@ final class RawSettingConvertServiceTests: XCTestCase {
     let ms = [
         RawMill(name: "Comandante C60", value: "4.5")
     ]
+    let rawSwitches = [true, true, true, true, true, true]
+    let switches: [Switch] = [.open, .open, .open, .open, .open, .open]
     let initConfig = CoffeeConfig(
         partitionsCountOf6: 4,
         waterToCoffeeBeansWeightRatio: 15.9,
@@ -32,21 +34,15 @@ final class RawSettingConvertServiceTests: XCTestCase {
         note: "",
         beforeChecklist: [],
         editedAtMilliSec: BrewCoffee46TestsShared.epochTimeMillis,
+        switches: [.open, .open, .open, .open, .open, .open],
         mills: [
             Mill(name: "Comandante C60", value: "4.5")
         ]
     )
     let globalConfig = GlobalConfig(11_800)
 
-    override class func setUp() {
+    override func setUp() {
         Container.shared.reset()
-        let mockValidateInputService = MockValidateInputService(dummyResult: .success(()))
-        Container.shared.validateInputService.register {
-            mockValidateInputService
-        }
-        Container.shared.dateService.register {
-            MockDateService()
-        }
         super.setUp()
     }
 
@@ -62,8 +58,18 @@ final class RawSettingConvertServiceTests: XCTestCase {
             steamingTimeSec: 40.0,
             coffeeBeansWeight: 11.8,
             editedAtMilliSec: dummyEpochTimeMills,
-            mills: ms
+            mills: ms,
+            switches: rawSwitches
         )
+        Container.shared.validateInputService.register {
+            MockValidateInputService(dummyResult: .success(()))
+        }
+        Container.shared.normalizeSwitchesService.register {
+            MockNormalizeSwitchesService(switches: self.switches, count: self.switches.count)
+        }
+        Container.shared.dateService.register {
+            MockDateService()
+        }
         let sut = RawSettingConvertServiceImpl()
 
         let actual = sut.toConfig(rawSetting, appConfig)
@@ -87,8 +93,18 @@ final class RawSettingConvertServiceTests: XCTestCase {
             steamingTimeSec: 40.0,
             coffeeBeansWeight: dummyValue,
             editedAtMilliSec: dummyEpochTimeMills,
-            mills: ms
+            mills: ms,
+            switches: rawSwitches
         )
+        Container.shared.validateInputService.register {
+            MockValidateInputService(dummyResult: .success(()))
+        }
+        Container.shared.normalizeSwitchesService.register {
+            MockNormalizeSwitchesService(switches: self.switches, count: self.switches.count)
+        }
+        Container.shared.dateService.register {
+            MockDateService()
+        }
         let sut = RawSettingConvertServiceImpl()
 
         let actual = sut.toConfig(rawSetting, appConfig)
@@ -112,8 +128,18 @@ final class RawSettingConvertServiceTests: XCTestCase {
             steamingTimeSec: initConfig.steamingTimeSec,
             coffeeBeansWeight: dummyValue,
             editedAtMilliSec: dummyEpochTimeMills,
-            mills: ms
+            mills: ms,
+            switches: rawSwitches
         )
+        Container.shared.validateInputService.register {
+            MockValidateInputService(dummyResult: .success(()))
+        }
+        Container.shared.normalizeSwitchesService.register {
+            MockNormalizeSwitchesService(switches: self.switches, count: self.switches.count)
+        }
+        Container.shared.dateService.register {
+            MockDateService()
+        }
         let sut = RawSettingConvertServiceImpl()
 
         let actual = sut.toConfig(rawSetting, appConfig)
@@ -122,6 +148,44 @@ final class RawSettingConvertServiceTests: XCTestCase {
         actual.forEach { (config: AppConfig) in
             XCTAssertEqual(config.globalConfig.coffeeBeansWeightG, rawSetting.coffeeBeansWeight)
             XCTAssertEqual(config.coffeeConfig.editedAtMilliSec, initConfig.editedAtMilliSec)
+        }
+    }
+
+    func testConvertToNormalizesSwitches() {
+        let normalizedSwitches: [Switch] = [.open, .close, .open, .close]
+        let appConfig = AppConfig(initConfig, globalConfig)
+        let rawSetting = RawSetting(
+            calculateCoffeeBeansWeightFromWater: false,
+            waterAmount: dummyValue,
+            waterToCoffeeBeansWeightRatio: 0.5,
+            firstWaterPercent: 210.0,
+            partitionsCountOf6: 40.0,
+            totalTimeSec: 210.0,
+            steamingTimeSec: 40.0,
+            coffeeBeansWeight: 11.8,
+            editedAtMilliSec: dummyEpochTimeMills,
+            mills: ms,
+            switches: rawSwitches
+        )
+        Container.shared.validateInputService.register {
+            MockValidateInputService(dummyResult: .success(()))
+        }
+        Container.shared.normalizeSwitchesService.register {
+            MockNormalizeSwitchesService(
+                switches: normalizedSwitches,
+                count: normalizedSwitches.count
+            )
+        }
+        Container.shared.dateService.register {
+            MockDateService()
+        }
+        let sut = RawSettingConvertServiceImpl()
+
+        let actual = sut.toConfig(rawSetting, appConfig)
+
+        XCTAssertTrue(actual.isSuccess())
+        actual.forEach { config in
+            XCTAssertEqual(config.coffeeConfig.switches, normalizedSwitches)
         }
     }
 
@@ -137,9 +201,18 @@ final class RawSettingConvertServiceTests: XCTestCase {
             steamingTimeSec: 40.0,
             coffeeBeansWeight: 11.8,
             editedAtMilliSec: BrewCoffee46TestsShared.epochTimeMillis,
-            mills: ms
+            mills: ms,
+            switches: rawSwitches
         )
-
+        Container.shared.validateInputService.register {
+            MockValidateInputService(dummyResult: .success(()))
+        }
+        Container.shared.normalizeSwitchesService.register {
+            MockNormalizeSwitchesService(switches: self.switches, count: self.switches.count)
+        }
+        Container.shared.dateService.register {
+            MockDateService()
+        }
         let sut = RawSettingConvertServiceImpl()
 
         let actual1 = sut.fromConfig(appConfig, rawSetting)
@@ -163,9 +236,18 @@ final class RawSettingConvertServiceTests: XCTestCase {
             steamingTimeSec: 40.0,
             coffeeBeansWeight: 27.4,
             editedAtMilliSec: BrewCoffee46TestsShared.epochTimeMillis,
-            mills: ms
+            mills: ms,
+            switches: rawSwitches
         )
-
+        Container.shared.validateInputService.register {
+            MockValidateInputService(dummyResult: .success(()))
+        }
+        Container.shared.normalizeSwitchesService.register {
+            MockNormalizeSwitchesService(switches: self.switches, count: self.switches.count)
+        }
+        Container.shared.dateService.register {
+            MockDateService()
+        }
         let sut = RawSettingConvertServiceImpl()
 
         let actual1 = sut.toConfig(rawSetting, appConfig)
