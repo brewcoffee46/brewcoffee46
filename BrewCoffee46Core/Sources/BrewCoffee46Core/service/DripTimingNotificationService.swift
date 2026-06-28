@@ -16,6 +16,7 @@ public protocol DripTimingNotificationService: Sendable {
 
 public final class DripTimingNotificationServiceImpl: DripTimingNotificationService {
     private let notificationService = Container.shared.notificationService()
+    private let dripIndexTextFormatterService = Container.shared.dripIndexTextFormatterService()
 
     public func registerNotifications(
         dripTimings: [DripTiming],
@@ -31,16 +32,11 @@ public final class DripTimingNotificationServiceImpl: DripTimingNotificationServ
                 let notifiedAt = floor(info.dripAt.second) + firstDripAtSec
 
                 group.addTask {
-                    let title =
-                        if i == 0 {
-                            String(format: NSLocalizedString("notification 1st drip", comment: ""), numberOfAllDrips)
-                        } else if i == 1 {
-                            String(format: NSLocalizedString("notification 2nd drip", comment: ""), numberOfAllDrips)
-                        } else if i == 2 {
-                            String(format: NSLocalizedString("notification 3rd drip", comment: ""), numberOfAllDrips)
-                        } else {
-                            String(format: NSLocalizedString("notification after 4th drip suffix", comment: ""), (i + 1), numberOfAllDrips)
-                        }
+                    let title = String(
+                        format: NSLocalizedString("notification drip now", comment: ""),
+                        self.dripIndexTextFormatterService.dripText(i),
+                        numberOfAllDrips
+                    )
                     let notificationID = await self.notificationService.addNotificationUsingTimer(
                         title: title,
                         body: "🫖 \(roundCentesimal(info.waterAmount.gram))g 💧",

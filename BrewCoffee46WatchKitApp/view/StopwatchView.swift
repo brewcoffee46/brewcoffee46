@@ -14,6 +14,7 @@ struct StopwatchView: View {
     @Injected(\.getDripPhaseService) private var getDripPhaseService
     @Injected(\.dripTimingNotificationService) private var dripTimingNotificationService
     @Injected(\.saveLoadTimerStartAtService) private var saveLoadTimerStartAtService
+    @Injected(\.dripIndexTextFormatterService) private var dripIndexTextFormatterService
 
     @State var startAt: Date? = .none
     @State var isStop︎AlertPresented: Bool = false
@@ -155,16 +156,13 @@ struct StopwatchView: View {
 
     private func showDripInfo(index: Int, totalDripCount: Int) -> some View {
         HStack {
-            switch index {
-            case 0:
-                Text(String(format: NSLocalizedString("watch kit app 1st drip", comment: ""), totalDripCount))
-            case 1:
-                Text(String(format: NSLocalizedString("watch kit app 2nd drip", comment: ""), totalDripCount))
-            case 2:
-                Text(String(format: NSLocalizedString("watch kit app 3rd drip", comment: ""), totalDripCount))
-            default:
-                Text(String(format: NSLocalizedString("watch kit app after 4th drip suffix", comment: ""), index + 1, totalDripCount))
-            }
+            Text(
+                String(
+                    format: NSLocalizedString("watch kit app drip", comment: ""),
+                    dripIndexTextFormatterService.dripText(index),
+                    totalDripCount
+                )
+            )
             Spacer()
             Text(
                 "\(roundCentesimal(Double(viewModel.dripInfo.dripTimings[index].waterAmount.gram)), specifier: "%.1f")\(weightUnit)"
