@@ -47,7 +47,8 @@ final class RawSettingConvertServiceImpl: RawSettingConvertService {
                 Mill(name: mill.name, value: mill.value)
             },
         )
-        newConfig.switches = normalizeSwitchesService.normalize(newConfig)
+        newConfig.switches = self.normalizeSwitchesService.normalize(newConfig)
+        print("switches: \(self.normalizeSwitchesService.normalize(newConfig))")
         if newConfig != appConfig.coffeeConfig {
             newConfig.editedAtMilliSec = rawSetting.editedAtMilliSec
         }

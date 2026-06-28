@@ -150,8 +150,6 @@ targets:
       - target: brewcoffee46
       - package: BrewCoffee46Core
         product: BrewCoffee46TestsShared
-      - package: Factory
-        product: FactoryTesting
     type: bundle.unit-test
 
   brewcoffee46WatchKitApp:
