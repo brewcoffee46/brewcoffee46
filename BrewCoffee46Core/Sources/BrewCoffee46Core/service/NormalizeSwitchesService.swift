@@ -24,10 +24,17 @@ public final class NormalizeSwitchesServiceImpl: NormalizeSwitchesService {
     }
 
     public func expectedSwitchCount(_ coffeeConfig: CoffeeConfig) -> Int {
-        let firstFortyPercentSwitchCount =
-            coffeeConfig.firstWaterPercent == 0 || coffeeConfig.firstWaterPercent == 1 ? 1 : 2
+        // `firstWaterPercent` can become values like 1.0000000000000002 after Double calculations.
+        let isEdgePercent =
+            approximatelyEquals(coffeeConfig.firstWaterPercent, 0) || approximatelyEquals(coffeeConfig.firstWaterPercent, 1)
+
+        let firstFortyPercentSwitchCount = isEdgePercent ? 1 : 2
 
         return firstFortyPercentSwitchCount + coffeeConfig.partitionsCountOf6
+    }
+
+    private func approximatelyEquals(_ lhs: Double, _ rhs: Double, tolerance: Double = 1e-9) -> Bool {
+        abs(lhs - rhs) <= tolerance
     }
 }
 

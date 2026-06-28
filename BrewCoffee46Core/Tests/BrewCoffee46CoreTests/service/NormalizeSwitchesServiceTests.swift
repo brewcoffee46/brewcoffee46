@@ -21,6 +21,22 @@ final class NormalizeSwitchesServiceTests: XCTestCase {
         XCTAssertEqual(sut.expectedSwitchCount(coffeeConfig), 4)
     }
 
+    func testExpectedSwitchCountWhenFirstWaterPercentIsApproximatelyOne() {
+        var coffeeConfig = CoffeeConfig.defaultValue()
+        coffeeConfig.firstWaterPercent = 1.0000000000000002
+        coffeeConfig.partitionsCountOf6 = 3
+
+        XCTAssertEqual(sut.expectedSwitchCount(coffeeConfig), 4)
+    }
+
+    func testExpectedSwitchCountWhenFirstWaterPercentIsNotApproximatelyOne() {
+        var coffeeConfig = CoffeeConfig.defaultValue()
+        coffeeConfig.firstWaterPercent = 0.9900000000000003
+        coffeeConfig.partitionsCountOf6 = 3
+
+        XCTAssertEqual(sut.expectedSwitchCount(coffeeConfig), 5)
+    }
+
     func testNormalizeAppendsOpenSwitchesWhenSwitchesAreShort() {
         var coffeeConfig = CoffeeConfig.defaultValue()
         coffeeConfig.firstWaterPercent = 0.5

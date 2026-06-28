@@ -33,18 +33,6 @@ struct SettingView: View {
 
     private let timerStep: Double = 1.0
 
-    // To animate showing & hiding the switch detail rows when the section toggle changes.
-    private var useSwitchBinding: Binding<Bool> {
-        Binding(
-            get: { viewModel.currentConfig.globalConfig.useSwitch },
-            set: { newValue in
-                withAnimation {
-                    viewModel.currentConfig.globalConfig.useSwitch = newValue
-                }
-            }
-        )
-    }
-
     var body: some View {
         Form {
             Toggle("config show tips", isOn: $showTips)
@@ -295,7 +283,7 @@ struct SettingView: View {
                     Spacer()
                     HStack {
                         Text("config switch use switch")
-                        Toggle("", isOn: useSwitchBinding)
+                        Toggle("", isOn: $viewModel.currentConfig.globalConfig.useSwitch.withAnimation())
                             .labelsHidden()
                     }
                 }
@@ -303,13 +291,16 @@ struct SettingView: View {
                 if viewModel.currentConfig.globalConfig.useSwitch {
                     Group {
                         ForEach(0..<rawSetting.switches.count, id: \.self) { i in
-                            Toggle(
-                                String(
-                                    format: NSLocalizedString("config switch settings nth drip", comment: ""),
-                                    i + 1,
-                                ),
-                                isOn: $rawSetting.switches[i],
-                            )
+                            HStack {
+                                Text(
+                                    String(
+                                        format: NSLocalizedString("config switch settings nth drip", comment: ""),
+                                        i + 1,
+                                    )
+                                )
+                                Spacer()
+                                switchToggleView(i)
+                            }
                         }
                     }
                     .transition(.opacity.combined(with: .move(edge: .top)))
@@ -442,6 +433,18 @@ struct SettingView: View {
                 target: $rawSetting.waterAmount,
                 isDisable: $appEnvironment.isTimerStarted
             )
+        }
+    }
+
+    private func switchToggleView(_ i: Int) -> some View {
+        HStack {
+            Image(systemName: rawSetting.switches[i] ? "spigot" : "spigot.fill")
+                .foregroundStyle(.blue)
+            Toggle("", isOn: $rawSetting.switches[i].withAnimation())
+                .tint(.blue)
+                .labelsHidden()
+            Image(systemName: rawSetting.switches[i] ? "drop.fill" : "drop")
+                .foregroundStyle(.blue)
         }
     }
 }

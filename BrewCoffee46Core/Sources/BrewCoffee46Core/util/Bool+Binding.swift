@@ -8,3 +8,15 @@ extension Bool {
         )
     }
 }
+extension Binding where Value == Bool {
+    public func withAnimation(_ animation: Animation? = .default) -> Binding<Bool> {
+        Binding(
+            get: { wrappedValue },
+            set: { newValue in
+                SwiftUI.withAnimation(animation) {
+                    wrappedValue = newValue
+                }
+            }
+        )
+    }
+}

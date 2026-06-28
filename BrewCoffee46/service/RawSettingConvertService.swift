@@ -48,7 +48,6 @@ final class RawSettingConvertServiceImpl: RawSettingConvertService {
             },
         )
         newConfig.switches = self.normalizeSwitchesService.normalize(newConfig)
-        print("switches: \(self.normalizeSwitchesService.normalize(newConfig))")
         if newConfig != appConfig.coffeeConfig {
             newConfig.editedAtMilliSec = rawSetting.editedAtMilliSec
         }
