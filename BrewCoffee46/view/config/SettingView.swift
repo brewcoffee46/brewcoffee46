@@ -14,6 +14,7 @@ struct SettingView: View {
     @Injected(\.watchConnectionService) private var watchConnectionService
     @Injected(\.configurationLinkService) private var configurationLinkService
     @Injected(\.saveLoadConfigService) private var saveLoadConfigService
+    @Injected(\.dripIndexTextFormatterService) private var dripIndexTextFormatterService
 
     @Environment(\.scenePhase) private var scenePhase
 
@@ -292,12 +293,7 @@ struct SettingView: View {
                     Group {
                         ForEach(0..<rawSetting.switches.count, id: \.self) { i in
                             HStack {
-                                Text(
-                                    String(
-                                        format: NSLocalizedString("config switch settings nth drip", comment: ""),
-                                        i + 1,
-                                    )
-                                )
+                                Text(dripIndexTextFormatterService.dripText(i))
                                 Spacer()
                                 switchToggleView(i)
                             }

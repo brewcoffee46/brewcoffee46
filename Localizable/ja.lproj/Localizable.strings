@@ -67,7 +67,11 @@
 
 "config switch settings" = "HARIO Switch設定";
 "config switch use switch" = "使う";
-"config switch settings nth drip"  = "%d投目";
+
+"drip ordinal 1" = "1投目";
+"drip ordinal 2" = "2投目";
+"drip ordinal 3" = "3投目";
+"drip ordinal n" = "%d投目";
 
 "config save load setting" = "設定の保存と読み込み";
 "config save load current config" = "現在の設定";
@@ -121,16 +125,10 @@
 
 "oss license title information" = "OSSライセンス情報";
 
-"notification 1st drip" = "1投目 / %d投";
-"notification 2nd drip" = "2投目 / %d投";
-"notification 3rd drip" = "3投目 / %d投";
-"notification after 4th drip suffix" = "%d投目 / %d投";
+"notification drip now" = "%@ / %d投";
 "notification drip end" = "抽出終了";
 
-"watch kit app 1st drip" = "1 / %d投目";
-"watch kit app 2nd drip" = "2 / %d投目";
-"watch kit app 3rd drip" = "3 / %d投目";
-"watch kit app after 4th drip suffix" = "%d / %d投目";
+"watch kit app drip" = "%@ / %d投目";
 "watch kit app drip end" = "抽出終了";
 
 "watch kit app current setting" = "現在の設定";

@@ -67,7 +67,11 @@
 
 "config switch settings" = "HARIO Switch settings";
 "config switch use switch" = "Use Switch?";
-"config switch settings nth drip" = "%d drip";
+
+"drip ordinal 1" = "1st Drip";
+"drip ordinal 2" = "2nd Drip";
+"drip ordinal 3" = "3rd Drip";
+"drip ordinal n" = "%dth Drip";
 
 "config save load setting" = "Save & Load configuration";
 "config save load current config" = "Current configuration";
@@ -121,16 +125,10 @@
 
 "oss license title information" = "OSS License Information";
 
-"notification 1st drip" = "1st of %d Drip Now";
-"notification 2nd drip" = "2nd of %d Drip Now";
-"notification 3rd drip" = "3rd of %d Drip Now";
-"notification after 4th drip suffix" = "%dth of %d Drip Now";
+"notification drip now" = "%@ of %d Drip Now";
 "notification drip end" = "End of Dripping";
 
-"watch kit app 1st drip" = "1st of %d";
-"watch kit app 2nd drip" = "2nd of %d";
-"watch kit app 3rd drip" = "3rd of %d";
-"watch kit app after 4th drip suffix" = "%dth of %d";
+"watch kit app drip" = "%@ of %d";
 "watch kit app drip end" = "End of Dripping";
 
 "watch kit app current setting" = "Current configuration";
