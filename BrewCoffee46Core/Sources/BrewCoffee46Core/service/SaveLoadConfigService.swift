@@ -19,6 +19,7 @@ public protocol SaveLoadConfigService: Sendable {
 
 public final class SaveLoadConfigServiceImpl: SaveLoadConfigService {
     private let userDefaultsService = Container.shared.userDefaultsService()
+    private let normalizeSwitchesService = Container.shared.normalizeSwitchesService()
 
     public func saveCurrentConfig(_ config: AppConfig) -> ResultNea<Void, CoffeeError> {
         return userDefaultsService.setEncodable(config, forKey: userDefaultsKey(SaveLoadConfigServiceImpl.currentAppConfigKey))
@@ -29,14 +30,14 @@ public final class SaveLoadConfigServiceImpl: SaveLoadConfigService {
             forKey: userDefaultsKey(SaveLoadConfigServiceImpl.currentAppConfigKey)
         ).flatMap { (appConfigOpt: AppConfig?) in
             if let appConfig = appConfigOpt {
-                .success(appConfig)
+                .success(normalizeSwitches(appConfig))
             } else {
                 // If `appConfig` is not found then try to load only legacy `CoffeeConfig`.
                 userDefaultsService.getDecodable(
                     forKey: userDefaultsKey(SaveLoadConfigServiceImpl.lagacyCurrentConfigKey)
                 ).map { (configOpt: CoffeeConfig?) in
                     if let config = configOpt {
-                        .some(AppConfig(config, GlobalConfig.defaultValue()))
+                        .some(normalizeSwitches(AppConfig(config, GlobalConfig.defaultValue())))
                     } else {
                         .none
                     }
@@ -50,7 +51,12 @@ public final class SaveLoadConfigServiceImpl: SaveLoadConfigService {
     }
 
     public func loadAll() -> ResultNea<[CoffeeConfig]?, CoffeeError> {
-        return userDefaultsService.getDecodable(forKey: userDefaultsKey(SaveLoadConfigServiceImpl.configsKey))
+        return
+            userDefaultsService
+            .getDecodable(forKey: userDefaultsKey(SaveLoadConfigServiceImpl.configsKey))
+            .map { (configs: [CoffeeConfig]?) in
+                configs?.map { normalizeSwitches($0) }
+            }
     }
 
     public func saveConfig(config: CoffeeConfig) -> ResultNea<Void, CoffeeError> {
@@ -71,6 +77,18 @@ public final class SaveLoadConfigServiceImpl: SaveLoadConfigService {
 
     private func userDefaultsKey(_ key: String) -> String {
         "\(SaveLoadConfigServiceImpl.keyPrefix)_\(key)"
+    }
+
+    private func normalizeSwitches(_ appConfig: AppConfig) -> AppConfig {
+        var appConfig = appConfig
+        appConfig.coffeeConfig = normalizeSwitches(appConfig.coffeeConfig)
+        return appConfig
+    }
+
+    private func normalizeSwitches(_ coffeeConfig: CoffeeConfig) -> CoffeeConfig {
+        var coffeeConfig = coffeeConfig
+        coffeeConfig.switches = normalizeSwitchesService.normalize(coffeeConfig)
+        return coffeeConfig
     }
 }
 
