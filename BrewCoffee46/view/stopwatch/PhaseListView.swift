@@ -19,18 +19,25 @@ struct PhaseListView: View {
     @State private var phaseList: [Phase] = []
     @State private var currentDripPhase: DripPhase = DripPhase.defaultValue()
 
+    private var columns: [GridItem] {
+        Array(
+            repeating: .init(),
+            count: viewModel.currentConfig.globalConfig.useSwitch ? 4 : 3
+        )
+    }
+
     var body: some View {
         ScrollView {
             LazyVGrid(
-                columns: Array(
-                    repeating: .init(),
-                    count: 3
-                ),
+                columns: columns,
                 alignment: .center
             ) {
                 Group {
                     Text("#")
                     Text("Water")
+                    if viewModel.currentConfig.globalConfig.useSwitch {
+                        Text("Switch")
+                    }
                     Text("Timing")
                 }
                 .font(Font.headline.weight(.bold))
@@ -38,10 +45,7 @@ struct PhaseListView: View {
             ForEach(phaseList, id: \.id) { phase in
                 let waterAmount = "\(String(format: "%.1f", phase.waterAmount))\(weightUnit)"
                 LazyVGrid(
-                    columns: Array(
-                        repeating: .init(),
-                        count: 3
-                    ),
+                    columns: columns,
                     alignment: .center
                 ) {
                     Group {
@@ -74,7 +78,10 @@ struct PhaseListView: View {
                                     fontConfig(Text("\(waterAmount)"), phase: phase)
                                 })
                         )
-                        timingView(phase: phase)
+                        if viewModel.currentConfig.globalConfig.useSwitch {
+                            switchView(phase)
+                        }
+                        timingView(phase)
                     }
                     .foregroundColor(appEnvironment.isTimerStarted ? .primary : .primary.opacity(0.5))
                 }
@@ -150,7 +157,23 @@ struct PhaseListView: View {
         )
     }
 
-    private func timingView(phase: Phase) -> AnyView {
+    private func switchView(_ phase: Phase) -> some View {
+        let switches = viewModel.currentConfig.coffeeConfig.switches
+
+        return Image(
+            systemName: switches[phase.index].toBool() ? "lightswitch.on" : "lightswitch.off"
+        )
+        .scaledToFit()
+        .rotationEffect(
+            Angle.degrees(90)
+        )
+        .frame(width: 24, height: 24)
+        .foregroundColor(
+            switches[phase.index].toBool() ? .blue : .gray
+        )
+    }
+
+    private func timingView(_ phase: Phase) -> AnyView {
         let dripPhase = getDripPhaseService.get(
             dripInfo: viewModel.dripInfo,
             progressTime: progressTime
@@ -192,10 +215,23 @@ struct PhaseListView: View {
         @ObservedObject static var viewModel: CurrentConfigViewModel = CurrentConfigViewModel()
         @State static var progressTime: Double = 90
 
+        @ObservedObject static var viewModelEnableSwitch: CurrentConfigViewModel = {
+            var viewModel = CurrentConfigViewModel()
+            viewModel.currentConfig.globalConfig.useSwitch = true
+            viewModel.currentConfig.coffeeConfig.switches = [.close, .open, .close, .open, .open]
+            return viewModel
+        }()
+
         static var previews: some View {
             PhaseListView(progressTime: $progressTime)
                 .environmentObject(AppEnvironment.init())
                 .environmentObject(viewModel)
+                .previewDisplayName("Disable Switch")
+
+            PhaseListView(progressTime: $progressTime)
+                .environmentObject(AppEnvironment.init())
+                .environmentObject(viewModelEnableSwitch)
+                .previewDisplayName("Enable Switch")
         }
     }
 #endif
