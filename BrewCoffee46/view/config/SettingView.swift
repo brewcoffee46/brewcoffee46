@@ -286,6 +286,7 @@ struct SettingView: View {
                         Text("config switch use switch")
                         Toggle("", isOn: $viewModel.currentConfig.globalConfig.useSwitch.withAnimation())
                             .labelsHidden()
+                            .disabled(appEnvironment.isTimerStarted)
                     }
                 }
             ) {
@@ -439,6 +440,7 @@ struct SettingView: View {
             Toggle("", isOn: $rawSetting.switches[i].withAnimation())
                 .tint(.blue)
                 .labelsHidden()
+                .disabled(appEnvironment.isTimerStarted)
             Image(systemName: rawSetting.switches[i] ? "drop.fill" : "drop")
                 .foregroundStyle(.blue)
         }

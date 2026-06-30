@@ -170,7 +170,9 @@ struct StopwatchView: View {
     private func startTimer() {
         if self.timer == nil {
             UIApplication.shared.isIdleTimerDisabled = true
-            self.appEnvironment.isTimerStarted = true
+            withAnimation {
+                self.appEnvironment.isTimerStarted = true
+            }
             self.startAt = dateService.now()
 
             Task { @MainActor in
@@ -225,7 +227,9 @@ struct StopwatchView: View {
             dripTimingNotificationService.removePendingAll()
 
             t.cancel()
-            self.appEnvironment.isTimerStarted = false
+            withAnimation {
+                self.appEnvironment.isTimerStarted = false
+            }
             UIApplication.shared.isIdleTimerDisabled = false
             progressTime = StopwatchView.progressTimeInit
             self.timer = .none
@@ -296,7 +300,10 @@ struct StopwatchView: View {
                     viewModel.currentConfig.globalConfig.coffeeBeansWeightMg = MilliGram.fromGram(newValue)
                 }
             }
-            .frame(height: isDiscloseCoffeeBeansSetting ? nil : 0, alignment: .top)
+            .frame(
+                height: isDiscloseCoffeeBeansSetting && !appEnvironment.isTimerStarted ? nil : 0,
+                alignment: .top
+            )
             .clipped()
         }
     }
