@@ -161,7 +161,7 @@ struct PhaseListView: View {
         let switches = viewModel.currentConfig.coffeeConfig.switches
 
         return Image(
-            systemName: switches[phase.index].toBool() ? "lightswitch.on" : "lightswitch.off"
+            systemName: switches[phase.index].toBool() ? "lightswitch.on.fill" : "lightswitch.off.fill"
         )
         .scaledToFit()
         .rotationEffect(

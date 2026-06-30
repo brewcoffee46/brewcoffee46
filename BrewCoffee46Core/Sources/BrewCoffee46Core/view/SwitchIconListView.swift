@@ -21,7 +21,7 @@ public struct SwitchIconListView: View {
                                 .foregroundStyle(.secondary)
                                 .lineLimit(1)
 
-                            Image(systemName: item.toBool() ? "lightswitch.on" : "lightswitch.off")
+                            Image(systemName: item.toBool() ? "lightswitch.on.fill" : "lightswitch.off.fill")
                                 .scaledToFit()
                                 .rotationEffect(.degrees(90))
                                 .frame(width: iconSize, height: iconSize)
