@@ -39,4 +39,46 @@ final class SaveLoadConfigServiceTests: XCTestCase {
         XCTAssertTrue(actual.isSuccess())
         XCTAssertEqual(mockUserDefaultsService.inputValues, [appConfig])
     }
+
+    func testLoadCurrentConfigNormalizesSwitches() {
+        var appConfig = AppConfig.defaultValue()
+        appConfig.coffeeConfig.switches = []
+        let normalizedSwitches: [Switch] = [.close, .open, .open, .open, .open]
+
+        Container.shared.userDefaultsService.register {
+            MockUserDefaultsService<AppConfig>(.success(.some(appConfig)))
+        }
+        Container.shared.normalizeSwitchesService.register {
+            MockNormalizeSwitchesService(switches: normalizedSwitches, count: normalizedSwitches.count)
+        }
+
+        let sut = SaveLoadConfigServiceImpl()
+        let actual = sut.loadCurrentConfig()
+
+        XCTAssertTrue(actual.isSuccess())
+        actual.forEach { loadedConfig in
+            XCTAssertEqual(loadedConfig?.coffeeConfig.switches, normalizedSwitches)
+        }
+    }
+
+    func testLoadAllNormalizesSwitches() {
+        var config = CoffeeConfig.defaultValue()
+        config.switches = []
+        let normalizedSwitches: [Switch] = [.close, .open, .open, .open, .open]
+
+        Container.shared.userDefaultsService.register {
+            MockUserDefaultsService<[CoffeeConfig]>(.success(.some([config])))
+        }
+        Container.shared.normalizeSwitchesService.register {
+            MockNormalizeSwitchesService(switches: normalizedSwitches, count: normalizedSwitches.count)
+        }
+
+        let sut = SaveLoadConfigServiceImpl()
+        let actual = sut.loadAll()
+
+        XCTAssertTrue(actual.isSuccess())
+        actual.forEach { loadedConfigs in
+            XCTAssertEqual(loadedConfigs?.first?.switches, normalizedSwitches)
+        }
+    }
 }
