@@ -65,6 +65,7 @@
 "config mill setting edit" = "編集";
 "config mill settings sheet title" = "Mill setting";
 
+"config switch settings short" = "HARIO Switch";
 "config switch settings" = "HARIO Switch設定";
 "config switch use switch" = "使う";
 

@@ -78,7 +78,7 @@ struct PhaseListView: View {
                                     fontConfig(Text("\(waterAmount)"), phase: phase)
                                 })
                         )
-                        if viewModel.currentConfig.globalConfig.useSwitch {
+                        if viewModel.currentConfig.globalConfig.useSwitch && viewModel.currentConfig.coffeeConfig.switches.count > phase.index {
                             switchView(phase)
                         }
                         timingView(phase)
