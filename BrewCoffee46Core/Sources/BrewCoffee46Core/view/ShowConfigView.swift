@@ -1,3 +1,4 @@
+import FactoryKit
 import SwiftUI
 import TipKit
 
@@ -123,6 +124,13 @@ public struct ShowConfigView: View {
             }
             GridRow {
                 MillListView(items: appConfig.coffeeConfig.mills).gridCellColumns(2)
+            }
+            Divider()
+
+            GridRow {
+                Text("config switch settings short")
+                SwitchIconListView(switches: appConfig.coffeeConfig.switches)
+                    .gridColumnAlignment(.trailing)
             }
             Divider()
 
