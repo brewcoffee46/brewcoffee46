@@ -177,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/yonaskolb/XcodeGen.git",
       "state" : {
-        "revision" : "8d3d3476a69ae3e5d68e1adccc701c410c05eb36",
-        "version" : "2.45.4"
+        "revision" : "8445e778451c7e44237b90281bde622d764b0084",
+        "version" : "2.46.0"
       }
     },
     {
@@ -186,8 +186,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/tuist/XcodeProj.git",
       "state" : {
-        "revision" : "01bb77000bc8c23a09ea2058f4954612f03cb705",
-        "version" : "9.10.1"
+        "revision" : "eb001108f64467b0cc7e8cbf90b3b4aaa1822cbb",
+        "version" : "9.14.0"
       }
     },
     {
