@@ -1,6 +1,6 @@
 import Foundation
 
-public struct GlobalConfig: Equatable, Hashable {
+public struct GlobalConfig: Sendable, Equatable, Hashable {
     public var coffeeBeansWeightMg: MilliGram
 
     // Use HARIO Switch-specific controls and timings.

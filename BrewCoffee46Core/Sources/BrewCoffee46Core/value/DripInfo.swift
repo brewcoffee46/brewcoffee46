@@ -1,4 +1,4 @@
-public struct DripTiming: Equatable, Sendable {
+public struct DripTiming: Codable, Equatable, Sendable {
     public let waterAmount: MilliGram
     public let dripAt: MilliSecond
 
@@ -8,7 +8,7 @@ public struct DripTiming: Equatable, Sendable {
     }
 }
 
-public struct DripInfo: Equatable {
+public struct DripInfo: Sendable, Equatable {
     public let dripTimings: [DripTiming]
     public let waterAmount: WaterAmount
     public let totalTimeSec: Double

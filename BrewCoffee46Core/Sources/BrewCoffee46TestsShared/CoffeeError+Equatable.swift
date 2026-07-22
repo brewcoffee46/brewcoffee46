@@ -18,6 +18,8 @@ extension CoffeeError: Equatable {
         case (.arrayNumberConversionError(_), .arrayNumberConversionError(_)): true
         case (.configQueryParameterNotFound, .configQueryParameterNotFound): true
         case (.numberOfSwitchesIsInvalid, .numberOfSwitchesIsInvalid): true
+        case (.activitiesNotEnabled, .activitiesNotEnabled): true
+        case (.liveActivityRequestFailed(_), .liveActivityRequestFailed(_)): true
         default:
             false
         }

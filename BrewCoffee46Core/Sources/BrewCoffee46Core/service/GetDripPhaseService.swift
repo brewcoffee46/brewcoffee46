@@ -7,6 +7,12 @@ public protocol GetDripPhaseService: Sendable {
         progressTime: Double
     ) -> DripPhase
 
+    func get(
+        dripTimings: [DripTiming],
+        totalTime: MilliSecond,
+        progressTime: Double
+    ) -> DripPhase
+
     func doneOnGoingNextScheduled<A>(
         _ i: Int,
         dripPhase: DripPhase,
@@ -26,8 +32,23 @@ public protocol GetDripPhaseService: Sendable {
 }
 
 public final class GetDripPhaseServiceImpl: GetDripPhaseService {
-    public func get(dripInfo: DripInfo, progressTime: Double) -> DripPhase {
-        let totalNumberOfDrip = dripInfo.dripTimings.count
+    public func get(
+        dripInfo: DripInfo,
+        progressTime: Double
+    ) -> DripPhase {
+        get(
+            dripTimings: dripInfo.dripTimings,
+            totalTime: MilliSecond.fromSecond(dripInfo.totalTimeSec),
+            progressTime: progressTime
+        )
+    }
+
+    public func get(
+        dripTimings: [DripTiming],
+        totalTime: MilliSecond,
+        progressTime: Double
+    ) -> DripPhase {
+        let totalNumberOfDrip = dripTimings.count
 
         if progressTime < 0 {
             return DripPhase(
@@ -36,7 +57,7 @@ public final class GetDripPhaseServiceImpl: GetDripPhaseService {
             )
         }
 
-        if let nth = dripInfo.dripTimings.firstIndex(where: { e in
+        if let nth = dripTimings.firstIndex(where: { e in
             e.dripAt.second > progressTime
         }) {
             return DripPhase(
@@ -44,7 +65,7 @@ public final class GetDripPhaseServiceImpl: GetDripPhaseService {
                 totalNumberOfDrip: totalNumberOfDrip
             )
         } else {
-            if progressTime > dripInfo.totalTimeSec {
+            if progressTime > totalTime.second {
                 return DripPhase(
                     dripPhaseType: .afterDrip,
                     totalNumberOfDrip: totalNumberOfDrip

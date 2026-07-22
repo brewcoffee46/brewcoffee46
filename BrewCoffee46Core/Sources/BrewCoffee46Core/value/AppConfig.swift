@@ -1,4 +1,4 @@
-public struct AppConfig: Equatable, Codable, Hashable {
+public struct AppConfig: Sendable, Equatable, Codable, Hashable {
     public var coffeeConfig: CoffeeConfig
     public var globalConfig: GlobalConfig
 

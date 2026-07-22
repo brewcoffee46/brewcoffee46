@@ -31,7 +31,7 @@ jobs:
           key: format-${{ runner.os }}-${{ hashFiles('**/Package.resolved', '.github/workflows/ci.yml') }}
           restore-keys: |
             format-${{ runner.os }}-
-      
+
       - name: Select Xcode
         run: sudo xcode-select -s '/Applications/Xcode_${{ matrix.xcode-version }}.app/Contents/Developer'
 
@@ -40,7 +40,7 @@ jobs:
 
       - name: Run swift-format and check
         run: |
-          .build/release/swift-format -r BrewCoffee46 BrewCoffee46Tests BrewCoffee46Core BrewCoffee46WatchKitApp -i
+          .build/release/swift-format -r BrewCoffee46 BrewCoffee46Tests BrewCoffee46Core BrewCoffee46WatchKitApp BrewCoffee46Widgets -i
           if [[ -n `git diff` ]]; then
             exit 1;
           fi
