@@ -1,3 +1,4 @@
+@preconcurrency import ActivityKit
 import AudioToolbox
 import BrewCoffee46Core
 import Combine
@@ -40,6 +41,8 @@ struct StopwatchView: View {
     @State private var rawCoffeeBeansWeight: Double = RawSetting.defaultValue().coffeeBeansWeight
     @State private var isDiscloseCoffeeBeansSetting: Bool = true
     @State private var notifications: [DripTimingNotification] = []
+    @State private var brewTimerActivity: Activity<BrewTimingAttributes>?
+    @State private var lastLiveActivityPourIndex: Int = 0
 
     @Injected(\.dateService) private var dateService
     @Injected(\.requestReviewService) private var requestReviewService
@@ -173,7 +176,10 @@ struct StopwatchView: View {
             withAnimation {
                 self.appEnvironment.isTimerStarted = true
             }
-            self.startAt = dateService.now()
+            let startedAt = self.startAt ?? dateService.now()
+            self.startAt = startedAt
+            print("start live activity")
+            startLiveActivity(startedAt: startedAt)
 
             Task { @MainActor in
                 let result = await dripTimingNotificationService.registerNotifications(
@@ -199,6 +205,7 @@ struct StopwatchView: View {
                             let previousProgressTime = progressTime
                             progressTime = now.timeIntervalSince(time) + StopwatchView.progressTimeInit
                             ringSound(previousProgressTime: previousProgressTime)
+                            updateLiveActivityIfNeeded(startedAt: time)
 
                             // For the battery life stop `isIdleTimerDisable` after 10 seconds from `totalTimeSec`.
                             if progressTime > (viewModel.currentConfig.coffeeConfig.totalTimeSec + 10.0) && UIApplication.shared.isIdleTimerDisabled {
@@ -225,6 +232,11 @@ struct StopwatchView: View {
     private func stopTimer() {
         if let t = self.timer {
             dripTimingNotificationService.removePendingAll()
+
+            let liveActivityStartedAt = self.startAt
+            Task {
+                await endLiveActivity(startedAt: liveActivityStartedAt)
+            }
 
             t.cancel()
             withAnimation {
@@ -261,6 +273,106 @@ struct StopwatchView: View {
             AudioServicesPlaySystemSound(soundIdRing)
         }
         hasRingingIndex = nth
+    }
+
+    private func startLiveActivity(startedAt: Date) {
+        if ActivityAuthorizationInfo().areActivitiesEnabled {
+            print("activities enabled")
+        } else {
+            print("activities disabled")
+            return
+        }
+
+        if let activeActivity = Activity<BrewTimingAttributes>.activities.first {
+            brewTimerActivity = activeActivity
+            let state = liveActivityState(startedAt: startedAt, progressTime: progressTime)
+            lastLiveActivityPourIndex = state.currentPourIndex
+            Task {
+                await activeActivity.update(ActivityContent(state: state, staleDate: nil))
+            }
+            return
+        }
+
+        let recipeName =
+            viewModel.currentConfig.coffeeConfig.note.isEmpty
+            ? "4:6 Method"
+            : viewModel.currentConfig.coffeeConfig.note
+        let attributes = BrewTimingAttributes(
+            recipeName: recipeName,
+            totalTime: viewModel.currentConfig.coffeeConfig.totalTimeMilliSec
+        )
+        let state = liveActivityState(startedAt: startedAt, progressTime: progressTime)
+
+        do {
+            brewTimerActivity = try Activity.request(
+                attributes: attributes,
+                content: ActivityContent(state: state, staleDate: nil),
+                pushType: nil
+            )
+            lastLiveActivityPourIndex = state.currentPourIndex
+        } catch {
+            viewModel.errors = error.localizedDescription
+        }
+    }
+
+    private func updateLiveActivityIfNeeded(startedAt: Date) {
+        guard let brewTimerActivity else {
+            return
+        }
+
+        let state = liveActivityState(startedAt: startedAt, progressTime: progressTime)
+        guard state.currentPourIndex != lastLiveActivityPourIndex else {
+            return
+        }
+
+        lastLiveActivityPourIndex = state.currentPourIndex
+        Task {
+            await brewTimerActivity.update(ActivityContent(state: state, staleDate: nil))
+        }
+    }
+
+    private func endLiveActivity(startedAt: Date?) async {
+        guard let brewTimerActivity else {
+            return
+        }
+
+        let startedAt = startedAt ?? dateService.now()
+        let finalState = liveActivityState(
+            startedAt: startedAt,
+            progressTime: viewModel.currentConfig.coffeeConfig.totalTimeSec
+        )
+
+        await brewTimerActivity.end(
+            ActivityContent(state: finalState, staleDate: nil),
+            dismissalPolicy: .immediate
+        )
+        self.brewTimerActivity = nil
+        lastLiveActivityPourIndex = 0
+    }
+
+    private func liveActivityState(startedAt: Date, progressTime: Double) -> BrewTimingAttributes.ContentState {
+        let dripTimings = viewModel.dripInfo.dripTimings
+        let totalPourCount = max(dripTimings.count, 1)
+        let phase = getDripPhaseService.get(
+            dripInfo: viewModel.dripInfo,
+            progressTime: progressTime
+        )
+        let currentPourIndex = min(max(phase.toInt() + 1, 1), totalPourCount)
+        let nextTiming = dripTimings.dropFirst(currentPourIndex).first
+        let nextWaterAmount =
+            nextTiming?.waterAmount
+            ?? dripTimings.last?.waterAmount
+            ?? .zero
+
+        return BrewTimingAttributes.ContentState(
+            startedAt: startedAt,
+            finishedAt: startedAt.addingTimeInterval(viewModel.currentConfig.coffeeConfig.totalTimeSec),
+            currentPourIndex: currentPourIndex,
+            totalPourCount: totalPourCount,
+            nextPourAt: nextTiming.map { startedAt.addingTimeInterval($0.dripAt.second) },
+            nextWaterAmount: nextWaterAmount,
+            totalWaterAmount: MilliGram.fromGram(viewModel.dripInfo.waterAmount.totalAmount())
+        )
     }
 
     private var coffeeBeansPicker: some View {
