@@ -32,6 +32,10 @@ public enum CoffeeError: Error, Sendable {
 
     case numberOfSwitchesIsInvalid
 
+    case activitiesNotEnabled
+
+    case liveActivityRequestFailed(_ underlying: Error)
+
     public func getMessage() -> String {
         switch self {
         case .coffeeBeansWeightUnderZeroError:
@@ -81,6 +85,12 @@ public enum CoffeeError: Error, Sendable {
 
         case .numberOfSwitchesIsInvalid:
             return "The number of switches is invalid."
+
+        case .activitiesNotEnabled:
+            return "Live activity is not enable."
+
+        case .liveActivityRequestFailed(let error):
+            return "Something error was occurred in live activity request: \(error)"
         }
     }
 }

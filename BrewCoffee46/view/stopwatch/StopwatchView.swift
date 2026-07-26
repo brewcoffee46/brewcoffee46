@@ -40,12 +40,14 @@ struct StopwatchView: View {
     @State private var rawCoffeeBeansWeight: Double = RawSetting.defaultValue().coffeeBeansWeight
     @State private var isDiscloseCoffeeBeansSetting: Bool = true
     @State private var notifications: [DripTimingNotification] = []
+    @State private var liveActivityHandle: LiveActivityHandle<DripTimingAttributes>?
 
     @Injected(\.dateService) private var dateService
     @Injected(\.requestReviewService) private var requestReviewService
     @Injected(\.dripTimingNotificationService) private var dripTimingNotificationService
     @Injected(\.getDripPhaseService) private var getDripPhaseService
     @Injected(\.saveLoadTimerStartAtService) private var saveLoadTimerStartAtService
+    @Injected(\.dripTimingLiveActivityService) private var dripTimingLiveActivityService
 
     private let soundIdRing = SystemSoundID(1013)
 
@@ -173,7 +175,18 @@ struct StopwatchView: View {
             withAnimation {
                 self.appEnvironment.isTimerStarted = true
             }
-            self.startAt = dateService.now()
+            let startedAt = self.startAt ?? dateService.now()
+            self.startAt = startedAt
+
+            Task { @MainActor in
+                let result = await dripTimingLiveActivityService.startLiveActivity(
+                    appConfig: viewModel.currentConfig,
+                    dripInfo: viewModel.dripInfo,
+                    startedAt: startedAt.addingTimeInterval(-StopwatchView.progressTimeInit)
+                )
+                result.forEach { liveActivityHandle = $0 }
+                result.recoverWithErrorLog(&viewModel.errors)
+            }
 
             Task { @MainActor in
                 let result = await dripTimingNotificationService.registerNotifications(
@@ -225,6 +238,13 @@ struct StopwatchView: View {
     private func stopTimer() {
         if let t = self.timer {
             dripTimingNotificationService.removePendingAll()
+
+            Task {
+                if let liveActivityHandle {
+                    let result = await dripTimingLiveActivityService.stopLiveActivity(handle: liveActivityHandle)
+                    result.recoverWithErrorLog(&viewModel.errors)
+                }
+            }
 
             t.cancel()
             withAnimation {
