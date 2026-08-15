@@ -17,7 +17,6 @@ protocol RawSettingConvertService: Sendable {
 final class RawSettingConvertServiceImpl: RawSettingConvertService {
     private let validateInputService = Container.shared.validateInputService()
     private let normalizeSwitchesService = Container.shared.normalizeSwitchesService()
-    private let dateService = Container.shared.dateService()
 
     func toConfig(
         _ rawSetting: RawSetting,
@@ -38,9 +37,6 @@ final class RawSettingConvertServiceImpl: RawSettingConvertService {
             steamingTimeMilliSec: MilliSecond.fromSecond(rawSetting.steamingTimeSec),
             note: appConfig.coffeeConfig.note,
             beforeChecklist: appConfig.coffeeConfig.beforeChecklist,
-            // For now set to old `editedAtMilliSec` to determine whether `CoffeeConfig` is the same as old one.
-            // If it's the same, which means that the modification is only `GlobalConfig` so
-            // it's not necessary to change `editedAtMilliSec`.
             editedAtMilliSec: appConfig.coffeeConfig.editedAtMilliSec,
             switches: rawSetting.switches.map { Switch.fromBool($0) },
             mills: rawSetting.mills.map { mill in
@@ -48,9 +44,6 @@ final class RawSettingConvertServiceImpl: RawSettingConvertService {
             },
         )
         newConfig.switches = self.normalizeSwitchesService.normalize(newConfig)
-        if newConfig != appConfig.coffeeConfig {
-            newConfig.editedAtMilliSec = rawSetting.editedAtMilliSec
-        }
 
         let globalConfig = GlobalConfig(
             MilliGram.fromGram(coffeeBeansWeight),
@@ -83,7 +76,6 @@ final class RawSettingConvertServiceImpl: RawSettingConvertService {
             totalTimeSec: appConfig.coffeeConfig.totalTimeSec,
             steamingTimeSec: appConfig.coffeeConfig.steamingTimeSec,
             coffeeBeansWeight: appConfig.globalConfig.coffeeBeansWeightMg.gram,
-            editedAtMilliSec: appConfig.coffeeConfig.editedAtMilliSec,
             mills: appConfig.coffeeConfig.mills.map { mill in
                 RawMill(name: mill.name, value: mill.value)
             },

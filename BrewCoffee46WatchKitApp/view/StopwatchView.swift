@@ -144,12 +144,6 @@ struct StopwatchView: View {
         }
         .currentConfigSaveLoadModifier(
             $viewModel.currentConfig,
-            // For now, there is no load & save function on WatchKit App, so
-            // it's OK that `lastUpdateAt` is always `.none`.
-            Binding(
-                get: { .none },
-                set: { _ in () }
-            ),
             $viewModel.log
         )
     }

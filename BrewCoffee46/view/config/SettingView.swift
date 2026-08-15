@@ -9,7 +9,6 @@ struct SettingView: View {
     @EnvironmentObject var appEnvironment: AppEnvironment
     @EnvironmentObject var viewModel: CurrentConfigViewModel
 
-    @Injected(\.dateService) private var dateService
     @Injected(\.rawSettingConvertService) private var rawSettingConvertService
     @Injected(\.watchConnectionService) private var watchConnectionService
     @Injected(\.configurationLinkService) private var configurationLinkService
@@ -46,8 +45,7 @@ struct SettingView: View {
                         Text(viewModel.currentConfig.coffeeConfig.note ??? NSLocalizedString("config note empty string", comment: ""))
                         Spacer()
                         Text(
-                            (viewModel.currentConfigLastUpdatedAt ?? viewModel.currentConfig.coffeeConfig.editedAtMilliSec)?.toDate()
-                                .formattedWithSec()
+                            viewModel.currentConfig.coffeeConfig.editedAtMilliSec?.toDate().formattedWithSec()
                                 ?? NSLocalizedString("config none last edited at", comment: ""))
                     },
                     tips: Text("config show current note tips")
@@ -62,8 +60,7 @@ struct SettingView: View {
                 }.onChange(of: viewModel.currentConfig, initial: true) {
                     configurationLinkService
                         .generate(
-                            config: viewModel.currentConfig.coffeeConfig,
-                            currentConfigLastUpdatedAt: viewModel.currentConfigLastUpdatedAt
+                            config: viewModel.currentConfig.coffeeConfig
                         )
                         .map { universalLinksConfigUrl = $0 }
                         .recoverWithErrorLog(&viewModel.errors)
@@ -344,13 +341,8 @@ struct SettingView: View {
                 return
             }
 
-            // `rawSetting` is update in `onChange(of: rawSetting)` so it seems to enter infinite loop
-            // but `Equatable` of `RawSetting` does not care `editedAtMilliSec` field so
-            // infinite loop will be avoided by `if oldValue == newValue { return }` above.
-            rawSetting.editedAtMilliSec = dateService.nowEpochTimeMillis()
-
             rawSettingConvertService.toConfig(newValue, viewModel.currentConfig).map { config in
-                viewModel.currentConfig = config
+                viewModel.applyUserEditedConfig(config)
 
                 // We have to feedback beans weight from water amount or its inverse.
                 // Due to this feedback, this `onChange` will be called at most twice unfortunately
@@ -369,16 +361,6 @@ struct SettingView: View {
         )
         .currentConfigSaveLoadModifier(
             $viewModel.currentConfig,
-            // To synchronise `viewModel.currentConfigLastUpdatedAt` & `rawSetting.editedAtMilliSec`
-            // this custom `Binding` is required. Note that `viewModel.currentConfig.coffeeConfig.editedAtMilliSec`
-            // will be set on `onChange(of: rawSetting)`.
-            Binding<MilliSecond?>(
-                get: { viewModel.currentConfigLastUpdatedAt },
-                set: { newValue in
-                    viewModel.currentConfigLastUpdatedAt = newValue
-                    rawSetting.editedAtMilliSec = newValue
-                }
-            ),
             $viewModel.errors
         )
     }

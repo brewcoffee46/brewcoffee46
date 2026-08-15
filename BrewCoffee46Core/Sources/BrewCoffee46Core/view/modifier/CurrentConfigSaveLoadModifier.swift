@@ -4,7 +4,6 @@ import SwiftUI
 /// When leave/back app, load/save the current configuration.
 public struct CurrentConfigSaveLoadModifier: ViewModifier {
     @Binding var currentConfig: AppConfig
-    @Binding var lastUpdatedAt: UInt64?
     @Binding var errors: String
 
     @Injected(\.saveLoadConfigService) private var saveLoadConfigService
@@ -15,14 +14,12 @@ public struct CurrentConfigSaveLoadModifier: ViewModifier {
             .onChange(of: scenePhase) { oldValue, newValue in
                 switch newValue {
                 case .background:
-                    let currentConfig = setConfigLastUpdateAt()
                     saveLoadConfigService
                         .saveCurrentConfig(currentConfig)
                         .recoverWithErrorLog(&errors)
                 case .inactive:
                     switch oldValue {
                     case .active:
-                        let currentConfig = setConfigLastUpdateAt()
                         saveLoadConfigService
                             .saveCurrentConfig(currentConfig)
                             .recoverWithErrorLog(&errors)
@@ -39,33 +36,21 @@ public struct CurrentConfigSaveLoadModifier: ViewModifier {
                         .loadCurrentConfig()
                         .map { $0.map { currentConfig = $0 } }
                         .recoverWithErrorLog(&errors)
-                    lastUpdatedAt = .none
                 @unknown default:
                     ()
                 }
             }
-    }
-
-    private func setConfigLastUpdateAt() -> AppConfig {
-        var currentConfig = self.currentConfig
-        if let lastUpdateAt = lastUpdatedAt {
-            currentConfig.coffeeConfig.editedAtMilliSec = lastUpdateAt
-        }
-
-        return currentConfig
     }
 }
 
 extension View {
     public func currentConfigSaveLoadModifier(
         _ config: Binding<AppConfig>,
-        _ lastUpdatedAt: Binding<UInt64?>,
         _ errors: Binding<String>
     ) -> some View {
         self.modifier(
             CurrentConfigSaveLoadModifier(
                 currentConfig: config,
-                lastUpdatedAt: lastUpdatedAt,
                 errors: errors
             )
         )

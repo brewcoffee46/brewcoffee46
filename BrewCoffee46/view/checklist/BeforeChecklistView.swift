@@ -68,13 +68,17 @@ struct BeforeChecklistView: View {
                     .moveDisabled(appEnvironment.isTimerStarted)
                 }
                 .onDelete(perform: { indexSet in
-                    viewModel.currentConfig.coffeeConfig.beforeChecklist.remove(atOffsets: indexSet)
+                    viewModel.editCoffeeConfig {
+                        $0.beforeChecklist.remove(atOffsets: indexSet)
+                    }
                     tmpBeforeChecklist.remove(atOffsets: indexSet)
                     checks.remove(atOffsets: indexSet)
                     checks.append(false)
                 })
                 .onMove(perform: { src, dest in
-                    viewModel.currentConfig.coffeeConfig.beforeChecklist.move(fromOffsets: src, toOffset: dest)
+                    viewModel.editCoffeeConfig {
+                        $0.beforeChecklist.move(fromOffsets: src, toOffset: dest)
+                    }
                     tmpBeforeChecklist.move(fromOffsets: src, toOffset: dest)
                     checks.move(fromOffsets: src, toOffset: dest)
                 })
@@ -82,7 +86,9 @@ struct BeforeChecklistView: View {
                     if newValue.isEditing {
                         tmpBeforeChecklist = viewModel.currentConfig.coffeeConfig.beforeChecklist
                     } else {
-                        viewModel.currentConfig.coffeeConfig.beforeChecklist = tmpBeforeChecklist
+                        viewModel.editCoffeeConfig {
+                            $0.beforeChecklist = tmpBeforeChecklist
+                        }
                     }
                 }
                 .onAppear {
@@ -102,7 +108,9 @@ struct BeforeChecklistView: View {
                             // To avoid two items identify as the same `placeholder` is required.
                             let placeholder = String(
                                 format: NSLocalizedString("before check list placeholder template", comment: ""), beforeChecklistLastCount + 1)
-                            viewModel.currentConfig.coffeeConfig.beforeChecklist.append(placeholder)
+                            viewModel.editCoffeeConfig {
+                                $0.beforeChecklist.append(placeholder)
+                            }
                             tmpBeforeChecklist.append(placeholder)
                         }
                     }) {
@@ -151,8 +159,6 @@ struct BeforeChecklistView: View {
 }
 
 #if DEBUG
-    let epochTimeMillis: UInt64 = 1_723_792_539_843
-
     struct BeforeChecklistView_Previews: PreviewProvider {
         @State static var currentConfig = CurrentConfigViewModel(
             AppConfig.defaultValue()

@@ -174,6 +174,7 @@ struct StopwatchView: View {
             UIApplication.shared.isIdleTimerDisabled = true
             withAnimation {
                 self.appEnvironment.isTimerStarted = true
+                isDiscloseCoffeeBeansSetting = false
             }
             let startedAt = self.startAt ?? dateService.now()
             self.startAt = startedAt
@@ -286,22 +287,21 @@ struct StopwatchView: View {
     private var coffeeBeansPicker: some View {
         VStack {
             HStack {
-                Spacer()
-                Image(systemName: "slider.horizontal.3")
-                Text(viewModel.currentConfig.coffeeConfig.note ??? NSLocalizedString("config note empty string", comment: ""))
-                Spacer()
-                Spacer()
-                Spacer()
+                SavedConfigMenuView()
+                    .padding(.leading, 30)
+                Divider()
+                    .frame(height: 20)
                 Button(action: {
                     withAnimation {
                         isDiscloseCoffeeBeansSetting.toggle()
                     }
                 }) {
-                    Image(systemName: "line.3.horizontal")
+                    Image(systemName: "list.triangle")
+                        .rotationEffect(Angle.degrees(isDiscloseCoffeeBeansSetting ? 0 : 180))
                 }
                 .buttonStyle(PlainButtonStyle())
                 .foregroundStyle(Color.accentColor)
-                Spacer()
+                .padding(.trailing, 30)
             }
             NumberPickerView(
                 digit: numberPickerDigit,
@@ -321,7 +321,7 @@ struct StopwatchView: View {
                 }
             }
             .frame(
-                height: isDiscloseCoffeeBeansSetting && !appEnvironment.isTimerStarted ? nil : 0,
+                height: isDiscloseCoffeeBeansSetting ? nil : 0,
                 alignment: .top
             )
             .clipped()
@@ -332,6 +332,10 @@ struct StopwatchView: View {
 #if DEBUG
     struct StopwatchView_Previews: PreviewProvider {
         static var previews: some View {
+            Container.shared.saveLoadConfigService.preview {
+                MockSaveLoadConfigServiceImpl()
+            }
+
             StopwatchView()
                 .environmentObject(CurrentConfigViewModel.init())
                 .environmentObject(AppEnvironment.init())

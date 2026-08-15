@@ -27,28 +27,19 @@ struct SaveLoadView: View {
                 VStack {
                     ShowConfigView(
                         Binding(
-                            get: {
-                                var config = viewModel.currentConfig
-
-                                if let lastUpdatedAt = viewModel.currentConfigLastUpdatedAt {
-                                    config.coffeeConfig.editedAtMilliSec = lastUpdatedAt
+                            get: { viewModel.currentConfig },
+                            set: { newValue in
+                                viewModel.editCoffeeConfig {
+                                    $0.note = newValue.coffeeConfig.note
                                 }
-                                return config
-                            },
-                            set: { viewModel.currentConfig = $0 }
+                            }
                         ),
                         (mode.isEditing || self.appEnvironment.isTimerStarted).getOnlyBinding
                     )
                     HStack {
                         Spacer()
                         Button(action: {
-                            var config = viewModel.currentConfig.coffeeConfig
-
-                            if let lastUpdatedAt = viewModel.currentConfigLastUpdatedAt {
-                                config.editedAtMilliSec = lastUpdatedAt
-                            }
-
-                            configs.insert(config, at: 0)
+                            configs.insert(viewModel.currentConfig.coffeeConfig, at: 0)
                             saveLoadConfigService
                                 .saveAll(configs: configs)
                                 .recoverWithErrorLog(&viewModel.errors)
@@ -87,7 +78,12 @@ struct SaveLoadView: View {
                     ForEach(configs, id: \.self) { config in
                         Button(action: {
                             selectedConfig = .some(config)
-                            isLoadAlertPresented.toggle()
+                            if configs.contains(viewModel.currentConfig.coffeeConfig) {
+                                viewModel.currentConfig.coffeeConfig = config
+                                selectedConfig = .none
+                            } else {
+                                isLoadAlertPresented.toggle()
+                            }
                         }) {
                             HStack {
                                 Text(config.note ??? NSLocalizedString("config note empty string", comment: ""))
@@ -97,33 +93,6 @@ struct SaveLoadView: View {
                                     config.editedAtMilliSec?.toDate().formattedWithSec()
                                         ?? NSLocalizedString("config none last edited at", comment: ""))
                             }
-                        }
-                        .alert("config load setting alert title", isPresented: $isLoadAlertPresented) {
-                            Button(role: .cancel, action: { isLoadAlertPresented.toggle() }) {
-                                Text("config load setting alert cancel")
-                            }
-                            Button(
-                                role: .destructive,
-                                action: {
-                                    isLoadAlertPresented.toggle()
-                                    if let config = selectedConfig {
-                                        viewModel.currentConfig.coffeeConfig = config
-                                        viewModel.currentConfigLastUpdatedAt = .none
-                                        selectedConfig = .none
-                                    }
-                                }
-                            ) {
-                                Text("config load setting alert load")
-                            }
-                        } message: {
-                            Text(
-                                String(
-                                    format: NSLocalizedString("config load setting alert message", comment: ""),
-                                    selectedConfig?.note ??? NSLocalizedString("config note empty string", comment: ""),
-                                    selectedConfig?.editedAtMilliSec?.toDate().formattedWithSec()
-                                        ?? NSLocalizedString("config none last edited at", comment: "")
-                                )
-                            )
                         }
                         .buttonStyle(BorderlessButtonStyle())
                         .disabled(appEnvironment.isTimerStarted || mode.isEditing)
@@ -162,9 +131,14 @@ struct SaveLoadView: View {
                 .map { legacySavedConfigs = $0 }
                 .recoverWithErrorLog(&viewModel.errors)
         }
+        .configLoadAlert(
+            isPresented: $isLoadAlertPresented,
+            selectedConfig: $selectedConfig
+        ) { config in
+            viewModel.currentConfig.coffeeConfig = config
+        }
         .currentConfigSaveLoadModifier(
             $viewModel.currentConfig,
-            $viewModel.currentConfigLastUpdatedAt,
             $viewModel.errors
         )
     }
