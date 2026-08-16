@@ -93,6 +93,18 @@ iOSInjectionProject/
 *.xcodeproj
 *.xcworkspace
 
+# Keep only the app's SwiftPM lockfile while ignoring the generated Xcode project:
+#   - `./BrewCoffee46.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`
+!BrewCoffee46.xcodeproj/
+BrewCoffee46.xcodeproj/*
+!BrewCoffee46.xcodeproj/project.xcworkspace/
+BrewCoffee46.xcodeproj/project.xcworkspace/*
+!BrewCoffee46.xcodeproj/project.xcworkspace/xcshareddata/
+BrewCoffee46.xcodeproj/project.xcworkspace/xcshareddata/*
+!BrewCoffee46.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+BrewCoffee46.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/*
+!BrewCoffee46.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+
 # Firebase setting
 GoogleService-Info*.plist
 !GoogleService-Info-CI.plist
