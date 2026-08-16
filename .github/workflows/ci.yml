@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         os: [ 'macos-26' ]
-        xcode-version: [ '26.4.1' ]
+        xcode-version: [ '26.6' ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -50,8 +50,8 @@ jobs:
     strategy:
       matrix:
         os: [ 'macos-26' ]
-        xcode-version: [ '26.4' ]
-        ios-version: [ '26.4.1' ]
+        xcode-version: [ '26.6' ]
+        ios-version: [ '26.5' ]
         ios-device-name: [ 'iPhone 17' ]
     runs-on: ${{ matrix.os }}
     env:
@@ -61,9 +61,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      # Cache SwiftPM build artifacts for CLI tools such as XcodeGen and
-      # LicensePlist, plus the generated Settings.bundle. Xcode `DerivedData is
-      # cached separately by irgaly/xcode-cache below.
+      # Cache SwiftPM build artifacts for CLI tools such as XcodeGen and LicensePlist, generated `Settings.bundle`.
+      # Xcode `DerivedData` is cached separately by irgaly/xcode-cache below.
       - uses: actions/cache@v6
         with:
           path: |
