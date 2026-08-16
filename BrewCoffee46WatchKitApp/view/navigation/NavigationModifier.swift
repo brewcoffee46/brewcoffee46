@@ -33,12 +33,6 @@ struct NavigationModifier: ViewModifier {
         // on `RootView` then the current configuration won't load and use the default configuration.
         .currentConfigSaveLoadModifier(
             $viewModel.currentConfig,
-            // For now, there is no load & save function on WatchKit App, so
-            // it's OK that `lastUpdateAt` is always `.none`.
-            Binding(
-                get: { .none },
-                set: { _ in () }
-            ),
             $viewModel.log
         )
     }

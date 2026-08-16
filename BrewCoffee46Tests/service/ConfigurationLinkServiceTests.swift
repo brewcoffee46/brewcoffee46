@@ -87,33 +87,7 @@ final class ConfigurationLinkServiceTests: XCTestCase {
         }
         let sut = ConfigurationLinkServiceImpl()
 
-        let actual = sut.generate(config: config, currentConfigLastUpdatedAt: .none)
-        XCTAssertEqual(
-            actual,
-            .success(
-                ConfigurationLinkServiceImpl.universalLinksBaseURL.appending(
-                    queryItems: [URLQueryItem(name: ConfigurationLinkServiceImpl.universalLinksQueryItemName, value: dummyString)]
-                )
-            ))
-    }
-
-    func testGenerateURLWithUpdateLastUpdatedAtSuccessfully() throws {
-        let dummyString = "dummy"
-        let currentConfigLastUpdatedAt: UInt64 = 1000
-        let mockJWTService = MockJWTService(
-            dummyConfigClaims: .success(configClaims),
-            dummyStringFunc: { config in
-                XCTAssertEqual(config.editedAtMilliSec, .some(currentConfigLastUpdatedAt))
-
-                return .success(dummyString)
-            }
-        )
-        Container.shared.jwtService.register {
-            mockJWTService
-        }
-        let sut = ConfigurationLinkServiceImpl()
-
-        let actual = sut.generate(config: CoffeeConfig.defaultValue(), currentConfigLastUpdatedAt: currentConfigLastUpdatedAt)
+        let actual = sut.generate(config: config)
         XCTAssertEqual(
             actual,
             .success(
