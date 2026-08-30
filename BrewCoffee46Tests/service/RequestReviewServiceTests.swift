@@ -39,6 +39,42 @@ class RequestReviewServiceTests: XCTestCase {
         Container.shared.reset()
     }
 
+    private func makeSUT() -> RequestReviewServiceImpl {
+        RequestReviewServiceImpl(shouldSuppressReviewRequest: false)
+    }
+
+    func test_to_return_false_if_review_request_is_suppressed() throws {
+        let sut = RequestReviewServiceImpl(shouldSuppressReviewRequest: true)
+
+        let actual = sut.check()
+
+        XCTAssertEqual(actual, .success(false))
+    }
+
+    func test_to_load_request_review_state() throws {
+        let expectedInfo = RequestReviewInfo(
+            requestHistory: [RequestReviewItem(appVersion: "1.1.1", requestedDate: now)]
+        )
+        let expectedGuard = RequestReviewGuard(tryCount: RequestReviewServiceImpl.minimumTryCount)
+        Container.shared.userDefaultsService.register {
+            MockUserDefaultsService(.some(expectedInfo), .some(expectedGuard))
+        }
+
+        let actual = try makeSUT().loadState().get()
+
+        XCTAssertEqual(actual.info, expectedInfo)
+        XCTAssertEqual(actual.guardInfo?.tryCount, expectedGuard.tryCount)
+    }
+
+    func test_to_load_empty_request_review_state_if_values_are_not_saved() throws {
+        Container.shared.userDefaultsService.register { MockUserDefaultsService(.none, .none) }
+
+        let actual = try makeSUT().loadState().get()
+
+        XCTAssertNil(actual.info)
+        XCTAssertNil(actual.guardInfo)
+    }
+
     func test_to_return_true_if_the_guard_tryCount_equals_with_minimum_and_request_review_info_is_none() throws {
         Container.shared.userDefaultsService.register {
             MockUserDefaultsService(
@@ -47,7 +83,21 @@ class RequestReviewServiceTests: XCTestCase {
             )
         }
 
-        let sut = RequestReviewServiceImpl()
+        let sut = makeSUT()
+        let actual = sut.check()
+
+        XCTAssertEqual(actual, .success(true))
+    }
+
+    func test_to_return_true_if_the_guard_tryCount_equals_with_minimum_and_request_review_history_is_empty() throws {
+        Container.shared.userDefaultsService.register {
+            MockUserDefaultsService(
+                .some(RequestReviewInfo(requestHistory: [])),
+                .some(RequestReviewGuard(tryCount: RequestReviewServiceImpl.minimumTryCount))
+            )
+        }
+
+        let sut = makeSUT()
         let actual = sut.check()
 
         XCTAssertEqual(actual, .success(true))
@@ -69,7 +119,7 @@ class RequestReviewServiceTests: XCTestCase {
             )
         }
 
-        let sut = RequestReviewServiceImpl()
+        let sut = makeSUT()
         let actual = sut.check()
 
         XCTAssertEqual(actual, .success(true))
@@ -78,7 +128,7 @@ class RequestReviewServiceTests: XCTestCase {
     func test_to_return_false_if_the_guard_is_none() throws {
         Container.shared.userDefaultsService.register { MockUserDefaultsService(.none, .none) }
 
-        let sut = RequestReviewServiceImpl()
+        let sut = makeSUT()
         let actual = sut.check()
 
         XCTAssertEqual(actual, .success(false))
@@ -92,7 +142,7 @@ class RequestReviewServiceTests: XCTestCase {
             )
         }
 
-        let sut = RequestReviewServiceImpl()
+        let sut = makeSUT()
         let actual = sut.check()
 
         XCTAssertEqual(actual, .success(false))
@@ -114,7 +164,7 @@ class RequestReviewServiceTests: XCTestCase {
             )
         }
 
-        let sut = RequestReviewServiceImpl()
+        let sut = makeSUT()
         let actual = sut.check()
 
         XCTAssertEqual(actual, .success(false))
