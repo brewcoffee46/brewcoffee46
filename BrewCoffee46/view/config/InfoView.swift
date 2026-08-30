@@ -61,6 +61,12 @@ struct InfoView: View {
                     }
                 }
             }
+
+            Section {
+                NavigationLink(value: Route.requestReviewState) {
+                    Text("navigation title request review state")
+                }
+            }
         }
         .navigation(
             path: $appEnvironment.configPath,

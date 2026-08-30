@@ -5,5 +5,6 @@ enum Route: Sendable {
     case universalLinksImport
     case jsonImportExport
     case info
+    case requestReviewState
     case beforeChecklist
 }

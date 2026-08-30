@@ -124,6 +124,14 @@
 "info by kasuya tetsu" = " 粕谷 哲（著）";
 "info share app" = "アプリをシェア";
 
+"navigation title request review state" = "Review Request State";
+"request review state guard" = "ガード";
+"request review state try count" = "試行回数";
+"request review state history" = "依頼履歴";
+"request review state build version" = "ビルドバージョン";
+"request review state requested date" = "依頼日時";
+"request review state no record" = "記録なし";
+
 "oss license title information" = "OSSライセンス情報";
 
 "notification drip now" = "%@ / %d投";

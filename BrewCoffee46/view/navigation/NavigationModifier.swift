@@ -18,6 +18,8 @@ struct NavigationModifier: ViewModifier {
             SaveLoadView()
         case .info:
             InfoView()
+        case .requestReviewState:
+            RequestReviewStateView()
         case .beforeChecklist:
             BeforeChecklistView()
         }

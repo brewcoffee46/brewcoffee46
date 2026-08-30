@@ -124,6 +124,14 @@
 "info by kasuya tetsu" = "by Tetsu Kasuya";
 "info share app" = "Share this App";
 
+"navigation title request review state" = "Review Request State";
+"request review state guard" = "Guard";
+"request review state try count" = "Try count";
+"request review state history" = "Request history";
+"request review state build version" = "Build version";
+"request review state requested date" = "Requested at";
+"request review state no record" = "No record";
+
 "oss license title information" = "OSS License Information";
 
 "notification drip now" = "%@ of %d Drip Now";

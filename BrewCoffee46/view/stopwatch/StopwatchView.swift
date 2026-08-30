@@ -143,11 +143,13 @@ struct StopwatchView: View {
                         .padding()
                         .background(buttonBackground)
                         .onAppear {
-                            requestReviewService.check().forEach { result in
-                                if result {
+                            let result = requestReviewService.check()
+                            result.forEach { shouldRequestReview in
+                                if shouldRequestReview {
                                     requestReview()
                                 }
                             }
+                            result.recoverWithErrorLog(&viewModel.errors)
                         }
                 }
                 .foregroundColor(.green)

@@ -5,14 +5,21 @@ import UIKit
 
 protocol RequestReviewService: Sendable {
     func check() -> ResultNea<Bool, CoffeeError>
+
+    func loadState() -> ResultNea<RequestReviewState, CoffeeError>
 }
 
 final class RequestReviewServiceImpl: RequestReviewService {
     private let userDefaultsService = Container.shared.userDefaultsService()
     private let dateService = Container.shared.dateService()
+    private let shouldSuppressReviewRequest: Bool
+
+    init(shouldSuppressReviewRequest: Bool = RequestReviewServiceImpl.shouldSuppressReviewRequest) {
+        self.shouldSuppressReviewRequest = shouldSuppressReviewRequest
+    }
 
     func check() -> ResultNea<Bool, CoffeeError> {
-        if RequestReviewServiceImpl.isTestFlight {
+        if shouldSuppressReviewRequest {
             .success(false)
         } else {
             beforeCheck().flatMap { result in
@@ -22,6 +29,17 @@ final class RequestReviewServiceImpl: RequestReviewService {
                     .success(false)
                 }
             }
+        }
+    }
+
+    func loadState() -> ResultNea<RequestReviewState, CoffeeError> {
+        let infoResult: ResultNea<RequestReviewInfo?, CoffeeError> =
+            userDefaultsService.getDecodable(forKey: RequestReviewServiceImpl.requestReviewInfoKey)
+        let guardResult: ResultNea<RequestReviewGuard?, CoffeeError> =
+            userDefaultsService.getDecodable(forKey: RequestReviewServiceImpl.requestReviewGuardKey)
+
+        return (infoResult |+| guardResult).map {
+            RequestReviewState(info: $0.0, guardInfo: $0.1)
         }
     }
 
@@ -67,9 +85,7 @@ final class RequestReviewServiceImpl: RequestReviewService {
         return userDefaultsService.getDecodable(forKey: RequestReviewServiceImpl.requestReviewInfoKey).flatMap {
             (requestReviewInfoOpt: RequestReviewInfo?) in
             if let requestReviewInfo = requestReviewInfoOpt {
-                if !requestReviewInfo.requestHistory.isEmpty {
-                    let latest = requestReviewInfo.requestHistory.last!
-
+                if let latest = requestReviewInfo.requestHistory.last {
                     if now.timeIntervalSince(latest.requestedDate) >= RequestReviewServiceImpl.reviewRequestInterval {
                         let updatedRequestReviewInfo = RequestReviewInfo(requestHistory: requestReviewInfo.requestHistory + [requestReviewItem])
 
@@ -81,7 +97,8 @@ final class RequestReviewServiceImpl: RequestReviewService {
                         return .success(false)
                     }
                 } else {
-                    return saveInitRequestReviewInfo(requestReviewItem).map { false }
+                    // This is unexpected case, we consider that as same as there are no request review.
+                    return saveInitRequestReviewInfo(requestReviewItem).map { true }
                 }
             } else {
                 return saveInitRequestReviewInfo(requestReviewItem).map { true }
@@ -100,6 +117,14 @@ extension RequestReviewServiceImpl {
     static internal let minimumTryCount: Int = 3
 
     private static let isTestFlight = Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
+
+    private static var shouldSuppressReviewRequest: Bool {
+        #if targetEnvironment(simulator)
+            return true
+        #else
+            return isTestFlight
+        #endif
+    }
 }
 
 extension Container {
