@@ -419,13 +419,22 @@ struct SettingView: View {
         HStack {
             Image(systemName: rawSetting.switches[i] ? "spigot" : "spigot.fill")
                 .foregroundStyle(.blue)
-            Toggle("", isOn: $rawSetting.switches[i].withAnimation())
-                .tint(.blue)
-                .labelsHidden()
-                .disabled(appEnvironment.isTimerStarted)
+
+            Picker(
+                dripIndexTextFormatterService.dripText(i),
+                selection: $rawSetting.switches[i].withAnimation()
+            ) {
+                Text("config switch close").tag(false)
+                Text("config switch open").tag(true)
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .disabled(appEnvironment.isTimerStarted)
+
             Image(systemName: rawSetting.switches[i] ? "drop.fill" : "drop")
                 .foregroundStyle(.blue)
         }
+        .padding(.leading, 50)
     }
 }
 
