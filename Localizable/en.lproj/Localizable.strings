@@ -68,6 +68,8 @@
 "config switch settings short" = "HARIO Switch";
 "config switch settings" = "HARIO Switch settings";
 "config switch use switch" = "Use Switch?";
+"config switch close" = "Close";
+"config switch open" = "Open";
 
 "drip ordinal 1" = "1st Drip";
 "drip ordinal 2" = "2nd Drip";

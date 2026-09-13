@@ -68,6 +68,8 @@
 "config switch settings short" = "HARIO Switch";
 "config switch settings" = "HARIO Switch設定";
 "config switch use switch" = "使う";
+"config switch close" = "Close";
+"config switch open" = "Open";
 
 "drip ordinal 1" = "1投目";
 "drip ordinal 2" = "2投目";
