@@ -19,7 +19,7 @@ packages:
     from: 3.0.0
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk.git
-    from: 12.11.0
+    from: 12.19.2
   SwiftJWT:
     url: https://github.com/Kitura/Swift-JWT.git
     from: 4.0.2
@@ -31,7 +31,7 @@ settings:
     ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
     DEAD_CODE_STRIPPING: YES
     ENABLE_USER_SCRIPT_SANDBOXING: NO
-    MARKETING_VERSION: 3.9.0
+    MARKETING_VERSION: 3.9.1
     SWIFT_VERSION: '6.3'
     MTL_FAST_MATH: 'YES'
     SWIFT_STRICT_CONCURRENCY: 'complete'
@@ -111,21 +111,20 @@ targets:
     postBuildScripts:
       - script: |
           if [ "${CI}" == "true" ]; then
-            cp "${PROJECT_DIR}/${PRODUCT_NAME}/config/GoogleService-Info-CI.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+            cp "${PROJECT_DIR}/${PRODUCT_NAME}/config/GoogleService-Info-CI.plist" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist"
           elif [ "${CONFIGURATION}" == "Release" ]; then
-            cp "${PROJECT_DIR}/${PRODUCT_NAME}/config/GoogleService-Info-Release.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+            cp "${PROJECT_DIR}/${PRODUCT_NAME}/config/GoogleService-Info-Release.plist" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist"
           else
-            cp "${PROJECT_DIR}/${PRODUCT_NAME}/config/GoogleService-Info-Debug.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+            cp "${PROJECT_DIR}/${PRODUCT_NAME}/config/GoogleService-Info-Debug.plist" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist"
           fi
         name: Generate GoogleService-Info.plist
         outputFiles:
-          - $(BUILT_PRODUCTS_DIR)/$(PRODUCT_NAME).app/GoogleService-Info.plist
-      - script: ${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run
+          - $(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist
+      - script: '"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run"'
         name: Crashlytics run
         inputFiles:
           - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}
           - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}
-          - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}.debug.dylib
           - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist
           - $(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist
           - $(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)
@@ -199,21 +198,20 @@ targets:
     postBuildScripts:
       - script: |
           if [ "${CI}" == "true" ]; then
-            cp "${PROJECT_DIR}/${PRODUCT_NAME}/config/GoogleService-Info-CI.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+            cp "${PROJECT_DIR}/${PRODUCT_NAME}/config/GoogleService-Info-CI.plist" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist"
           elif [ "${CONFIGURATION}" == "Release" ]; then
-            cp "${PROJECT_DIR}/${PRODUCT_NAME}/config/GoogleService-Info-Release.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+            cp "${PROJECT_DIR}/${PRODUCT_NAME}/config/GoogleService-Info-Release.plist" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist"
           else
-            cp "${PROJECT_DIR}/${PRODUCT_NAME}/config/GoogleService-Info-Debug.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+            cp "${PROJECT_DIR}/${PRODUCT_NAME}/config/GoogleService-Info-Debug.plist" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist"
           fi
         name: Generate GoogleService-Info.plist
         outputFiles:
-          - $(BUILT_PRODUCTS_DIR)/$(PRODUCT_NAME).app/GoogleService-Info.plist
-      - script: ${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run
+          - $(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist
+      - script: '"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run"'
         name: Crashlytics run for watchOS
         inputFiles:
           - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}
           - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}
-          - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}.debug.dylib
           - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist
           - $(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist
           - $(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)
