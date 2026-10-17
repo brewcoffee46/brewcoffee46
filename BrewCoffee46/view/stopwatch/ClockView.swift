@@ -1,3 +1,4 @@
+import BrewCoffee46Core
 import FactoryKit
 import SwiftUI
 
@@ -16,6 +17,7 @@ struct ClockView: View {
 
     @Binding var progressTime: Double
     private let pointerInfo: PointerInfo
+    private let isWide: Bool
 
     @State var endDegree: Double = 0.0
     @State var endDegreeEveryStep: Double = 0.0
@@ -25,27 +27,28 @@ struct ClockView: View {
     var steamingTime: Double
     var totalTime: Double
 
-    init(progressTime: Binding<Double>, pointerInfo: PointerInfo, steamingTime: Double, totalTime: Double) {
+    init(progressTime: Binding<Double>, pointerInfo: PointerInfo, steamingTime: Double, totalTime: Double, isWide: Bool) {
         self._progressTime = progressTime
         self.pointerInfo = pointerInfo
         self.steamingTime = steamingTime
         self.totalTime = totalTime
+        self.isWide = isWide
     }
 
     var body: some View {
-        ViewThatFits(in: .horizontal) {
+        if isWide {
             HStack {
                 GeometryReader { (geometry: GeometryProxy) in
                     VStack {
                         Spacer()
                         Spacer()
-                        mainClockView.frame(minWidth: appEnvironment.minWidth)
+                        mainClockView
                         Spacer()
                         Spacer()
                     }
                 }
             }
-            .frame(minWidth: appEnvironment.minWidth)
+        } else {
             GeometryReader { (geometry: GeometryProxy) in
                 mainClockView.frame(maxHeight: geometry.size.width * 0.9)
             }
@@ -249,7 +252,8 @@ struct ClockView: View {
                         progressTime: $progressTime,
                         pointerInfo: PointerInfo.defaultValue(),
                         steamingTime: 50,
-                        totalTime: 180
+                        totalTime: 180,
+                        isWide: false
                     )
                     .frame(height: geometry.size.width * 0.8)
                 }

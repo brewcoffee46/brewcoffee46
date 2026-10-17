@@ -12,17 +12,6 @@ final class AppEnvironment: ObservableObject {
 
     @Published var importedConfigClaimsWithURL: ConfigClaimsWithURL? = .none
 
-    var minWidth: Double
-
-    init() {
-        switch UIDevice.current.userInterfaceIdiom {
-        case .pad:
-            self.minWidth = 1024
-        default:
-            self.minWidth = 500
-        }
-    }
-
     var tabSelection: Binding<Route> {
         Binding { [weak self] in
             self?.selectedTab ?? .stopwatch
