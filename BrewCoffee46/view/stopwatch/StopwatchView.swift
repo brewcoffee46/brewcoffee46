@@ -41,6 +41,7 @@ struct StopwatchView: View {
     @State private var isDiscloseCoffeeBeansSetting: Bool = true
     @State private var notifications: [DripTimingNotification] = []
     @State private var liveActivityHandle: LiveActivityHandle<DripTimingAttributes>?
+    @State private var isWide: Bool = false
 
     @Injected(\.dateService) private var dateService
     @Injected(\.requestReviewService) private var requestReviewService
@@ -57,53 +58,54 @@ struct StopwatchView: View {
         .padding(6)
 
     var body: some View {
-        ViewThatFits(in: .horizontal) {
-            // Landscape
-            HStack {
-                GeometryReader { (geometry: GeometryProxy) in
-                    ZStack(alignment: .center) {
-                        ClockView(
-                            progressTime: $progressTime,
-                            pointerInfo: pointerInfo,
-                            steamingTime: viewModel.currentConfig.coffeeConfig.steamingTimeSec,
-                            totalTime: viewModel.currentConfig.coffeeConfig.totalTimeSec
-                        )
-                        .frame(height: geometry.size.width * 0.9)
-                    }
-                }
-                GeometryReader { (geometry: GeometryProxy) in
-                    VStack {
-                        PhaseListView(progressTime: $progressTime)
-                            .frame(height: isDiscloseCoffeeBeansSetting ? geometry.size.height * 0.3 : geometry.size.height * 0.6)
-                        Divider()
-                        coffeeBeansPicker
-                        Divider()
-                        timerController
-                    }
-                }
-            }
-            .frame(minWidth: appEnvironment.minWidth)
-
-            // Portrait
-            GeometryReader { (geometry: GeometryProxy) in
-                VStack {
-                    Group {
+        Group {
+            if isWide {
+                HStack {
+                    GeometryReader { (geometry: GeometryProxy) in
                         ZStack(alignment: .center) {
                             ClockView(
                                 progressTime: $progressTime,
                                 pointerInfo: pointerInfo,
                                 steamingTime: viewModel.currentConfig.coffeeConfig.steamingTimeSec,
-                                totalTime: viewModel.currentConfig.coffeeConfig.totalTimeSec
+                                totalTime: viewModel.currentConfig.coffeeConfig.totalTimeSec,
+                                isWide: isWide
                             )
-                            .frame(height: geometry.size.width * 0.85)
+                            .frame(height: geometry.size.width * 0.9)
                         }
                     }
-                    Divider()
-                    coffeeBeansPicker
-                    Divider()
-                    PhaseListView(progressTime: $progressTime)
-                    Divider()
-                    timerController
+                    GeometryReader { (geometry: GeometryProxy) in
+                        VStack {
+                            PhaseListView(progressTime: $progressTime)
+                                .frame(height: isDiscloseCoffeeBeansSetting ? geometry.size.height * 0.4 : geometry.size.height * 0.7)
+                            Spacer()
+                            coffeeBeansPicker
+                            Divider()
+                            timerController
+                        }
+                    }
+                }
+            } else {
+                GeometryReader { (geometry: GeometryProxy) in
+                    VStack {
+                        Group {
+                            ZStack(alignment: .center) {
+                                ClockView(
+                                    progressTime: $progressTime,
+                                    pointerInfo: pointerInfo,
+                                    steamingTime: viewModel.currentConfig.coffeeConfig.steamingTimeSec,
+                                    totalTime: viewModel.currentConfig.coffeeConfig.totalTimeSec,
+                                    isWide: isWide
+                                )
+                                .frame(height: geometry.size.width * 0.85)
+                            }
+                        }
+                        Divider()
+                        coffeeBeansPicker
+                        Divider()
+                        PhaseListView(progressTime: $progressTime)
+                        Divider()
+                        timerController
+                    }
                 }
             }
         }
@@ -111,6 +113,11 @@ struct StopwatchView: View {
             path: $appEnvironment.stopwatchPath,
             title: "navigation title stopwatch"
         )
+        .onGeometryChange(for: Bool.self) { proxy in
+            proxy.size.width > proxy.size.height
+        } action: { newValue in
+            isWide = newValue
+        }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 saveLoadTimerStartAtService.loadStartAt().forEach { (startAtOpt: Date?) in
